@@ -4,7 +4,7 @@ In manuscript culture, the exemplar was the authoritative copy scribes worked fr
 
 It defines, independently of any one implementation:
 
-- **The court record key**: a deterministic, docket-anchored identifier for every US court decision and for each separate opinion within it (`us/{court}/{docket}/{decided}[/{role}.{author}][@{revised}]`), following the FRBR work/expression split used by ECLI, URN:LEX and Akoma Ntoso.
+- **The court record key**: a deterministic, docket-anchored identifier for every US court decision and for each separate opinion within it (`us/{court}/{docket}/{decided}[~n][/{role}[.{author}]][@{revised}]`), specified in [`spec/court-record-key.md`](spec/court-record-key.md), following the FRBR work/expression split used by ECLI, URN:LEX and Akoma Ntoso.
 - **An Akoma Ntoso judgment profile**: how a US decision is represented in OASIS LegalDocML (Akoma Ntoso), including separate opinions, parallel printings of the same decision, page anchors into scanned volumes, and decisions whose text was not released.
 - **Machine-checkable schemas** for the profile and for the viewer's JSON sidecar.
 - **Test vectors** any implementation can run to prove conformance.
@@ -17,6 +17,7 @@ It defines, independently of any one implementation:
 | `schema/` | Schematron rules layered on the Akoma Ntoso schema; JSON Schema for the viewer sidecar |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents |
 | `examples/` | Complete sample documents built from Caselaw Access Project data |
+| `tests/` | Checks that the vectors agree with the specs' grammars and rules |
 
 ## Consumers
 
@@ -28,4 +29,12 @@ Consumers pin a release tag. Releases follow semantic versioning: a change to ho
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key grammar comes from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and moves here as the normative source.
+Early. Nothing here is stable yet. The court record key spec is at 0.1.0 (draft); it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source.
+
+## Checks
+
+```
+uv run pytest
+```
+
+The checks read the ABNF and the regex straight out of the spec, so a grammar change that the vectors don't follow fails.
