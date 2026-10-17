@@ -1,0 +1,46 @@
+{
+  "spec": "spec/court-record-key.md",
+  "spec_version": "0.1.0",
+  "registry_fixture": "registry-fixture.json",
+  "provenance": {
+    "human-curated": "A person checked it against the primary source. Ground truth: where it disagrees with any other vector, it wins.",
+    "hand-checked": "Taken from a worked example in gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md.",
+    "engine-output": "Taken from an implementation's tests or output (gorsuch-library); it shows what an implementation does, not what is correct.",
+    "spec-derived": "Constructed from the spec's rules to exercise an edge case; not yet checked by a person."
+  },
+  "files": {
+    "parse.jsonl": {
+      "checks": "A validator accepts key; a parser returns parts and decision; formatting parts gives key back.",
+      "fields": {
+        "key": "string",
+        "parts": "{country, court, docket, decided, decision_ordinal (1 when unmarked), role (null for a decision), authors (list), part_ordinal (null for a decision, 1 when unmarked), revised (null when absent), fallback (true for an rpt. docket)}",
+        "decision": "the decision key (spec section 2.4)"
+      }
+    },
+    "reject.jsonl": {
+      "checks": "A validator rejects key, and SHOULD report error.",
+      "fields": {
+        "key": "string",
+        "error": "error class, spec section 2.5",
+        "layer": "syntax: the ABNF and the regex reject it; semantic: they accept it and the validity rules of section 2.3 reject it"
+      }
+    },
+    "compute.jsonl": {
+      "checks": "A producer given facts and the registry fixture emits key, or refuses with error.",
+      "fields": {
+        "facts": "{country, court, docket (as printed, or null), decided (ISO date, possibly partial, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}}",
+        "key": "expected key, when the producer succeeds",
+        "fallback": "true when key uses the rpt. fallback",
+        "error": "refusal class, spec section 12, when it refuses"
+      }
+    },
+    "docket.jsonl": {
+      "checks": "The court's docket profile (from the registry fixture) maps printed to segment, or refuses with error.",
+      "fields": {"court": "court code", "printed": "docket as printed", "segment": "expected docket segment", "error": "refusal class"}
+    },
+    "alias.jsonl": {
+      "checks": "printed normalizes to alias under scheme; alias matches the alias grammar; resolves_to lists the keys a resolver returns.",
+      "fields": {"scheme": "alias scheme, spec section 11.1 (docket for a key-shaped alias)", "printed": "identifier as printed, when the vector tests normalization", "alias": "alias string", "resolves_to": "keys, when known"}
+    }
+  }
+}
