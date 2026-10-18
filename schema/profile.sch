@@ -14,7 +14,7 @@
   give the same results.
 
   Open questions O2 (the form of key URIs) and O7 (decisions without a decision key) are to be
-  settled with codexpublicus/exemplar#4. These rules implement the 0.1.0 text, which takes
+  settled with codexpublicus/exemplar#4. These rules implement the 0.1.1 text, which takes
   option (a) for both: FRBR URIs and ref targets are bare keys, and every document has one.
   They don't check anything those questions leave open. Registry hrefs are checked only for
   their fragment and their agreement with cx:registry/@uri, not for the form of the URI, and
@@ -56,7 +56,7 @@
       '^cl-opinion:[1-9][0-9]*$')"/>
   </xsl:function>
 
-  <!-- O2: the key a URI value names. Under 0.1.0 (option a) the value is the bare key. -->
+  <!-- O2: the key a URI value names. Under 0.1.1 (option a) the value is the bare key. -->
   <xsl:function name="f:key-of-uri" as="xs:string">
     <xsl:param name="uri" as="xs:string?"/>
     <xsl:sequence select="string($uri)"/>

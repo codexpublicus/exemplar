@@ -1,6 +1,6 @@
 # Akoma Ntoso judgment profile for US decisions
 
-Specification version: **0.1.0** (draft). Status: not yet stable; see sections 17 and 18.
+Specification version: **0.1.1** (draft). Status: not yet stable; see sections 17 and 18.
 
 This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, gorsuch-library for its corpus) write documents in this form, and the shared viewer reads them.
 
@@ -50,7 +50,7 @@ Consequences:
 
 - **Duplicative cases are printings.** A regional reprint of an officially reported decision is not a separate decision and MUST NOT get its own document [AKN-3, not machine-checkable]; it is a `cx:printing` of the decision's document, with its own citation and pages, whether or not its text was released.
 - **Revisions by the court are expressions.** A version the court labels amended, corrected or revised gets its own document whose expression URI is the `@{revised}` key.
-- **Corrections to a transcription are not court revisions.** A corrected OCR text, or a source's updated record, changes the manifestation the producer read, not the court's text. In 0.1.0 it is a new manifestation (a new document file for the same expression); whether it should instead be a new expression is open question O5.
+- **Corrections to a transcription are not court revisions.** A corrected OCR text, or a source's updated record, changes the manifestation the producer read, not the court's text. In this version it is a new manifestation (a new document file for the same expression); whether it should instead be a new expression is open question O5.
 
 ## 4. Document outline
 
@@ -83,12 +83,16 @@ The root MUST be `akomaNtoso` with exactly one `judgment` child and no `componen
 | Element | Value | Rule |
 |---|---|---|
 | `FRBRthis/@value`, `FRBRuri/@value` | the decision key, exactly, as computed under the CRK spec (no part, no `@revised`) | [AKN-9] |
-| `FRBRalias` | one per alias of the decision: `name` is the CRK alias scheme (`cite`, `neutral`, `cap`, `cl-cluster`, ...) and `value` the alias string (CRK spec section 11.1); `name="akn-nc"` holds the AKN Naming Convention IRI derived from the key (CRK spec section 15); `name="vendor"` holds a vendor citation verbatim (`1954 U.S. LEXIS 2094`), which has no alias scheme | [AKN-10] |
+| `FRBRalias` | one per alias of the decision: `name` is the CRK alias scheme (`cite`, `neutral`, `cap`, `cl-cluster`, ...) and `value` the alias string (CRK spec section 11.1); `name="akn-nc"` holds the AKN Naming Convention IRI derived from the key (CRK spec section 15); `name="vendor"` holds a vendor citation verbatim (`1954 U.S. LEXIS 2094`), which has no alias scheme; a key-shaped alias is described below the table | [AKN-10] |
 | `FRBRdate` | `@date` the decision date, `@name="decided"` | [AKN-11] |
 | `FRBRauthor/@href` | `#` + the court's `TLCOrganization` eId | [AKN-12] |
 | `FRBRcountry/@value` | `us`, the key's country segment | [AKN-13] |
 | `FRBRnumber` | OPTIONAL: `@value` the key's docket segment, `@showAs` the docket as printed | |
 | `FRBRname` | OPTIONAL: `@value` the decision's short name as the source gives it | |
+
+An alias that is itself a decision key, such as the key under another docket of a consolidated case, has no CRK alias scheme. Its `@name` MAY be any name other than a CRK alias scheme, `akn-nc` or `vendor`, and its `@value` MUST be a valid decision key, with no part and no `@{revised}` [AKN-10]. An alias whose `@name` is a CRK alias scheme MUST be valid under that scheme; `cl-opinion` names a part, not a decision, and is not used in `FRBRWork`.
+
+The `akn-nc` IRI of a decision key without a decision ordinal is `/akn/us/judgment/{court}/{decided}/{docket}` [AKN-10]. CRK section 15 gives no mapping for a key with a decision ordinal (`~2`); for such a key this version doesn't fix the value of an `akn-nc` alias, and AKN-10 doesn't check it.
 
 A document MUST NOT be written for a decision whose key the producer can't compute [AKN-14, not machine-checkable]; the CRK spec's refusals apply unchanged. Open question O7 covers decisions that have no key under CRK 0.1.0, such as Supreme Court decisions before 1971-07-01.
 
@@ -140,7 +144,7 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
 `meta/proprietary` (with `@source` referencing the producer) holds these `cx:` elements:
 
 - `cx:profile @version`: the profile version (section 2) [AKN-2].
-- `cx:keys @provenance`: how the keys were obtained (section 12), with one `cx:registry` child per registry used to compute them, `@name` (`courts`, `judges`), `@uri`, `@version`. This is the record of registry snapshots the CRK spec section 10.3 requires a producer to keep [AKN-23].
+- `cx:keys @provenance`: how the keys were obtained (section 12), with one `cx:registry` child per registry used to compute them, `@name` (`courts`, `judges`), `@uri`, `@version`. This is the record of registry snapshots the CRK spec section 10.3 requires a producer to keep [AKN-23]. `cx:keys` MUST list exactly one `courts` registry. It MUST list one `judges` registry when some part key has authors, and MAY list one otherwise; a decision with no authored part, such as one with no released text (section 13.1), computes no judge slugs [AKN-23].
 - `cx:printing`: one per printing in `references` [AKN-24]. Attributes:
   - `@ref`: `#` + the printing's `TLCReference` eId.
   - `@type`: `official` or `parallel`, as the source types the citation.
@@ -156,7 +160,7 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
 
 - `@class`: the kind of block, from this vocabulary: `parties`, `docketnumber`, `court`, `decisiondate`, `otherdate`, `attorneys`, `judges`, `syllabus`, `headnotes`, `summary`, `synopsis`, `history`, `disposition`, `posture`, `arguments` (arguments of counsel as a reporter printed them), `statement` (a reporter's statement of the case), `headmatter` (anything else).
 - `@cx:origin`: who wrote it, as far as the producer knows (section 12.1).
-- `@eId`: `header__p_{n}` for a `p`, `header__blockContainer_{n}` for a `blockContainer`, numbered in order; paragraphs inside a `blockContainer` are `{its eId}__p_{n}`.
+- `@eId`: `header__p_{n}` for a `p`, `header__blockContainer_{n}` for a `blockContainer`; paragraphs inside a `blockContainer` are `{its eId}__p_{n}`. `p` and `blockContainer` blocks are numbered separately, each in printed order: each block's `n` MUST be greater than that of the previous header block of the same element, and need not be one greater.
 
 Blocks of class `syllabus`, `headnotes`, `summary` and `synopsis` MUST NOT have `@cx:origin="court"` [AKN-27]. They are added by a reporter or a publisher; the official syllabus of the Supreme Court is itself prepared by the Reporter of Decisions and is not part of the opinion.
 
@@ -192,7 +196,7 @@ For each separately headed writing (CRK spec section 8), in printed order [AKN-2
 
 - `@name` MUST be the part's CRK role [AKN-29].
 - `@eId` MUST be `opinion_` followed by the part segment of the part key, `{role}[.{authors}][~n]` [AKN-30].
-- `@cx:part` MUST be the part key, and its decision key MUST equal the work URI [AKN-31].
+- `@cx:part` MUST be the part key, and its decision key MUST equal the work URI [AKN-31]. In a document for a revised version, the part key MAY omit `@{revised}`; if present, it MUST equal the expression's revision date. In a document for the decision as first issued, the part key has no `@{revised}`.
 - `@cx:authors` MUST list the author slugs in printed order, separated by single spaces, the same list as the part key; it is absent for a part with no author [AKN-32].
 - `@cx:joinedBy`, OPTIONAL, lists the slugs of judges who joined the writing, in printed order, each with a `TLCPerson` [AKN-33].
 - `@cx:sourceType` records the source's own type for the writing (CAP's `majority`, `dissent`, ...), unchanged.
@@ -367,7 +371,7 @@ Facts behind its identifiers:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Minimal example for spec/akoma-ntoso-profile.md 0.1.0, quoted in full in section 14 of that spec.
+  Minimal example for spec/akoma-ntoso-profile.md 0.1.1, quoted in full in section 14 of that spec.
   An excerpt of Taylor v. Yellow Cab Co., 31 A.2d 683, built by hand from the Caselaw Access Project
   case a2d/31/0683-01. The text is CAP's, OCR errors included; omitted text is marked with omissis.
 -->
@@ -414,7 +418,7 @@ Facts behind its identifiers:
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0683-01" showAs="Caselaw Access Project, a2d/31/0683-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.1.0"/>
+        <cx:profile version="0.1.1"/>
         <cx:keys provenance="engine-output">
           <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
           <cx:registry name="judges" uri="examples/minimal/judges.json" version="fixture"/>
@@ -562,15 +566,22 @@ A CourtListener record is a cluster with its docket, court, citations and opinio
 
 ### 16.1 Now
 
-`uv run pytest` checks, for every `*.akn.xml` under `examples/`:
+The reference validator, `validator/validate.py` (`mise run validate [PATH ...]`), checks each `*.akn.xml` against the vendored Akoma Ntoso 1.0 schema and, if it is schema-valid, against the Schematron rules in `schema/profile.sch`, run with Saxon HE and the vendored SchXslt2 transpiler. It checks each `*.sidecar.json` against `schema/sidecar.schema.json` and, when the document it indexes sits beside it, against that document (section 16.3). Each finding names the rule id at the start of the Schematron message, `AKN-1` for a schema failure, or `sidecar-schema` or `sidecar-document` for a sidecar. With no paths it checks `examples/` and `vectors/akn-profile/`.
 
-- validity against the vendored Akoma Ntoso 1.0 schema, whose files are checked against their SHA-256 pins first;
-- the work and expression URIs, and every `@cx:part`, against the CRK grammar and validity rules, with each part's decision key equal to the work URI;
-- for `examples/minimal`, that the keys are the ones the CRK rules compute from the printed facts, and that the copy in section 14 is identical to the file.
+`uv run pytest` checks:
+
+- the vendored Akoma Ntoso schema and SchXslt2 files against their SHA-256 pins;
+- for every `*.akn.xml` under `examples/`: validity against the schema, the work and expression URIs and every `@cx:part` against the CRK grammar and validity rules, with each part's decision key equal to the work URI, and that every example has a sidecar;
+- for `examples/minimal`, that the keys are the ones the CRK rules compute from the printed facts, and that the copy in section 14 is identical to the file;
+- that the Schematron's key regex is the CRK spec's, byte for byte, and that its key and alias functions agree with the CRK test vectors;
+- that the Schematron checks every rule section 16.2 assigns to it, except AKN-28, AKN-45 and AKN-53 (below), and that a vector exercises every rule it checks;
+- every vector in `vectors/akn-profile/`: the validator reports exactly the rule ids the vector expects.
+
+`mise run check` runs ruff, the validator and pytest, as CI does.
 
 ### 16.2 Rules and what enforces them
 
-The Schematron rules are codexpublicus/exemplar#3's work (`schema/profile.sch`). This table is its checklist.
+The Schematron rules are in `schema/profile.sch` (codexpublicus/exemplar#3). This table is its checklist. Three rules the table assigns to Schematron within a range have no assertion of their own: AKN-28 (parts in printed order) and AKN-45 (an `eop` sits where its page begins) can't be checked from the document alone, and AKN-53 is covered by AKN-51, since every `ref` must target a decision.
 
 | Rule | Requirement | Enforced by |
 |---|---|---|
@@ -581,7 +592,7 @@ The Schematron rules are codexpublicus/exemplar#3's work (`schema/profile.sch`).
 | AKN-5, AKN-6 | `judgment/@name`, `@contains` values | Schematron |
 | AKN-7 | no `coverPage`, `conclusions`, `attachments`, `components` | Schematron |
 | AKN-8, AKN-19, AKN-21 | `@source` and manifestation author reference the producer | Schematron |
-| AKN-9, AKN-15 | work and expression URIs are valid keys and agree with each other and with `@contains` | Schematron (regex from the CRK spec; calendar-date checks in the reference validator of #3) |
+| AKN-9, AKN-15 | work and expression URIs are valid keys and agree with each other and with `@contains` | Schematron (regex from the CRK spec; calendar dates through `xs:date`) |
 | AKN-10 | aliases well formed per CRK section 11.1 | Schematron |
 | AKN-11, AKN-16 | `FRBRdate` names and values match the key's dates | Schematron |
 | AKN-12, AKN-13 | work author is the court; country is `us` | Schematron |
@@ -589,7 +600,7 @@ The Schematron rules are codexpublicus/exemplar#3's work (`schema/profile.sch`).
 | AKN-17 | `FRBRauthoritative` is `false` | Schematron |
 | AKN-18, AKN-20 | manifestation URI and format | Schematron |
 | AKN-22 | reference eIds and hrefs follow the table in 5.2 | Schematron |
-| AKN-23 | `cx:keys` lists a courts and a judges registry | Schematron |
+| AKN-23 | `cx:keys` lists a courts registry, and a judges registry when some part key has authors | Schematron |
 | AKN-24, AKN-25 | each printing and source has its `cx:` record, and the reverse | Schematron |
 | AKN-26, AKN-27 | header blocks have `@class` from the vocabulary, `@cx:origin`, `@eId`; syllabus and headnotes are not `court` | Schematron |
 | AKN-28 to AKN-36 | part `hcontainer` name, eId, `cx:part`, authors, joiners, `opinion/@by`, `opinion/@type`, block placement | Schematron (key grammar via the CRK regex) |
@@ -609,6 +620,8 @@ The Schematron rules are codexpublicus/exemplar#3's work (`schema/profile.sch`).
 ### 16.3 The viewer's sidecar
 
 The JSON sidecar (#3, `schema/sidecar.schema.json`) is an index derived from the document; it adds no facts the document lacks except the bounding boxes. This profile expects it to carry: the decision key and profile version; the parts (eId, part key, role, authors); for each printing, each page number with the eId of the element its `eop` sits in; and for each `cx:blocks` id, its scan page and bounding box from CAP's `data-blocks`, which the viewer needs to highlight a paragraph on the archival PDF (codexpublicus/stare#51).
+
+The sidecar has no version of its own. It is versioned with this profile: its `profile` field MUST equal the `cx:profile/@version` of the document it indexes, and its shape is the one this profile version defines.
 
 ### 16.4 Examples
 
@@ -643,7 +656,7 @@ This profile is versioned with [Semantic Versioning 2.0.0](https://semver.org/sp
 - **Minor:** a change that only adds: an optional element or attribute, a header class, an origin or provenance value, a source mapping.
 - **Patch:** editorial changes and new examples that don't change any rule.
 
-While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.1.0, follows CRK spec 0.1.0 and court registry `2026.10.18`. A document records the profile version it follows (section 2); consumers SHOULD reject a document whose major version they don't implement.
+While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.1.1, follows CRK spec 0.1.0 and court registry `2026.10.18`. It is a patch release of 0.1.0: it states how to read six points the 0.1.0 text left ambiguous (key-shaped aliases and `akn-nc` for keys with a decision ordinal in 5.1.1, the registries in 5.3, header eId numbering in 6, `@{revised}` in part keys in 7.2, the sidecar's version in 16.3), each as the Schematron rules already read them, and corrects sections 16.1 and 16.2 to match the Schematron and validator. A document records the profile version it follows (section 2); consumers SHOULD reject a document whose major version they don't implement.
 
 ## 19. Open questions
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Test vector for spec/akoma-ntoso-profile.md 0.1.0 section 13.1, a decision with no released text.
+  Test vector for spec/akoma-ntoso-profile.md 0.1.1 section 13.1, a decision with no released text.
   Constructed from examples/minimal by hand: its identifiers and printing are the example's, and
   the printing's text="withheld" is invented for this vector. It describes no real source record.
 -->
@@ -39,7 +39,7 @@
         <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.1.0"/>
+        <cx:profile version="0.1.1"/>
         <cx:keys provenance="engine-output">
           <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
         </cx:keys>

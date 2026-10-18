@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Minimal example for spec/akoma-ntoso-profile.md 0.1.0, quoted in full in section 14 of that spec.
+  Minimal example for spec/akoma-ntoso-profile.md 0.1.1, quoted in full in section 14 of that spec.
   An excerpt of Taylor v. Yellow Cab Co., 31 A.2d 683, built by hand from the Caselaw Access Project
   case a2d/31/0683-01. The text is CAP's, OCR errors included; omitted text is marked with omissis.
 -->
@@ -47,7 +47,7 @@
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0683-01" showAs="Caselaw Access Project, a2d/31/0683-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.1.0"/>
+        <cx:profile version="0.1.1"/>
         <cx:keys provenance="engine-output">
           <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
           <cx:registry name="judges" uri="examples/minimal/judges.json" version="fixture"/>
