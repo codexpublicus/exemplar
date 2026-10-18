@@ -953,7 +953,9 @@ def fetch(entry: dict[str, Any]) -> None:
     for kind in ("json", "html"):
         path = source_path(entry, kind)
         url = entry["source"][kind]["url"]
-        with urllib.request.urlopen(url, timeout=60) as r:
+        # static.case.law answers urllib's default User-Agent with 403 Forbidden.
+        request = urllib.request.Request(url, headers={"User-Agent": "exemplar-cap-examples"})
+        with urllib.request.urlopen(request, timeout=60) as r:
             data = r.read()
         if sha256(data) != entry["source"][kind]["sha256"]:
             raise Refusal(f"{url}: SHA-256 {sha256(data)} differs from the manifest")
