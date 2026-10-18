@@ -1,0 +1,14 @@
+{
+  "description": "Test fixture standing in for the judge registry, which exemplar does not publish (spec section 10.2): a consumer supplies its own by URI. It holds only the judges the vectors use. Court codes are resolved against registry/courts.json, not this file.",
+  "judges": {
+    "gorsuch": {"courts": ["ca10", "scotus"]},
+    "roberts": {"courts": ["scotus"]},
+    "thomas": {"courts": ["scotus"]},
+    "kagan": {"courts": ["scotus"]},
+    "alito": {"courts": ["scotus"]},
+    "kavanaugh": {"courts": ["scotus"]},
+    "kennedy": {"courts": ["scotus"]},
+    "souter": {"courts": ["scotus"]},
+    "oconnor": {"courts": ["scotus"]}
+  }
+}
