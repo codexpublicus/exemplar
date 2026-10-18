@@ -157,7 +157,6 @@ class TestAlias:
             assert crk_check.classify(key) is None
             assert alias != key
 
-
     def test_a_bare_key_is_not_an_alias(self) -> None:
         for v in load("alias.jsonl"):
             if v["scheme"] == "crk":

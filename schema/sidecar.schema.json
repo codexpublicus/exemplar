@@ -10,21 +10,21 @@
     "profile": {
       "description": "The profile version the document declares in cx:profile/@version. The sidecar's shape follows the same version.",
       "type": "string",
-      "pattern": "^0\\.1\\.(0|[1-9][0-9]*)$"
+      "pattern": "^0\\.2\\.(0|[1-9][0-9]*)$"
     },
     "document": {
-      "description": "The document's manifestation URI (FRBRManifestation/FRBRthis/@value).",
+      "description": "The document's manifestation URI (FRBRManifestation/FRBRthis/@value): crk:, the expression key, .akn.xml.",
       "type": "string",
-      "pattern": "\\.akn\\.xml$"
+      "pattern": "^crk:us/.*\\.akn\\.xml$"
     },
     "work": {
-      "description": "The work URI: the decision key.",
-      "$ref": "#/$defs/decisionKey"
+      "description": "The work URI (FRBRWork/FRBRthis/@value): a key reference, crk: followed by the decision key.",
+      "$ref": "#/$defs/decisionKeyReference"
     },
     "expression": {
-      "description": "The expression URI: the decision key, or the version key with @{revised}.",
+      "description": "The expression URI (FRBRExpression/FRBRthis/@value): a key reference, crk: followed by the decision key, or by the version key with @{revised}.",
       "type": "string",
-      "pattern": "^us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+      "pattern": "^crk:us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$"
     },
     "parts": {
       "description": "The parts in document order: one per hcontainer in motivation and decision. Empty for a decision with no released text.",
@@ -44,9 +44,9 @@
     }
   },
   "$defs": {
-    "decisionKey": {
+    "decisionKeyReference": {
       "type": "string",
-      "pattern": "^us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?$"
+      "pattern": "^crk:us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?$"
     },
     "part": {
       "type": "object",
@@ -55,7 +55,7 @@
       "properties": {
         "eId": {"type": "string", "pattern": "^opinion_"},
         "key": {
-          "description": "The part key (@cx:part).",
+          "description": "The part key (@cx:part), with no crk: prefix.",
           "type": "string",
           "pattern": "^us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\\.[a-z][a-z-]*(\\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$"
         },

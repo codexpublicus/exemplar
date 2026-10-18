@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/dc/30/1943-02-12.akn.xml",
-  "work": "us/dc/30/1943-02-12",
-  "expression": "us/dc/30/1943-02-12",
+  "profile": "0.2.0",
+  "document": "crk:us/dc/30/1943-02-12.akn.xml",
+  "work": "crk:us/dc/30/1943-02-12",
+  "expression": "crk:us/dc/30/1943-02-12",
   "parts": [
     {
       "eId": "opinion_opinion.hood",

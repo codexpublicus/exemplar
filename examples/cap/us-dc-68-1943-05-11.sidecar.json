@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/dc/68/1943-05-11.akn.xml",
-  "work": "us/dc/68/1943-05-11",
-  "expression": "us/dc/68/1943-05-11",
+  "profile": "0.2.0",
+  "document": "crk:us/dc/68/1943-05-11.akn.xml",
+  "work": "crk:us/dc/68/1943-05-11",
+  "expression": "crk:us/dc/68/1943-05-11",
   "parts": [
     {
       "eId": "opinion_opinion.richardson",

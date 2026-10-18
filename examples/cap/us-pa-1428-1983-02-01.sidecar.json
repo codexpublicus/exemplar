@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/pa/1428/1983-02-01.akn.xml",
-  "work": "us/pa/1428/1983-02-01",
-  "expression": "us/pa/1428/1983-02-01",
+  "profile": "0.2.0",
+  "document": "crk:us/pa/1428/1983-02-01.akn.xml",
+  "work": "crk:us/pa/1428/1983-02-01",
+  "expression": "crk:us/pa/1428/1983-02-01",
   "parts": [
     {
       "eId": "opinion_opinion.larsen",

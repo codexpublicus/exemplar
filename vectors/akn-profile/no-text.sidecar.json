@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/dc/57/1943-04-06.akn.xml",
-  "work": "us/dc/57/1943-04-06",
-  "expression": "us/dc/57/1943-04-06",
+  "profile": "0.2.0",
+  "document": "crk:us/dc/57/1943-04-06.akn.xml",
+  "work": "crk:us/dc/57/1943-04-06",
+  "expression": "crk:us/dc/57/1943-04-06",
   "parts": [],
   "printings": [
     {

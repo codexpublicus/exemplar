@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/pa/rpt.500-pa-109/1982-12-31.akn.xml",
-  "work": "us/pa/rpt.500-pa-109/1982-12-31",
-  "expression": "us/pa/rpt.500-pa-109/1982-12-31",
+  "profile": "0.2.0",
+  "document": "crk:us/pa/rpt.500-pa-109/1982-12-31.akn.xml",
+  "work": "crk:us/pa/rpt.500-pa-109/1982-12-31",
+  "expression": "crk:us/pa/rpt.500-pa-109/1982-12-31",
   "parts": [
     {
       "eId": "opinion_opinion.roberts",
