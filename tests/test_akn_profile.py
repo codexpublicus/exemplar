@@ -1,6 +1,6 @@
 """Check the Akoma Ntoso examples against the vendored schema and spec/akoma-ntoso-profile.md.
 
-The profile's own rules (Schematron) come with codexpublicus/exemplar#3; these checks cover
+The profile's own rules (Schematron) are checked in test_profile_rules.py; these checks cover
 the base schema, the vendored schema's pins, and the keys the examples carry.
 """
 

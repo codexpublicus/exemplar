@@ -1,0 +1,19 @@
+{
+  "profile": "0.1.0",
+  "document": "us/dc/57/1943-04-06.akn.xml",
+  "work": "us/dc/57/1943-04-06",
+  "expression": "us/dc/57/1943-04-06",
+  "parts": [],
+  "printings": [
+    {
+      "ref": "printing_31-a2d-683",
+      "citation": "31 A.2d 683",
+      "type": "official",
+      "firstPage": "683",
+      "lastPage": "687",
+      "text": "withheld",
+      "pages": []
+    }
+  ],
+  "blocks": {}
+}

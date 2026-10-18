@@ -1,0 +1,49 @@
+{
+  "spec": "spec/akoma-ntoso-profile.md",
+  "spec_version": "0.1.0",
+  "schematron": "schema/profile.sch",
+  "sidecar_schema": "schema/sidecar.schema.json",
+  "namespaces": {
+    "a": "http://docs.oasis-open.org/legaldocml/ns/akn/3.0",
+    "cx": "https://codexpublicus.org/ns/exemplar"
+  },
+  "rule_ids": "A finding's rule id is the id at the start of its Schematron message: AKN-n for a numbered rule of the profile, or the section number (5.1.2) for a requirement the profile states without one. AKN-1 is a failure against the Akoma Ntoso XML Schema; a document that fails it is not checked further. sidecar-schema is a failure against schema/sidecar.schema.json; sidecar-document is a sidecar that disagrees with its document.",
+  "provenance": {
+    "human-curated": "A person checked it against the primary source. Ground truth: where it disagrees with any other vector, it wins.",
+    "hand-checked": "Taken from a worked example in the spec.",
+    "engine-output": "Taken from an implementation's tests or output; it shows what an implementation does, not what is correct.",
+    "spec-derived": "Constructed from the spec's rules to exercise one rule; not yet checked by a person."
+  },
+  "files": {
+    "documents.jsonl": {
+      "checks": "Apply ops, in order, to a copy of base. A validator running the Akoma Ntoso XML Schema and then the Schematron reports exactly the rule ids in expect (an empty list: the document is valid).",
+      "fields": {
+        "id": "vector name",
+        "base": "path of the document to edit, from the repository root",
+        "ops": "list of edits. Each has op and xpath (XPath 1.0 with the prefixes in namespaces; it selects one or more elements, and the edit applies to each). set: set attribute attr (prefix:name for a namespaced one) to value. unset: remove attribute attr. remove: remove the element. append: add the elements in xml as its last children. after: insert the elements in xml as its following siblings. Unprefixed elements in xml are in the Akoma Ntoso namespace and cx: is bound",
+        "expect": "sorted rule ids the result fails",
+        "provenance": "see provenance",
+        "note": "what the vector tests"
+      }
+    },
+    "sidecars.jsonl": {
+      "checks": "Apply patch (RFC 6902; add, remove and replace only) to base. When document is not null, apply ops to it as in documents.jsonl. A validator reports exactly the rule ids in expect: sidecar-schema from the JSON Schema; otherwise, given the document, sidecar-document if the sidecar disagrees with it.",
+      "fields": {
+        "id": "vector name",
+        "base": "path of the sidecar to patch",
+        "document": "path of the document the sidecar indexes, or null to check the sidecar alone",
+        "patch": "RFC 6902 JSON Patch",
+        "ops": "optional edits to document, as in documents.jsonl",
+        "expect": "sorted rule ids",
+        "provenance": "see provenance",
+        "note": "what the vector tests"
+      }
+    },
+    "no-text.akn.xml": {
+      "checks": "A valid document for a decision with no released text (profile section 13.1), constructed from examples/minimal; base for documents.jsonl vectors."
+    },
+    "no-text.sidecar.json": {
+      "checks": "The sidecar of no-text.akn.xml; base for sidecars.jsonl vectors."
+    }
+  }
+}

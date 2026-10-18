@@ -16,9 +16,10 @@ It defines, independently of any one implementation:
 |---|---|
 | `spec/` | Normative specifications (MUST/SHOULD language): the court record key, the Akoma Ntoso profile |
 | `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from |
-| `schema/` | JSON Schema for the court registry; the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); Schematron rules layered on it; JSON Schema for the viewer sidecar |
-| `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents |
-| `examples/` | Complete sample documents built from Caselaw Access Project data |
+| `schema/` | JSON Schema for the court registry; the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
+| `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents and sidecars |
+| `examples/` | Complete sample documents built from Caselaw Access Project data, each with its viewer sidecar |
+| `validator/` | The reference validator, which runs the XSD, the Schematron rules and the sidecar schema, and the vendored SchXslt2 transpiler it uses |
 | `tests/` | Checks that the vectors agree with the specs' grammars and rules |
 
 ## Consumers
@@ -32,6 +33,20 @@ Consumers pin a release tag. Releases follow semantic versioning: a change to ho
 ## Akoma Ntoso schema
 
 `schema/akn/1.0/` holds the official Akoma Ntoso 1.0 XML Schema, `akomantoso30.xsd`, and the `xml.xsd` it imports, both unchanged from <https://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/> (Akoma Ntoso Version 1.0, OASIS Standard, 29 August 2018), retrieved 2026-10-18. `schema/akn/1.0/source.json` records each file's URL and SHA-256 and the notice each file states: `akomantoso30.xsd` states OASIS copyright and that OASIS provides the schema under CC BY 4.0; `xml.xsd` states no license.
+
+## Schematron rules and the viewer sidecar
+
+`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open questions O2 and O7 of the profile are to be settled with codexpublicus/exemplar#4; the rules implement the 0.1.0 text for both and check nothing those questions leave open.
+
+`schema/sidecar.schema.json` is the JSON Schema for the viewer's sidecar, the index the viewer loads beside a document (profile section 16.3): the keys, the parts, each printing's page markers with the eId they sit in, and each scan block's page and bounding box from CAP's `data-blocks`. A sidecar is named after its document (`{stem}.sidecar.json` beside `{stem}.akn.xml`), and everything in it except the bounding boxes must agree with the document.
+
+The reference validator runs both:
+
+```
+uv run python validator/validate.py [PATH ...]
+```
+
+It checks each `*.akn.xml` against the Akoma Ntoso schema and then the Schematron rules, and each `*.sidecar.json` against its JSON Schema and its document. It runs the Schematron with Saxon HE (`saxonche`) and SchXslt2's transpiler, vendored unchanged from the SchXslt2 1.11.2 release (<https://codeberg.org/SchXslt/schxslt2>) at `validator/vendor/schxslt2/`, retrieved 2026-10-18. `validator/vendor/schxslt2/source.json` records the release archive's URL and SHA-256, each file's SHA-256, and the notice the files state: the MIT License, copyright David Maus.
 
 ## Court registry
 
@@ -53,6 +68,10 @@ Early. Nothing here is stable yet. The court record key spec is at 0.1.0 (draft)
 uv run pytest
 ```
 
+or, with mise, `mise run check` (everything CI runs) and `mise run validate [PATH ...]` (the reference validator).
+
 The checks read the ABNF and the regex straight out of the spec, so a grammar change that the vectors don't follow fails. They also validate `registry/courts.json` against its schema, rebuild it from the vendored courts-db snapshot and compare, check the snapshot against its SHA-256 pin, and check that every court code a vector resolves is in the registry.
 
 For the Akoma Ntoso profile, they validate every `examples/**/*.akn.xml` against the vendored Akoma Ntoso 1.0 schema (after checking its files against their pins), check each example's work, expression and part URIs against the court record key rules, and check that the example quoted in the profile is identical to `examples/minimal/`.
+
+For the Schematron rules and the sidecar, they run every vector in `vectors/akn-profile/`: each edits a valid document or sidecar and names the rules the result must fail, no more and no fewer. They also check the vendored transpiler against its pins, that the Schematron's key regex is byte-identical to the court record key spec's, that its key and alias functions accept and reject what the court record key vectors say, that it covers every rule section 16.2 assigns it, and that every rule it checks has a vector.

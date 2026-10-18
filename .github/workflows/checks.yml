@@ -35,5 +35,8 @@ jobs:
       - name: Akoma Ntoso schema validation
         run: uv run pytest tests/test_akn_profile.py
 
+      - name: Reference validator (XSD, Schematron, sidecar schema)
+        run: uv run python validator/validate.py
+
       - name: pytest
         run: uv run pytest --ignore=tests/test_akn_profile.py

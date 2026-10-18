@@ -12,6 +12,7 @@ dev = [
     "lxml>=5.3",
     "pytest>=8",
     "ruff>=0.6",
+    "saxonche~=13.0.0",
 ]
 
 [tool.uv]
