@@ -1,0 +1,18 @@
+{
+  "description": "Vendored copy of the official Akoma Ntoso 1.0 XML Schema (OASIS LegalDocML), used to validate documents against spec/akoma-ntoso-profile.md. Both files are byte-for-byte the files at the URLs below.",
+  "standard": "Akoma Ntoso Version 1.0. Part 2: Specifications. OASIS Standard, 29 August 2018",
+  "namespace": "http://docs.oasis-open.org/legaldocml/ns/akn/3.0",
+  "retrieved": "2026-10-18",
+  "files": {
+    "akomantoso30.xsd": {
+      "url": "https://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/akomantoso30.xsd",
+      "sha256": "6f61fe84cbb6f8cb0e8418cd67b74a63da9990e6573b5a3491f623184f45c4fd",
+      "notice_as_stated": "The file's header comment reads 'Copyright (c) OASIS Open 2018. All Rights Reserved.' and its TERMS AND CONDITIONS annotation reads 'This schema is provided by OASIS, the Copyright Holder, under licence cc-by 4.0, that can also be found at the URL https://creativecommons.org/licenses/by/4.0/legalcode'."
+    },
+    "xml.xsd": {
+      "url": "https://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/xml.xsd",
+      "sha256": "61960fb3131e38022caad5360e2f33a3382578ab3c80cd58bd74320ede61b20c",
+      "notice_as_stated": "The file is the W3C schema document for the XML namespace, imported by akomantoso30.xsd as ./xml.xsd. It states no license."
+    }
+  }
+}

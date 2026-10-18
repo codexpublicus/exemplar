@@ -5,7 +5,7 @@ In manuscript culture, the exemplar was the authoritative copy scribes worked fr
 It defines, independently of any one implementation:
 
 - **The court record key**: a deterministic, docket-anchored identifier for every US court decision and for each separate opinion within it (`us/{court}/{docket}/{decided}[~n][/{role}[.{author}]][@{revised}]`), specified in [`spec/court-record-key.md`](spec/court-record-key.md), following the FRBR work/expression split used by ECLI, URN:LEX and Akoma Ntoso.
-- **An Akoma Ntoso judgment profile**: how a US decision is represented in OASIS LegalDocML (Akoma Ntoso), including separate opinions, parallel printings of the same decision, page anchors into scanned volumes, and decisions whose text was not released.
+- **An Akoma Ntoso judgment profile**: how a US decision is represented in OASIS LegalDocML (Akoma Ntoso), including separate opinions, parallel printings of the same decision, page anchors into scanned volumes, and decisions whose text was not released, specified in [`spec/akoma-ntoso-profile.md`](spec/akoma-ntoso-profile.md).
 - **Machine-checkable schemas** for the profile and for the viewer's JSON sidecar.
 - **The court registry**: the court codes the key uses and the docket profile for each, built from a pinned snapshot of Free Law Project's courts-db.
 - **Test vectors** any implementation can run to prove conformance.
@@ -16,7 +16,7 @@ It defines, independently of any one implementation:
 |---|---|
 | `spec/` | Normative specifications (MUST/SHOULD language): the court record key, the Akoma Ntoso profile |
 | `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from |
-| `schema/` | JSON Schema for the court registry; Schematron rules layered on the Akoma Ntoso schema; JSON Schema for the viewer sidecar |
+| `schema/` | JSON Schema for the court registry; the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); Schematron rules layered on it; JSON Schema for the viewer sidecar |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents |
 | `examples/` | Complete sample documents built from Caselaw Access Project data |
 | `tests/` | Checks that the vectors agree with the specs' grammars and rules |
@@ -28,6 +28,10 @@ It defines, independently of any one implementation:
 - The shared Codex Publicus viewer: renders documents in this format.
 
 Consumers pin a release tag. Releases follow semantic versioning: a change to how identifiers are computed, or to a document's required structure, is a major version.
+
+## Akoma Ntoso schema
+
+`schema/akn/1.0/` holds the official Akoma Ntoso 1.0 XML Schema, `akomantoso30.xsd`, and the `xml.xsd` it imports, both unchanged from <https://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/> (Akoma Ntoso Version 1.0, OASIS Standard, 29 August 2018), retrieved 2026-10-18. `schema/akn/1.0/source.json` records each file's URL and SHA-256 and the notice each file states: `akomantoso30.xsd` states OASIS copyright and that OASIS provides the schema under CC BY 4.0; `xml.xsd` states no license.
 
 ## Court registry
 
@@ -41,7 +45,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.1.0 (draft), with court registry 2026.10.18; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source.
+Early. Nothing here is stable yet. The court record key spec is at 0.1.0 (draft), with court registry 2026.10.18; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.1.0 (draft); its open questions are listed in its section 19.
 
 ## Checks
 
@@ -50,3 +54,5 @@ uv run pytest
 ```
 
 The checks read the ABNF and the regex straight out of the spec, so a grammar change that the vectors don't follow fails. They also validate `registry/courts.json` against its schema, rebuild it from the vendored courts-db snapshot and compare, check the snapshot against its SHA-256 pin, and check that every court code a vector resolves is in the registry.
+
+For the Akoma Ntoso profile, they validate every `examples/**/*.akn.xml` against the vendored Akoma Ntoso 1.0 schema (after checking its files against their pins), check each example's work, expression and part URIs against the court record key rules, and check that the example quoted in the profile is identical to `examples/minimal/`.

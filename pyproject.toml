@@ -9,6 +9,7 @@ dependencies = []
 dev = [
     "abnf>=2.2",
     "jsonschema>=4.23",
+    "lxml>=5.3",
     "pytest>=8",
     "ruff>=0.6",
 ]

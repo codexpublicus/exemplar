@@ -1,0 +1,9 @@
+{
+  "description": "Test fixture standing in for a judge registry (spec/court-record-key.md section 10.2) for examples/minimal only. It is not a judge registry. It holds the three judges the example's panel line names, registered for the court code the example uses.",
+  "version": "fixture",
+  "judges": {
+    "cayton": {"name": "Cayton", "courts": ["dc"]},
+    "hood": {"name": "Hood", "courts": ["dc"]},
+    "richardson": {"name": "Richardson", "courts": ["dc"]}
+  }
+}
