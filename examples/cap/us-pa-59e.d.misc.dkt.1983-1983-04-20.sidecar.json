@@ -1,0 +1,211 @@
+{
+  "profile": "0.1.1",
+  "document": "us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml",
+  "work": "us/pa/59e.d.misc.dkt.1983/1983-04-20",
+  "expression": "us/pa/59e.d.misc.dkt.1983/1983-04-20",
+  "parts": [
+    {
+      "eId": "opinion_per-curiam",
+      "key": "us/pa/59e.d.misc.dkt.1983/1983-04-20/per-curiam",
+      "role": "per-curiam",
+      "authors": []
+    },
+    {
+      "eId": "opinion_dissent.roberts",
+      "key": "us/pa/59e.d.misc.dkt.1983/1983-04-20/dissent.roberts",
+      "role": "dissent",
+      "authors": [
+        "roberts"
+      ]
+    }
+  ],
+  "printings": [
+    {
+      "ref": "printing_500-pa-510",
+      "citation": "500 Pa. 510",
+      "type": "official",
+      "firstPage": "510",
+      "lastPage": "511",
+      "text": "transcribed",
+      "pages": [
+        {
+          "number": "511",
+          "eId": "opinion_per-curiam",
+          "scan": 561
+        }
+      ]
+    },
+    {
+      "ref": "printing_458-a2d-928",
+      "citation": "458 A.2d 928",
+      "type": "parallel",
+      "firstPage": "928",
+      "text": "withheld",
+      "pages": []
+    }
+  ],
+  "blocks": {
+    "BL_560.7": {
+      "scan": 560,
+      "rect": [
+        700,
+        979,
+        219,
+        30
+      ]
+    },
+    "BL_560.8": {
+      "scan": 560,
+      "rect": [
+        239,
+        1049,
+        1143,
+        416
+      ]
+    },
+    "BL_560.9": {
+      "scan": 560,
+      "rect": [
+        578,
+        1523,
+        458,
+        37
+      ]
+    },
+    "BL_560.10": {
+      "scan": 560,
+      "rect": [
+        522,
+        1603,
+        568,
+        40
+      ]
+    },
+    "BL_560.11": {
+      "scan": 560,
+      "rect": [
+        606,
+        1684,
+        399,
+        38
+      ]
+    },
+    "BL_560.12": {
+      "scan": 560,
+      "rect": [
+        603,
+        1756,
+        405,
+        38
+      ]
+    },
+    "BL_560.14": {
+      "scan": 560,
+      "rect": [
+        235,
+        1944,
+        1141,
+        98
+      ]
+    },
+    "BL_560.15": {
+      "scan": 560,
+      "rect": [
+        235,
+        2071,
+        1141,
+        98
+      ]
+    },
+    "BL_560.16": {
+      "scan": 560,
+      "rect": [
+        233,
+        2235,
+        1142,
+        96
+      ]
+    },
+    "BL_561.4": {
+      "scan": 561,
+      "rect": [
+        230,
+        400,
+        289,
+        34
+      ]
+    },
+    "BL_561.3": {
+      "scan": 561,
+      "rect": [
+        683,
+        331,
+        149,
+        33
+      ]
+    },
+    "BL_561.5": {
+      "scan": 561,
+      "rect": [
+        230,
+        462,
+        292,
+        35
+      ]
+    },
+    "BL_561.6": {
+      "scan": 561,
+      "rect": [
+        188,
+        557,
+        1135,
+        98
+      ]
+    },
+    "BL_561.7": {
+      "scan": 561,
+      "rect": [
+        229,
+        678,
+        482,
+        42
+      ]
+    },
+    "BL_561.8": {
+      "scan": 561,
+      "rect": [
+        730,
+        679,
+        195,
+        43
+      ]
+    },
+    "BL_561.9": {
+      "scan": 561,
+      "rect": [
+        184,
+        740,
+        1139,
+        471
+      ]
+    },
+    "BL_561.10": {
+      "scan": 561,
+      "rect": [
+        184,
+        1230,
+        1137,
+        150
+      ]
+    },
+    "BL_561.11": {
+      "scan": 561,
+      "rect": [
+        183,
+        1431,
+        1137,
+        95
+      ]
+    }
+  }
+}

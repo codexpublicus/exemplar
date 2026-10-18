@@ -1,0 +1,553 @@
+{
+  "id": 1781149,
+  "name": "COMMONWEALTH ex rel. Ignatius ZAFFARANO and Marion Zaffarano, Appellees, v. Richard GENARO, Appellant",
+  "name_abbreviation": "Commonwealth ex rel. Zaffarano v. Genaro",
+  "decision_date": "1983-02-01",
+  "docket_number": "No. 1428",
+  "first_page": "256",
+  "last_page": "267",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "500 Pa. 256"
+    },
+    {
+      "type": "parallel",
+      "cite": "455 A.2d 1180"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "Pa.",
+    "id": 8832,
+    "name": "Supreme Court of Pennsylvania"
+  },
+  "jurisdiction": {
+    "id": 6,
+    "name_long": "Pennsylvania",
+    "name": "Pa."
+  },
+  "cites_to": [
+    {
+      "cite": "268 A.2d 140",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "year": 1970,
+      "pin_cites": [
+        {
+          "page": "143",
+          "parenthetical": "footnote omitted"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "216 Pa.Super. 388",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        790684
+      ],
+      "year": 1970,
+      "pin_cites": [
+        {
+          "parenthetical": "footnote omitted"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/216/0388-01"
+      ]
+    },
+    {
+      "cite": "206 Or. 253",
+      "category": "reporters:state",
+      "reporter": "Or.",
+      "case_ids": [
+        5105640
+      ],
+      "weight": 2,
+      "year": 1956,
+      "pin_cites": [
+        {
+          "parenthetical": "\" 'Custody' ... connotes, among other things, the right of the legal custodian to establish the legal domicile for the child, whereas such right does not abide with the parent who enjoys only the occasional right of visitation .... \""
+        },
+        {
+          "page": "799",
+          "parenthetical": "\" 'Custody' ... connotes, among other things, the right of the legal custodian to establish the legal domicile for the child, whereas such right does not abide with the parent who enjoys only the occasional right of visitation .... \""
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/or/206/0253-01"
+      ]
+    },
+    {
+      "cite": "242 S.E.2d 696",
+      "category": "reporters:state_regional",
+      "reporter": "S.E.2d",
+      "pin_cites": [
+        {
+          "page": "697"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "368 A.2d 288",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "weight": 4,
+      "year": 1976,
+      "pin_cites": [
+        {
+          "page": "291",
+          "parenthetical": "Spaeth, J., concurring"
+        },
+        {
+          "page": "290",
+          "parenthetical": "\"Partial custody\" is visitation with a child out of the presence of the individual who has custody of the child."
+        },
+        {
+          "page": "291"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "240 Pa.Super. 65",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        817960
+      ],
+      "year": 1976,
+      "pin_cites": [
+        {
+          "page": "69",
+          "parenthetical": "Spaeth, J., concurring"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/240/0065-01"
+      ]
+    },
+    {
+      "cite": "266 Pa.Super. 104",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        123393
+      ],
+      "weight": 2,
+      "year": 1979,
+      "pin_cites": [
+        {
+          "page": "107",
+          "parenthetical": "emphasis in original"
+        },
+        {
+          "page": "116",
+          "parenthetical": "emphasis in original"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/266/0104-01"
+      ]
+    },
+    {
+      "cite": "30 A.2d 810",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "year": 1943,
+      "pin_cites": [
+        {
+          "parenthetical": "child ordered by court to visit with grandparents at their home two days each month over mother's objection developed nervousness, neurotic behavior and intestinal disturbances"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "151 Pa.Super. 612",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        1047320
+      ],
+      "year": 1943,
+      "pin_cites": [
+        {
+          "parenthetical": "child ordered by court to visit with grandparents at their home two days each month over mother's objection developed nervousness, neurotic behavior and intestinal disturbances"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/151/0612-01"
+      ]
+    },
+    {
+      "cite": "249 Pa. Super. 274",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        834512
+      ],
+      "weight": 2,
+      "year": 1977,
+      "pin_cites": [
+        {
+          "page": "287"
+        },
+        {
+          "page": "654-55"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/249/0274-01"
+      ]
+    },
+    {
+      "cite": "254 Pa.Super. 227",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        96896
+      ],
+      "weight": 4,
+      "year": 1978,
+      "pin_cites": [
+        {
+          "page": "230"
+        },
+        {
+          "page": "994",
+          "parenthetical": "emphasis in original"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/254/0227-01"
+      ]
+    },
+    {
+      "cite": "493 Pa. 292",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        8732566
+      ],
+      "weight": 5,
+      "year": 1981,
+      "pin_cites": [
+        {
+          "page": "295"
+        },
+        {
+          "page": "557"
+        },
+        {
+          "page": "296"
+        },
+        {
+          "page": "557"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/493/0292-01"
+      ]
+    },
+    {
+      "cite": "15 J.Fam.L. 51",
+      "category": "journals:journal",
+      "reporter": "J. Fam. L.",
+      "year": 1976,
+      "pin_cites": [
+        {
+          "page": "67"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "286 Pa.Super. 436",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        162239
+      ],
+      "weight": 8,
+      "year": 1981,
+      "pin_cites": [
+        {
+          "page": "442"
+        },
+        {
+          "page": "20"
+        },
+        {
+          "page": "442"
+        },
+        {
+          "page": "20"
+        },
+        {
+          "page": "441"
+        },
+        {
+          "page": "20"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa-super/286/0436-01"
+      ]
+    },
+    {
+      "cite": "490 Pa. 363",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1763810
+      ],
+      "weight": 2,
+      "year": 1980,
+      "pin_cites": [
+        {
+          "page": "373-374"
+        },
+        {
+          "page": "517"
+        }
+      ],
+      "opinion_index": 1,
+      "case_paths": [
+        "/pa/490/0363-01"
+      ]
+    },
+    {
+      "cite": "491 Pa. 320",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1765652
+      ],
+      "weight": 2,
+      "year": 1980,
+      "pin_cites": [
+        {
+          "page": "328"
+        },
+        {
+          "page": "161"
+        }
+      ],
+      "opinion_index": 1,
+      "case_paths": [
+        "/pa/491/0320-01"
+      ]
+    },
+    {
+      "cite": "97 A.2d 350",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "year": 1953,
+      "pin_cites": [
+        {
+          "page": "353"
+        }
+      ],
+      "opinion_index": 2
+    },
+    {
+      "cite": "374 Pa. 172",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1241444
+      ],
+      "year": 1953,
+      "pin_cites": [
+        {
+          "page": "177"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa/374/0172-01"
+      ]
+    },
+    {
+      "cite": "333 A.2d 846",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "case_ids": [
+        482875,
+        482907,
+        482825
+      ],
+      "year": 1975,
+      "pin_cites": [
+        {
+          "page": "851"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa/460/0423-01",
+        "/pa/460/0421-01",
+        "/pa/460/0422-01"
+      ]
+    },
+    {
+      "cite": "460 Pa. 423",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        482875
+      ],
+      "year": 1975,
+      "pin_cites": [
+        {
+          "page": "433"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa/460/0423-01"
+      ]
+    },
+    {
+      "cite": "470 Pa. 290",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1723844
+      ],
+      "weight": 2,
+      "year": 1977,
+      "pin_cites": [
+        {
+          "page": "296"
+        },
+        {
+          "page": "637"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa/470/0290-01"
+      ]
+    },
+    {
+      "cite": "254 Pa.Super. 227",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        96896
+      ],
+      "weight": 2,
+      "year": 1978,
+      "pin_cites": [
+        {
+          "page": "232-233"
+        },
+        {
+          "page": "995"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa-super/254/0227-01"
+      ]
+    },
+    {
+      "cite": "286 Pa.Super. 436",
+      "category": "reporters:state",
+      "reporter": "Pa. Super.",
+      "case_ids": [
+        162239
+      ],
+      "weight": 5,
+      "year": 1981,
+      "pin_cites": [
+        {
+          "page": "442"
+        },
+        {
+          "page": "20-21"
+        },
+        {
+          "page": "442"
+        },
+        {
+          "page": "21"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/pa-super/286/0436-01"
+      ]
+    }
+  ],
+  "analysis": {
+    "cardinality": 990,
+    "char_count": 21559,
+    "ocr_confidence": 0.781,
+    "pagerank": {
+      "raw": 6.78065003866519e-07,
+      "percentile": 0.9636362969424086
+    },
+    "sha256": "92fe1e77fbb8123001f9a103cdbfcf0cbcecaffae99bb9233fe33d385f886e5e",
+    "simhash": "1:d0bbe86a48db05c5",
+    "word_count": 3501
+  },
+  "last_updated": "2024-02-27T23:49:15.316484+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [
+      "Before O\u2019BRIEN, C.J., and ROBERTS, NIX, LARSEN, FLAHERTY, McDERMOTT and HUTCHINSON, JJ.",
+      "O\u2019BRIEN, Former C.J., did not participate in the decision of this case.",
+      "ROBERTS, C.J., and McDERMOTT, J., join in the majority-",
+      "FLAHERTY, J., joins Order and files concurring opinion.",
+      "HUTCHINSON, J., also joins Order and joins with Justice Flaherty\u2019s concurring opinion.",
+      "NIX, J., files a dissenting opinion.",
+      "HUTCHINSON, J., joins this concurring opinion."
+    ],
+    "parties": [
+      "COMMONWEALTH ex rel. Ignatius ZAFFARANO and Marion Zaffarano, Appellees, v. Richard GENARO, Appellant."
+    ],
+    "opinions": [
+      {
+        "text": "OPINION\nLARSEN, Justice.\nOn April 10, 1980, appellees Ignatius and Marion Zaffarano filed a petition for visitation in the Court of Common Pleas of Montgomery County. The petition sought an order granting appellees \u201cvisitation and temporary custody rights\u201d with respect to their granddaughter, Shannon Genaro. After a hearing, the court of common pleas dismissed the petition. On appeal, the Superior Court reversed and remanded the case for the establishment of a partial custody schedule for appellees with their granddaughter. Commonwealth ex rel. Zaffarano v. Genaro, 286 Pa.Super. 436, 429 A.2d 17 (1981). We granted allocatur and we now reverse..\nShannon Genaro was born on June 4, 1978, the daughter of appellant, Richard Genaro, and appellees\u2019 daughter, Carmella Genaro. On September 16, 1979, Carmella was critically injured in an automobile accident. She remained in a coma from the date of the accident until her death on December 9, 1979.\nPrior to the accident, appellees saw Shannon frequently. At the hearing, appellee Ignatius Zaffarano testified that he saw Shannon five to seven days a week prior to Carmella\u2019s hospitalization. During these visits he and Carmella would take Shannon to get ice cream, to see the ducks at a nearby pond, to the airport, or to the store. Appellees also babysat for Shannon and kept her overnight on several occasions when her parents went out for the evening. A single visit took place during the six weeks following the accident. Thereafter, during November, 1979, December, 1979, and January, 1980, appellees saw Shannon two or three times each week. Typically, these visits were initiated by a telephone call from appellees to appellant, following which appellant would leave Shannon at appellees\u2019 home for a few hours.\nAppellees last saw Shannon on February 9,1980. On that date, appellant had an argument with his sister-in-law, Donna Zaffarano, during which Donna told appellant that he was not spending enough time with Shannon and that he should be home with her more often.\nAppellant testified that although he believed that appellees love Shannon, he did not want to leave Shannon alone with appellees because they had been saying nasty things about him, and he felt that appellees were not capable of caring for Shannon because Mrs. Zaffarano had emotional problems and Mr. Zaffarano drank a lot. Appellant described his February 9 argument with Donna Zaffarano as \u201cthe last straw,\u201d and has refused to leave Shannon alone with appellees since that date. Nevertheless, appellant did testify that he was willing to allow appellees to visit with Shannon in his presence. Appellees have, however, repeatedly rejected this offer.\nAlthough the hearing court concluded that appellees were not unfit to act as partial custodians for Shannon, it refused to order any visitation because \u201c[t]he present hard feelings which unhappily exist may well serve to place Shannon in a cross-fire between conflicting adults which would certainly not be in her best interests.\u201d On appeal, the Superior Court found that there was no \u201cirreconcilable animosity\u201d between the parties and concluded \u201cthat appellants [Ignatius and Marion Zaffarano, appellees herein] have shown that it would be in their grandchild\u2019s best interests to allow them partial custody of her.\u201d 286 Pa.Super. at 442, 429 A.2d at 20. We granted allocatur.\nIn light of the relief requested in this case \u2014 an order granting \u201cvisitation and temporary custody rights\u201d \u2014 we must differentiate between custody, partial custody, and visitation. The distinguishing elements of these arrangements are \u201c[t]he length of existing visits, the frequency with which they occur, whose home the visits take place in, and who is in effective control of the children during the visit.\u201d Note, Visitation Rights of a Grandparent Over the Objection of a Parent: The Best Interests of the Child, 15 J.Fam.L. 51, 67 (1976-77). Thus, at one end of the spectrum is custody, which is a relatively permanent arrangement that involves keeping and caring for a child on a continual basis and that affords the custodian the greatest degree of day-to-day control over the child. At the opposite end of the spectrum is visitation, which allows for the least amount of control over the child and contacts of a relatively short duration since visits must be held in the presence of the child\u2019s custodian. Between these extremes is partial custody, which involves greater control over the child than does visitation because it takes place away from the child\u2019s custodian, and which may involve contacts of relatively long duration, such as a weekend or a month of summer vacation.\nIn this case, appellees seek partial custody of Shannon. Accordingly, our review of this case must focus upon the appropriate standards for granting partial custody to a child\u2019s grandparents.\nWe have repeatedly held that \u201c[o]ur paramount concern in custody cases is the best interest and permanent welfare of the child.\u201d Commonwealth ex rel. Pierce v. Pierce, 493 Pa. 292, 295, 426 A.2d 555, 557 (1981). Our concern is no less in cases of partial custody and visitation, since the goal in each case is to foster those relationships which will be meaningful for the child, while protecting the child from situations which would have a harmful effect.\nWe employ a \u201csliding scale\u201d approach in allocating the burdens of proof to determine whether partial custody would be in a child\u2019s best interest. The opinion of the Superior Court in Commonwealth ex rel. Williams v. Miller, 254 Pa.Super. 227, 385 A.2d 992 (1978) is helpful in this regard, and we adopt its language and rationale:\n[W]e said recently that in a dispute between a parent and a third party, including a relative such as a grandparent, the parent has a prima facie right to custody which will be forfeited only if convincing reasons appear that the child\u2019s best interest will be served by an award to the third party. In re Hernandez, 249 Pa. Super. 274, at 287, 376 A.2d 648, at 654-55 (1977). Since visitation is correlative to custody a similar test should apply when a third party seeks visitation, although the burden on the third party should not be so heavy, for an order granting visitation is a far lesser intrusion, or assertion of control, than is an award of custody.\n. .. When seeking visitation, a third party must show reasons to overcome the parent\u2019s prima facie right to uninterrupted custody. However, the reasons need not be so convincing as in a custody case. In a custody case, the third party must convince the court that it is in the child\u2019s best interest to take custody from a parent and award it to the third party. In a visitation case, the third party need only convince the court that it is in the child\u2019s best interest to give some time to the third party. As the amount of time requested moves the visit further from a visit and closer to custody, the reasons offered in support of the request must become correspondingly more convincing.\n254 Pa.Super. at 230, 385 A.2d at 994 (emphasis in original).\nThus, in a case such as this in which partial custody is sought, the grandparents bear the burden of proving to the court that it would be in their grandchild\u2019s best interest for the grandparents to have custody of the child away from his or her parent for limited periods of time.\nWe have held that\nOur scope of review in a custody matter is of the broadest type, and we are not bound by deductions or inferences made by a trial court.. . . We must exercise an independent judgment based on the evidence and make such an order on the merits of the case as right and justice dictate.\nCommonwealth ex rel Pierce v. Pierce, supra, 493 Pa. at 296, 426 A.2d at 557.\nAppellant first argues that the Superior Court improperly substituted itself as the fact finder with respect to the extent of the hostility between the parties in this case. The hearing court, after listening to and individually questioning each of the witnesses, concluded \u201cthat there is some underlying bitterness between the Zaffaranos and Richard resultant from Carmella\u2019s untimely death.\u201d Nevertheless, the Superi- or Court concluded that \u201cthere does not exist between these parties an \u2018irreconcilable animosity\u2019 .... The situation here is closer to a temporary falling out than a permanent estrangement.\u201d 286 Pa.Super. at 442, 429 A.2d at 20.\nThe feelings and attitudes exhibited by the parties towards one another are relevant in a custody and/or visitation dispute and are sometimes discernable only by the hearing judge who has an opportunity to observe the witnesses. The mere fact that a witness says he harbors no ill will towards another individual does not establish that fact; particularly in cases such as this in which the emotions of the parties are relevant to a determination of the child\u2019s best interest, the demeanor of the witness is crucial in judging his sincerity and truthfulness.\nThus, despite the fact that appellate courts possess a broad scope of review in partial custody and visitation cases, they may not, and in fact cannot, substitute their own findings of fact with respect to the parties\u2019 emotional feelings and attitudes towards one another.\nIn this case, there was evidence in the record to support the hearing judge\u2019s finding of bitterness between the parties. Appellant testified that he did not trust appellees to care for Shannon, that appellee had said nasty things to and about him, and that appellees\u2019 daughter Donna had criticized his care of Shannon; appellee admitted that he had stated that appellant was at fault for Carmella\u2019s death and that appellant was not a good husband, father or provider; and Donna admitted having berated appellant and testified that appellant had, on at least one occasion, instructed appellees to hide any pictures they had of Carmella while Shannon was in their house. Further, there was evidence that the hostility accompanying these fears and accusations had continued up to and beyond the date of the hearing. Despite the efforts of the hearing judge and his request that the parties attempt to agree with each other upon a visitation or partial custody schedule before he issued an order in the case, the parties still failed to come to any agreement. Accordingly, we hold that it was error for the Superior Court to substitute its finding for that of the hearing court.\nAppellant also argues that the Superior Court erred in holding that partial custody with appellees was in Shannon\u2019s best interest. We agree.\nWe are aware that a child\u2019s relationship with his or her grandparents is a special one and that the love, trust, security and companionship which comprise such a relationship may greatly enrich a child\u2019s life. Nevertheless, we must face the reality that such relationships are not always welcomed by a child\u2019s parent, either because the parent and the grandparents disagree over the care of the child, or because one of the parties, either parent or grandparent, wishes to retaliate against the other for behavior unrelated to the child. In such cases, we must determine whether the detriment to the child caused by friction between his or her parent and grandparents will outweigh any benefit to the child which arises from a continuing relationship with his or her grandparents.\nCommentators have noted that\nPsychologically, the effects of a rivalry between a child\u2019s parents and grandparents for his affection has been termed \u201cdevastating.\u201d\nNote, Visitation Rights of a Grandparent, supra at 60.\nThese \u201cdevastating consequences\u201d are not merely theoretical. See Commonwealth ex rel. Flannery v. Sharp, 151 Pa.Super. 612, 30 A.2d 810 (1943) (child ordered by court to visit with grandparents at their home two days each month over mother\u2019s objection developed nervousness, neurotic behavior and intestinal disturbances).\nIn this case, the great potential for the development of these \u201cdevastating consequences\u201d leads us to conclude that the detrimental effects caused by the hostility between the parties outweighs the benefits Shannon would receive from a renewed relationship with her grandparents. Like the hearing court, we believe that it would be in Shannon\u2019s best interest not to be placed in the crossfire between her father and her grandparents.\nThe differences between the parties in this case are extensive and deal with matters in which all parties have a substantial emotional investment. Each side charges that the other is incapable of properly caring for Shannon. In addition, while appellees seek to place the blame for Carmella\u2019s death on appellant, appellant has attempted to impose upon appellees the requirement that they hide Carmella\u2019s pictures from Shannon. We will not risk Shannon\u2019s well-being by placing her in the center of this emotionally charged conflict.\nFurther, unlike the Superior Court in this case, we do not feel it appropriate to grant appellees partial custody of Shannon simply because she has not yet suffered \u201cemotional or physical harm as a result of the relationship between her father and [appellees].\u201d 286 Pa.Super. at 441, 429 A.2d at 20. Shannon is not an inanimate object which may be moved from one environment to another without any ill or lasting effects; she is a human being who deserves the chance to grow up in an environment free of continuing hostility between family members.\nOur holding today certainly does not preclude further review of this matter by the hearing court if the circumstances surrounding the case have changed, nor does our holding preclude the parties to this action from renewing their attempts to resolve their differences amicably and to agree upon a mutually satisfactory schedule of visitation or partial custody. As the Superior Court has aptly stated:\nHopefully, bad feelings will cease to exist between the parties, for that certainly would be in the child\u2019s best interests. Since we cannot order such a result, the child\u2019s best interests will be furthered by denying visitation to appellants.\nWick v. Wick, 266 Pa.Super. 104, 107, 403 A.2d 115, 116 (1979) (emphasis in original).\nThe order of the Superior Court is reversed and the order of the Court of Common Pleas of Montgomery County is reinstated.\nO\u2019BRIEN, Former C.J., did not participate in the decision of this case.\nROBERTS, C.J., and McDERMOTT, J., join in the majority-\nFLAHERTY, J., joins Order and files concurring opinion.\nHUTCHINSON, J., also joins Order and joins with Justice Flaherty\u2019s concurring opinion.\nNIX, J., files a dissenting opinion.\n. Appellant and Shannon have been living with appellant\u2019s parents since this time.\n. Appellee, Marion Zaffarano was not present at the hearing and did not testify. The record reveals that she had been under the care of a doctor for severe depression since the death of Carmella.\n. Appellees\u2019 daughter, Donna Zaffarano, testified that on at least one of these occasions, appellant asked appellees to hide their pictures of Carmella while Shannon was in the house.\n. Appellee admitted during the hearing that he had made several remarks to the effect that appellant was at fault for Carmella\u2019s death and was not a good father, husband, or provider, and that the two daughters still living with him had also spoken ill of appellant, but he stated that they have now forgotten everything and that he neither holds appellant responsible for Carmella\u2019s death nor bears any ill will towards him.\n. Pennsylvania recognizes three possible custodial arrangements: \u201ccustody\u201d, \u201cpartial custody\u201d (also called \u201climited custody\u201d or \u201cdivided custody\u201d), and \u201cvisitation\u201d. Scott v. Scott, 240 Pa.Super. 65, 69, 368 A.2d 288, 291 (1976) (Spaeth, J., concurring). Since it is apparent from an examination of the record in this case that appellees seek partial custody, we will treat their request for \u201ctemporary custody rights\u201d as a request for partial custody.\n. See J.M.S. v. H.A., 242 S.E.2d 696, 697 (W.Va.1978) (\u201c[I]t is apparent that custody confers more authority and power upon one in whom it is placed than does the privilege of visiting.\u201d); McFadden v. McFadden, 206 Or. 253, 292 P.2d 795, 799 (1956) (\u201c \u2018Custody\u2019 ... connotes, among other things, the right of the legal custodian to establish the legal domicile for the child, whereas such right does not abide with the parent who enjoys only the occasional right of visitation .... \u201d).\n. See Commonwealth ex rel. Rosequist v. Rosequist, 216 Pa.Super. 388, 268 A.2d 140, 143 (1970) (footnote omitted) (\u201cVisit\u201d means \u201cthe right of the parent to go to see the child wherever he might be and does not include the right of the parent to take possession of the child.\u201d).\n. See Scott v. Scott, supra, 240 Pa.Superior at 67, 368 A.2d at 290 (\u201cPartial custody\u201d is visitation with a child out of the presence of the individual who has custody of the child.). Judge Spaeth, concurring in this case, stated: \u201cI suggest that we ... limit use of the term \u2018partial custody\u2019 to cases where psychological considerations ... or geographical reasons ... require that the non-custodial parent see the child out of the presence of the custodial parent.\u201d Id., 240 Pa.Superior at 69, 368 A.2d at 291.\n. The record of the hearing in this case reveals that appellees rejected appellant\u2019s offer to have them visit with Shannon in his presence. Thus, appellees have, by their actions, rejected visitation with their granddaughter.\n... In addition, certain circumstances such as visitations may themselves be a source of discontinuity. Children have difficulty in relating positively to, profiting from, and maintaining the contact with two psychological parents who are not in positive contact with each other. Loyalty conflicts are common and normal under such conditions and may have devastating consequences by destroying the child\u2019s positive relationships to both parents.",
+        "type": "majority",
+        "author": "LARSEN, Justice."
+      },
+      {
+        "text": "FLAHERTY, Justice,\nconcurring.\nI join, but write separately to disagree with the reference in the opinion authored by Mr. Justice Larsen to a \u201cright\u201d favoring uninterrupted parental custody. Reference to \u201crights\u201d favoring parents over non-parents serves only to becloud the ultimate concern of the child\u2019s well-being, and has been relegated to the past as a basis of inquiry. Albright v. Commonwealth, 491 Pa. 320, 328, 421 A.2d 157, 161 (1980). As stated in my concurring opinion in Ellerbe v. Hooks, 490 Pa. 363, 373-374, 416 A.2d 512, 517 (1980), the custody inquiry is best conducted without reference to \u201crights\u201d or \u201cpresumptions\u201d, while focusing only upon \u201cthe determination of what affiliation will best serve the child\u2019s interests, including physical, emotional intellectual, moral, and spiritual well-being.\u201d\nHUTCHINSON, J., joins this concurring opinion.",
+        "type": "concurrence",
+        "author": "FLAHERTY, Justice,"
+      },
+      {
+        "text": "NIX, Justice,\ndissenting.\nIt has long been recognized that the broad scope of review given to reviewing courts in custody matters was never intended to mean that an appellate court is free to nullify the fact-finding function of the hearing judge. Commonwealth ex rel. Spriggs v. Carson, 470 Pa. 290, 296, 368 A.2d 635, 637 (1977); Adoption of Farabelli, 460 Pa. 423, 433, 333 A.2d 846, 851 (1975); Commonwealth ex rel. Harry V. Eastridge, 374 Pa. 172, 177, 97 A.2d 350, 353 (1953). However, I do not view the disagreement between the Superior Court and the hearing judge as turning upon the former\u2019s refusal to accept the findings of fact of the latter.\nThe Superior Court accepted the hearing court\u2019s finding as to the existence of a hostility between the appellant and the appellees. The difference in the result of the two tribunals arose from the judgmental determination as to the impact of this animosity on the emotional and physical development of the child and the value to be derived by the child in having some association with her mother\u2019s family.\nWe hold that [appellees] have shown that it would be in their grandchild\u2019s best interests to allow the partial custody of her.... The relationship between young Shannon and her grandparents appears to be a happy one, filled with love and affection on both sides. Although Shannon is but two and one-half years of age, we believe that she is capable of appreciating and cherishing her grandparents\u2019 affection and would experience a terrible loss if denied the opportunity to see and be with them. . . .\nCommonwealth ex rel. Zaffarano v. Genaro, 286 Pa.Super. 436, 442, 429 A.2d 17, 20-21 (1981).\nAfter noting that \u201c[e]xcept under unusual circumstances, no child should be cut off entirely from one side of its family,\u201d id., 286 Pa.Super. at 442,429 A.2d at 21, quoting from Commonwealth ex rel. Williams v. Miller, 254 Pa.Super. 227, 232-233, 385 A.2d 992, 995 (1978), the Superior Court concluded that the relationship between appellees and appellant did not pose such a threat to the emotional or physical development of the child, Shannon, as to warrant the order entered by the hearing court. I do not believe that the Superior Court attempted to nullify the hearing court\u2019s fact-finding responsibility nor do I agree with this Court\u2019s attempt to disturb a reasonable exercise of discretion by the Superior Court, on the conjectural theory of the possibility of the development of \u201cdevasting consequences.\u201d\nI would affirm the order of the Superior Court.",
+        "type": "dissent",
+        "author": "NIX, Justice,"
+      }
+    ],
+    "attorneys": [
+      "Mark E. Weand, Steven E. Speece, Ambler, for appellant.",
+      "Robert J. Kerns, North Wales, for appellees."
+    ],
+    "corrections": "",
+    "head_matter": "455 A.2d 1180\nCOMMONWEALTH ex rel. Ignatius ZAFFARANO and Marion Zaffarano, Appellees, v. Richard GENARO, Appellant.\nSupreme Court of Pennsylvania.\nArgued Dee. 6, 1982.\nDecided Feb. 1, 1983.\nMark E. Weand, Steven E. Speece, Ambler, for appellant.\nRobert J. Kerns, North Wales, for appellees.\nBefore O\u2019BRIEN, C.J., and ROBERTS, NIX, LARSEN, FLAHERTY, McDERMOTT and HUTCHINSON, JJ."
+  },
+  "file_name": "0256-01",
+  "first_page_order": 306,
+  "last_page_order": 317
+}

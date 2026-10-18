@@ -1,0 +1,205 @@
+{
+  "description": "The CAP examples: each entry is a Caselaw Access Project case, the source files examples/cap/build.py reads (with the URL each was downloaded from and its SHA-256), the decision key the build must compute, and why the case was chosen. Source files are in examples/cap/source/, at the same path as on static.case.law. CAP data is CC0; this manifest records the source and nothing more. Each source file is byte-identical to the member of its CAP volume zip that volume.members names; the zip's SHA-256 is recorded as downloaded.",
+  "profile": "0.1.1",
+  "generated": "2026-10-18",
+  "producer": {
+    "eId": "org_exemplar",
+    "href": "https://github.com/codexpublicus/exemplar",
+    "showAs": "codexpublicus/exemplar"
+  },
+  "registries": {
+    "courts": "registry/courts.json",
+    "courtsVersion": "2026.10.18",
+    "judges": "examples/cap/judges.json"
+  },
+  "courts": {
+    "District of Columbia Municipal Court of Appeals": "dc",
+    "Supreme Court of Pennsylvania": "pa",
+    "Massachusetts Supreme Judicial Court": "mass"
+  },
+  "courtsNote": "CAP court.name to court registry code, mapped by hand (engine-output in the documents' cx:keys). dc: see profile section 14. pa and mass: CAP's name equals the registry's name for the code.",
+  "examples": [
+    {
+      "cap": "a2d/31/0647-01",
+      "key": "us/dc/69/1943-05-11",
+      "why": "A short single-opinion decision with a printed docket (the case codexpublicus/exemplar#4 names).",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/a2d/31/cases/0647-01.json",
+          "sha256": "fef2a5f4dc1da6258b44b91675f97c1ccb9a07d7b6ef4303755100989fa55dd3"
+        },
+        "html": {
+          "url": "https://static.case.law/a2d/31/html/0647-01.html",
+          "sha256": "a56ac73586c4b4ef822077f3fdedbeeec5acad50d2dc71b9971918cf32d2185c"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/a2d/31.zip",
+        "sha256": "bea1e748cf349c33b63a0f5a9b52e6c21489a535331dbcfce86f88b8b6b3ad0a",
+        "members": [
+          "json/0647-01.json",
+          "html/0647-01.html"
+        ]
+      }
+    },
+    {
+      "cap": "a2d/31/0657-01",
+      "key": "us/dc/30/1943-02-12",
+      "why": "The first of two decisions that begin on 31 A.2d 657 (profile section 13.2); a one-page per-paragraph opinion.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/a2d/31/cases/0657-01.json",
+          "sha256": "8f07af43823a83201fe1065206ab372e2df385af93a3214885f9728e3e03715a"
+        },
+        "html": {
+          "url": "https://static.case.law/a2d/31/html/0657-01.html",
+          "sha256": "54cd9928bd25dcd78e0bbb8e49030e1d986b408478d2fee8449fc16bf9d753c7"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/a2d/31.zip",
+        "sha256": "bea1e748cf349c33b63a0f5a9b52e6c21489a535331dbcfce86f88b8b6b3ad0a",
+        "members": [
+          "json/0657-01.json",
+          "html/0657-01.html"
+        ]
+      },
+      "pageShared": true
+    },
+    {
+      "cap": "a2d/31/0657-02",
+      "key": "us/dc/68/1943-05-11",
+      "why": "The second decision on 31 A.2d 657 (ordinal 2), and a page break in the head matter.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/a2d/31/cases/0657-02.json",
+          "sha256": "282c16a78302f6015461c0bde9816376acdd191fa5bee34f8d6815ecd7ac646c"
+        },
+        "html": {
+          "url": "https://static.case.law/a2d/31/html/0657-02.html",
+          "sha256": "b78a3a8330fdecfc4a62ab1eb317b7183c036c67be9ab707eb0f1e91ebf376e8"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/a2d/31.zip",
+        "sha256": "bea1e748cf349c33b63a0f5a9b52e6c21489a535331dbcfce86f88b8b6b3ad0a",
+        "members": [
+          "json/0657-02.json",
+          "html/0657-02.html"
+        ]
+      },
+      "pageShared": true
+    },
+    {
+      "cap": "pa/500/0256-01",
+      "key": "us/pa/1428/1983-02-01",
+      "why": "An opinion with a concurrence and a dissent; a parallel A.2d printing whose text CAP withheld; page breaks inside paragraphs and one inside a word; footnotes, block quotations, and citations CAP links to cases, leaves unlinked, and links to a journal.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/pa/500/cases/0256-01.json",
+          "sha256": "f675d4d8f7fd55c5ee55ee77f97706660ad886c18a0954b551c0896d43d49354"
+        },
+        "html": {
+          "url": "https://static.case.law/pa/500/html/0256-01.html",
+          "sha256": "070d06c6edf518b5368b9f27c77278980ba1a8f3e0b6f9030df491a9dd4cd5c7"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/pa/500.zip",
+        "sha256": "46b7f3708a2123b08efc9fb171dbbd3d6f41949499272792697f5276355598f2",
+        "members": [
+          "json/0256-01.json",
+          "html/0256-01.html"
+        ]
+      },
+      "printings": {
+        "455 A.2d 1180": {
+          "text": "withheld",
+          "basis": "CAP holds A.2d volume 455 (VolumesMetadata: redacted true) and released no case at this citation: its CasesMetadata lists only Delaware, D.C., Maine and Rhode Island cases."
+        }
+      }
+    },
+    {
+      "cap": "pa/500/0510-01",
+      "key": "us/pa/59e.d.misc.dkt.1983/1983-04-20",
+      "why": "A per curiam order with a dissenting statement; a page break before the byline; a docket the printed profile keeps with its court-office suffix.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/pa/500/cases/0510-01.json",
+          "sha256": "dfb38a29f1a455b079267b144705e221af673fa18403ca9ea4c6e1da83efbf78"
+        },
+        "html": {
+          "url": "https://static.case.law/pa/500/html/0510-01.html",
+          "sha256": "b25b155d2e044938d8d28078a18ec73594bffe2082591053ae6f9b245fe4c894"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/pa/500.zip",
+        "sha256": "46b7f3708a2123b08efc9fb171dbbd3d6f41949499272792697f5276355598f2",
+        "members": [
+          "json/0510-01.json",
+          "html/0510-01.html"
+        ]
+      },
+      "printings": {
+        "458 A.2d 928": {
+          "text": "withheld",
+          "basis": "CAP holds A.2d volume 458 (VolumesMetadata: redacted true) and released no case at this citation: its CasesMetadata lists only Delaware, D.C., Maine and Rhode Island cases."
+        }
+      }
+    },
+    {
+      "cap": "pa/500/0109-01",
+      "key": "us/pa/rpt.500-pa-109/1982-12-31",
+      "why": "A decision with no docket in CAP: the reporter fallback key; an opinion with two dissents and a withheld parallel printing.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/pa/500/cases/0109-01.json",
+          "sha256": "440fb9618c2704879271f40b94d093c52213f708644f4640cb07787141884655"
+        },
+        "html": {
+          "url": "https://static.case.law/pa/500/html/0109-01.html",
+          "sha256": "2be6cd9905652c7e400b090a4868bece39a797b01017d6906d11b211bfc9217a"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/pa/500.zip",
+        "sha256": "46b7f3708a2123b08efc9fb171dbbd3d6f41949499272792697f5276355598f2",
+        "members": [
+          "json/0109-01.json",
+          "html/0109-01.html"
+        ]
+      },
+      "printings": {
+        "454 A.2d 985": {
+          "text": "withheld",
+          "basis": "CAP holds A.2d volume 454 (VolumesMetadata: redacted true) and released no case at this citation: its CasesMetadata lists only Delaware, D.C., Maine and Rhode Island cases."
+        }
+      }
+    },
+    {
+      "cap": "mass/150/0066-01",
+      "key": "us/mass/rpt.150-mass-66/1889-11-11",
+      "why": "An older reporter (Massachusetts Reports, 1889) with a full decision date and no docket: the reporter fallback; headnotes, and counsel and the disposition printed after the opinion.",
+      "source": {
+        "json": {
+          "url": "https://static.case.law/mass/150/cases/0066-01.json",
+          "sha256": "39ad06d907b2d3fc83057dfc281822018546fea8d485281461d1e6e10093fa1c"
+        },
+        "html": {
+          "url": "https://static.case.law/mass/150/html/0066-01.html",
+          "sha256": "b153bc95609ac20e8a11ee283cfffd40448faa387a79067d6498f65487f2fbea"
+        }
+      },
+      "volume": {
+        "url": "https://static.case.law/mass/150.zip",
+        "sha256": "aef07616752ccdbc8eb0f1483d300e83c601f457369259e50702f2cf90fb78de",
+        "members": [
+          "json/0066-01.json",
+          "html/0066-01.html"
+        ]
+      }
+    }
+  ],
+  "pageSharedNote": "pageShared: another decision begins on the same page of the official printing (CAP's next file ordinal), so cx:printing carries @ordinal."
+}

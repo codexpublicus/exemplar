@@ -1,0 +1,339 @@
+{
+  "id": 1781127,
+  "name": "COMMONWEALTH of Pennsylvania, Appellant, v. Dale BARRY",
+  "name_abbreviation": "Commonwealth v. Barry",
+  "decision_date": "1982-12-31",
+  "docket_number": "",
+  "first_page": "109",
+  "last_page": "120",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "500 Pa. 109"
+    },
+    {
+      "type": "parallel",
+      "cite": "454 A.2d 985"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "Pa.",
+    "id": 8832,
+    "name": "Supreme Court of Pennsylvania"
+  },
+  "jurisdiction": {
+    "id": 6,
+    "name_long": "Pennsylvania",
+    "name": "Pa."
+  },
+  "cites_to": [
+    {
+      "cite": "285 A.2d 141",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "year": 1971,
+      "opinion_index": 0
+    },
+    {
+      "cite": "445 Pa. 288",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1940103
+      ],
+      "year": 1971,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/445/0288-01"
+      ]
+    },
+    {
+      "cite": "468 Pa. 193",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1719634
+      ],
+      "weight": 2,
+      "year": 1976,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/468/0193-01"
+      ]
+    },
+    {
+      "cite": "304 U.S. 458",
+      "category": "reporters:federal",
+      "reporter": "U.S.",
+      "case_ids": [
+        10805
+      ],
+      "weight": 3,
+      "year": 1938,
+      "pin_cites": [
+        {
+          "page": "464"
+        },
+        {
+          "page": "1023"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/us/304/0458-01"
+      ]
+    },
+    {
+      "cite": "486 Pa. 221",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1757543
+      ],
+      "weight": 2,
+      "year": 1979,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/486/0221-01"
+      ]
+    },
+    {
+      "cite": "441 U.S. 369",
+      "category": "reporters:federal",
+      "reporter": "U.S.",
+      "case_ids": [
+        1780286
+      ],
+      "weight": 3,
+      "year": 1979,
+      "opinion_index": 0,
+      "case_paths": [
+        "/us/441/0369-01"
+      ]
+    },
+    {
+      "cite": "488 Pa. 148",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1760977
+      ],
+      "weight": 2,
+      "year": 1980,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/488/0148-01"
+      ]
+    },
+    {
+      "cite": "399 F.2d 467",
+      "category": "reporters:federal",
+      "reporter": "F.2d",
+      "case_ids": [
+        2140695
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/f2d/399/0467-01"
+      ]
+    },
+    {
+      "cite": "442 U.S. 707",
+      "category": "reporters:federal",
+      "reporter": "U.S.",
+      "case_ids": [
+        1532114
+      ],
+      "weight": 11,
+      "year": 1979,
+      "pin_cites": [
+        {
+          "page": "725"
+        },
+        {
+          "page": "2572"
+        },
+        {
+          "page": "724"
+        },
+        {
+          "page": "726"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/us/442/0707-01"
+      ]
+    },
+    {
+      "cite": "343 A.2d 669",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "case_ids": [
+        1708098,
+        1708038
+      ],
+      "year": 1975,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/463/0089-01",
+        "/pa/463/0090-01"
+      ]
+    },
+    {
+      "cite": "463 Pa. 90",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1708038
+      ],
+      "year": 1975,
+      "opinion_index": 0,
+      "case_paths": [
+        "/pa/463/0090-01"
+      ]
+    },
+    {
+      "cite": "496 Pa. 349",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1772954
+      ],
+      "weight": 6,
+      "year": 1981,
+      "pin_cites": [
+        {
+          "page": "362-63"
+        },
+        {
+          "page": "394",
+          "parenthetical": "Kauffman, J., dissenting"
+        }
+      ],
+      "opinion_index": 1,
+      "case_paths": [
+        "/pa/496/0349-01"
+      ]
+    },
+    {
+      "cite": "442 U.S. 707",
+      "category": "reporters:federal",
+      "reporter": "U.S.",
+      "case_ids": [
+        1532114
+      ],
+      "weight": 6,
+      "year": 1979,
+      "opinion_index": 1,
+      "case_paths": [
+        "/us/442/0707-01"
+      ]
+    },
+    {
+      "cite": "343 A.2d 669",
+      "category": "reporters:state_regional",
+      "reporter": "A.2d",
+      "case_ids": [
+        1708098,
+        1708038
+      ],
+      "weight": 2,
+      "year": 1975,
+      "opinion_index": 1,
+      "case_paths": [
+        "/pa/463/0089-01",
+        "/pa/463/0090-01"
+      ]
+    },
+    {
+      "cite": "463 Pa. 90",
+      "category": "reporters:state",
+      "reporter": "Pa.",
+      "case_ids": [
+        1708038
+      ],
+      "weight": 2,
+      "year": 1975,
+      "opinion_index": 1,
+      "case_paths": [
+        "/pa/463/0090-01"
+      ]
+    },
+    {
+      "cite": "441 U.S. 369",
+      "category": "reporters:federal",
+      "reporter": "U.S.",
+      "case_ids": [
+        1780286
+      ],
+      "weight": 4,
+      "year": 1979,
+      "pin_cites": [
+        {
+          "page": "373"
+        }
+      ],
+      "opinion_index": 2,
+      "case_paths": [
+        "/us/441/0369-01"
+      ]
+    }
+  ],
+  "analysis": {
+    "cardinality": 819,
+    "char_count": 19172,
+    "ocr_confidence": 0.745,
+    "pagerank": {
+      "raw": 5.909308548919316e-08,
+      "percentile": 0.369360144162845
+    },
+    "sha256": "c33bfa4f0b495e8595663d9ece2b2a5e132cd094a61dc52f9923799905eba044",
+    "simhash": "1:adbba724259db444",
+    "word_count": 3112
+  },
+  "last_updated": "2024-02-27T23:49:15.316484+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [
+      "Before O\u2019BRIEN, C.J., and ROBERTS, NIX, LARSEN, FLAHERTY, McDERMOTT and HUTCHINSON, JJ.",
+      "McDERMOTT, J., files a dissenting opinion in which LARSEN and HUTCHINSON, JJ., join.",
+      "HUTCHINSON, J., files a dissenting opinion in which LARSEN and McDERMOTT, JJ., join.",
+      "LARSEN and HUTCHINSON, JJ., join in this dissenting opinion.",
+      "LARSEN and McDERMOTT, JJ., join in this dissenting opinion."
+    ],
+    "parties": [
+      "COMMONWEALTH of Pennsylvania, Appellant, v. Dale BARRY."
+    ],
+    "opinions": [
+      {
+        "text": "OPINION OF THE COURT\nROBERTS, Justice.\nFollowing a trial by jury, appellee Dale Barry was found guilty of murder of the second degree, robbery, theft, and conspiracy in connection with the stabbing death of Oliver Jack Schugardt and the theft of Schugardt\u2019s car in Downingtown, Chester County, on February 5, 1977. At trial, over defense objection, the Commonwealth introduced into evidence an inculpatory statement that appellee had given to police following his arrest in Niskayuna, New York on February 8, 1977. On post-trial motions, the Court of Common Pleas of Chester County sitting en banc entered an order granting a new trial on the ground that the statement had been erroneously admitted. Appellant, District Attorney\u2019s Office of Chester County, filed this direct appeal. We affirm.\nWriting for the court en banc in support of its order granting a new trial, the trial judge determined that the admission of the challenged statement at trial had been erroneous on two grounds. First, appellee, who was sixteen years of age at the time of his inculpatory statement, had not been provided an opportunity to consult with an adult interested in his welfare prior to waiving his Miranda rights, see Commonwealth v. McCutchen, 463 Pa. 90, 343 A.2d 669 (1975); second, the Commonwealth had not introduced evidence from which it could be concluded under the \u201ctotality of the circumstances\u201d that appellee had understood and knowingly and voluntarily waived his Miranda rights. See Fare v. Michael C., 442 U.S. 707, 99 S.Ct. 2560, 61 L.Ed.2d 197 (1979).\nAppellant challenges both of these grounds as a basis for a new trial. Because appellee was arrested and questioned by New York police, who were not obliged under New York law to provide appellee with an opportunity to consult with an interested adult, appellant argues that the failure to provide such an opportunity should not bar admission of the statement. Appellant also argues that even if the lack of an opportunity to consult with an interested adult should have resulted in the statement\u2019s inadmissibility at trial, this Court should abolish the \u201cinterested-adult\u201d rule. We do not address these arguments, because appellant has not established its threshold challenge to the court\u2019s determination that the evidence fails to establish a valid waiver of appellee\u2019s Miranda rights under the \u201ctotality of the circumstances.\u201d\nAt the suppression hearing and at trial the Commonwealth presented evidence regarding the circumstances surrounding the custodial interrogation of appellee. Police testimony established that five police officers arrested appellee at 6:00 p.m. at the home of his girlfriend\u2019s parents, where appellee had been staying for a few days. Appellee was informed that he was being arrested as a \u201cfugitive from justice.\u201d He was then handcuffed and transported to the police station in a police car driven by Detective Sergeant Nitchman. During the drive, Detective Pasquariello read Miranda warnings to appellee from a card, but did not have any discussion with appellee or elicit any response. Upon arrival at the police station, appellee was taken directly to the detectives\u2019 office. His interrogation began at 6:20 p.m. and continued for an hour and fifteen minutes, until 7:35 p.m. Prior to questioning appellee, Detective Sergeant Nitchman removed the handcuffs and told appellee \u201cthat he could sit down.\u201d Appellee was offered coffee, which he refused. Appellee was told that \u201che had been arrested as a fugitive from justice and that it was in connection with a homicide investigation.\u201d The police asked appellee his age and appellee told them he was sixteen. There was no discussion of appellee\u2019s Miranda rights. However, Detective Pasquariello testified that, before taking appellee\u2019s statement,\n\u201cWe took out \u2014 I gave him a blank \u2014 a form, which is the rights again, and asked him to, before we take a statement, he would have to read it and sign that waiver of rights.\nSj! He # 5\u00a1S 5\u00a1C 5\u00a3\nAnd when he completed it, I asked him if he read it and he said yes.\nThen I said, would you sign, and he did.\u201d\nIn Fare v. Michael C., 442 U.S. 707, 99 S.Ct. 2560, 61 L.Ed.2d 197 (1979), the Supreme Court of the United States held that, as a matter of federal constitutional law, an accused\u2019s waiver of his Miranda rights may be deemed valid only if \u201cthe totality of the circumstances surrounding the interrogation\u201d demonstrates that \u201cthe accused in fact knowingly and voluntarily decided to forgo his rights to remain silent and to have the assistance of counsel. Miranda v. Arizona, 384 U.S. [436], 475-477, 86 S.Ct. [1602], 1628-1629 [(1966)].\u201d 442 U.S. at 725, 99 S.Ct. at 2572. The Supreme Court stated:\n\u201cThe totality approach permits \u2014 indeed, it mandates \u2014 inquiry into all the circumstances surrounding the interrogation. This includes evaluation of the juvenile\u2019s age, experience, education, background, and intelligence, and into whether he has the capacity to understand the warnings given him, the nature of his Fifth Amendment rights, and the consequences of waiving those rights.\u201d\nId.\nAs support for its position that the record establishes a valid waiver of appellee\u2019s Miranda rights, appellant relies upon the non-coercive aspects of the interrogation, such as the lack of any evidence that promises or threats were made to induce appellee\u2019s statement and the fact that appellee\u2019s physical condition was not impaired by fatigue, drugs, or alcohol. However, the non-coercive nature of the interrogation does not establish that appellee had \u201cthe capacity to understand the warnings given him, the nature of his Fifth Amendment rights, and the consequences of waiving those rights.\u201d As the court en banc observed in granting a new trial on the basis of the lack of evidence of a knowing and intelligent waiver,\n\u201cunder the totality of the circumstances test, the admission of the statement was error. The trial record is barren as to the education of the accused, the knowledge of the accused as to the substance of the charge, whether the accused had prior contacts with the law (i.e., whether he had received and understood prior Miranda warnings) and the maturity of the accused as to his ability to understand and communicate intelligently. Fare v. Michael C., supra; West v. U.S., 399 F.2d 467 (5th Cir.1968); Com. v. Nelson, [488 Pa. 148, 411 A.2d 740 (1980) ] (Larsen, J., opinion in support of reversal).\u201d\nAppellant\u2019s challenge to the accuracy of the court en banc\u2019s review of the record, which alleges that the conclusions of the court en banc are contradicted by the findings of the suppression court, cannot prevail. In concluding that appellee had \u201cknowingly and intelligently and voluntarily waived [his Miranda] rights,\u201d the suppression court relied solely upon the presence of appellee\u2019s signature at the bottom of the \u201cWaiver of Rights\u201d form. As correctly found by the court en banc, this conclusion was erroneous as a matter of law, for appellee\u2019s signature does not, by itself, provide a sufficient basis from which to conclude that appellee made a knowing, intelligent and voluntary waiver. See North Carolina v. Butler, 441 U.S. 369, 99 S.Ct. 1755, 60 L.Ed.2d 286 (1979); Commonwealth v. Bussey, 486 Pa. 221, 404 A.2d 1309 (1979).\nNor is appellant correct in its allegation that the conclusions of the court en banc are without support on the record. Neither at the suppression hearing nor at trial did the Commonwealth present sufficient evidence of \u201call the circumstances surrounding the interrogation\u201d to warrant the conclusion that appellee\u2019s waiver of his Miranda rights was knowing and intelligent.\nThe Commonwealth attempts to cure deficiencies in the trial record noted by the court en banc through evidence presented at bail hearings conducted both before and after appellee\u2019s trial. The Commonwealth\u2019s reliance on such evidence, however, is misplaced. In order to have appellee\u2019s statement properly admitted into evidence, the Commonwealth had the \u201cheavy burden\u201d of demonstrating to the trial court that appellee\u2019s waiver of his privilege against self-incrimination and his right to retained or appointed counsel constituted \u201can intentional relinquishment or abandonment of a known right or privilege.\u201d Johnson v. Zerbst, 304 U.S. 458, 464, 58 S.Ct. 1019, 1023, 82 L.Ed. 1461 (1938); Miranda v. Arizona, supra, 384 U.S. at 475, 86 S.Ct. at 1628; Fare v. Michael C., supra, 442 U.S. at 724, 99 S.Ct. at 2571. See generally Commonwealth v. Tyler, 468 Pa. 193, 360 A.2d 617 (1976); Commonwealth v. Barnette, 445 Pa. 288, 285 A.2d 141 (1971). Moreover, even if the evidence presented at the bail hearings had been presented to the trial court, that evidence \u2014 the fact that appellee had completed the ninth grade of school and had once been adjudicated a delinquent \u2014 would not have been sufficient to establish that appellee\u2019s waiver of his Miranda rights was knowing and intelligent. Unlike in Fare v. Michael C., supra, where \u201cthe police officers conducting the interrogation took care to ensure that [the accused] understood his rights . . . and ascertained that [the accused] understood those rights,\u201d 442 U.S. at 726, 99 S.Ct. at 2572, on this record it cannot be concluded that appellee understood the Miranda rights as written on the form that he was told to read or that he understood the consequences of signing his name under the \u201cWaiver of Rights\u201d portion of the form. As Detective Pasquariello testified, appellee was simply handed the form and told by the police that \u201che would have to read it and sign that waiver of rights.\u201d\nAs the record supports the determination of the court en banc that appellee is entitled to a new trial, the order of the Court of Common Pleas of Chester County is affirmed.\nOrder affirmed.\nMcDERMOTT, J., files a dissenting opinion in which LARSEN and HUTCHINSON, JJ., join.\nHUTCHINSON, J., files a dissenting opinion in which LARSEN and McDERMOTT, JJ., join.\n. Because of its ruling, the court did not reach the remainder of appellee\u2019s claims of error.\n. This appeal was filed prior to the amendment of 42 Pa.C.S. \u00a7 722, which transferred jurisdiction of direct appeals in most homicide matters from this Court to the Superior Court. In addition, a separate appeal was filed in the Superior Court seeking review of the order of the court of common pleas as it relates to the charges of robbery, theft and conspiracy. That appeal was transferred to this Court and consolidated with the appeal relating to the charge of homicide.\n. The card stated:\n\u201cYou have the right to remain silent. Anything you say can and will be used against you in a court of law.\nYou have the right to talk to a lawyer and have him present with you while you are being questioned. If you cannot afford to hire a lawyer, one will be appointed to represent you before any questioning if you wish one.\u201d\n. The form stated:\n\u201cYour Rights. Before we ask you any questions, you must understand your rights.\nYou have the right to remain silent.\nAnything you say can be used against you in court.\nYou have the right to talk to a lawyer for advice before we ask you any questions and to have him with you during questioning.\nIf you cannot afford a lawyer, one will be appointed for you before any questioning if you wish.\nYou can decide at any time to exercise these rights and not answer any questions or make any statements.\nWaiver of Rights. I have read the above statement of my rights and I understand each of those rights, and having these rights in mind I waive them and willingly make a statement.\u201d",
+        "type": "majority",
+        "author": "ROBERTS, Justice."
+      },
+      {
+        "text": "McDERMOTT, Justice,\ndissenting.\nThe Court today applies a \u201ctotality of the circumstances\u201d test, rather than the per se \u201cinterested adult\u201d rule to justify the suppression of a juvenile\u2019s inculpatory statement. Although I approve of application of the broader standard, I dissent from the majority opinion because I believe appellee\u2019s statement should be suppressed under neither test.\nAppellee Dale Barry, then sixteen years and nine months of age, was arrested in New York by the Niskayuna Police Department as a fugitive from justice in connection with a Pennsylvania homicide. Appellee, an adult under New York state law, was verbally advised on his Miranda rights during his ride to the police station, and was further advised through a written waiver form at the station. Appellee, indicating that he had read each line of the waiver form, signed the form and gave a statement. The suppression hearing judge concluded that appellee\u2019s waiver was knowing, intelligent and voluntary, and the statement was admitted at trial. Appellee was convicted after a jury trial of second degree murder, robbery, theft and conspiracy.\nOn post-trial motions, the court en banc concluded that appellee\u2019s statement should have been excluded, and awarded appellee a new trial. The basis for this conclusion was the court\u2019s determination, after an exhaustive analysis, that the \u201cinterested adult\u201d rule, was applicable even to statements obtained in other jurisdictions, and must be given per se effect. The court\u2019s further assertion that the statement was inadmissible under the totality of the circumstances was something of an afterthought. To characterize that assertion as an alternative ground for decision, and thus deflect the challenge to the continuing validity of our \u201cinterested adult\u201d rule, misrepresents the proceedings below.\nI would hold, as did the court of common pleas en banc, that if the \u201cinterested adult\u201d rule applies to exclude the statements of any juvenile tried in Pennsylvania, it must apply to statements made outside the Commonwealth. I would, however, go on to overrule our decision in Commonwealth v. McCutchen, 463 Pa. 90, 343 A.2d 669 (1975), and its progeny, and follow the \u201ctotality of the circumstances\u201d standard announced by the Supreme Court of the United States in Fare v. Michael C., 442 U.S. 707, 99 S.Ct. 2560, 61 L.Ed.2d 197 (1979).\nThe McCutchen rule is not required by the federal Constitution, but is simply another example of the truth-deterring road blocks placed by the Court between the fact-finder and the facts. As Mr. Justice Kauffman stated in Commonwealth v. Henderson, 496 Pa. 349, 437 A.2d 387 (1981):\nAlthough we have long recognized that the waiver of constitutional rights by an accused of tender years must be closely scrutinized, I believe that society would be far better served by a rule inquiring into the validity of each particular waiver in view of all of the circumstances. The majority\u2019s mechanical rule will result in blanket exclusion of trustworthy evidence vital to the truth determining process, not because the juvenile\u2019s will has been overborne or his understanding has been inadequate, but because the police did not follow a rigid procedure in obtaining his statement. A totality of the circumstances rule, on the other hand, not only would adequately protect the rights of the accused by disregarding any waiver of constitutional rights not knowingly, voluntarily, and intelligently made, but would also protect the interests of society by precluding exclusion of relevant, trustworthy evidence simply because of a failure to comply with a rigid per se rule.\n496 Pa. at 362-63, 437 A.2d at 394 (Kauffman, J., dissenting) (emphasis in original).\nThe facts of this case demonstrate the deficiencies of this Court\u2019s current inflexible approach. In neither age, maturity, nor experience does appellee warrant the special protections necessary for some juveniles. Operation of the per se rule in such cases undermines the truth-determining process without concomitant benefit. Moreover, nothing in the law of this Commonwealth mandates the inflexible McCutchen rule. We should join the thirty-six states and the United States Supreme Court which reject this rigid approach, and evaluate the validity of such waivers in view of all the circumstances.\nFurthermore, even applying the totality of the circumstances test to the instant case, I would uphold the decision of the suppression court admitting appellee\u2019s statement.\nThe suppression judge concluded that appellee\u2019s waiver of his Miranda rights was knowing and intelligent and voluntary. The record shows that appellant was twice informed of his rights; read and signed a written waiver; acknowledged that he had read each line of the waiver form; and read, corrected, and initialed each page of his statement. The conclusion of the suppression judge had ample support in the record. Under the totality of the circumstances approach, the court en banc had no valid basis for disturbing the judgment of the suppression court. Appellee\u2019s statement was properly admitted for consideration by the jury in its search for the truth.\nPer se, prophylactic rules, in almost every instance foreclose the truth of a case. They are the classics of \u201ctechnicality,\u201d a galvanic, judicial punch board; wonderful for arithmetic, \u201cmechanical\u201d jurisprudence. If people were digits and cases geometric, if the totality of the circumstances were all squares and circles, such rules might have provided a shorthand. They have proved a failure of justice, however, in more instances than they ever were designed to serve.\nLARSEN and HUTCHINSON, JJ., join in this dissenting opinion.\n. See Fare v. Michael C., 442 U.S. 707, 99 S.Ct. 2560, 61 L.Ed.2d 197 (1979).\n. See Commonwealth v. McCutchen, 463 Pa. 90, 343 A.2d 669 (1975). See also, Commonwealth v. Henderson, 496 Pa. 349, 437 A.2d 387 (1981).",
+        "type": "dissent",
+        "author": "McDERMOTT, Justice,"
+      },
+      {
+        "text": "HUTCHINSON, Justice,\ndissenting.\nI join the dissenting opinion of Mr. Justice McDermott. I also wish to add that, unlike silence in the face of Miranda warnings, an express written waiver is sufficient to meet the Commonwealth\u2019s burden of proving a waiver of Miranda rights. Contrary to the majority position, North Carolina v. Butler, 441 U.S. 369, 99 S.Ct. 1755, 60 L.Ed.2d 286 (1979) supports this view. In that case, the United States Supreme Court neither held nor said that a signature on a waiver form could never by itself satisfy the Miranda requirement that the defendant make a knowing, intelligent and voluntary waiver of his right to remain silent. In fact, in Butler the United States Supreme Court said\n[a]n express written or oral statement of waiver of the right to remain silent or of the right to counsel is usually strong proof of the validity of that waiver, but is not inevitably either necessary or sufficient to establish waiver.\nId. at 373, 99 S.Ct. at 1757. This statement, to my mind, leaves the decision as to whether a written waiver is valid within the sound discretion of the trial court. Since the suppression court had sufficient basis for finding a valid waiver, I believe the trial court en banc and the Superior Court erred in reversing the suppression court. I would, therefore, reverse.\nLARSEN and McDERMOTT, JJ., join in this dissenting opinion.",
+        "type": "dissent",
+        "author": "HUTCHINSON, Justice,"
+      }
+    ],
+    "attorneys": [
+      "Lee Ruslander, Chief, Appeals Div., West Chester, for appellant.",
+      "Carol E. Haltrecht, West Chester, for appellee."
+    ],
+    "corrections": "",
+    "head_matter": "454 A.2d 985\nCOMMONWEALTH of Pennsylvania, Appellant, v. Dale BARRY.\nSupreme Court of Pennsylvania.\nArgued Oct. 18, 1982.\nDecided Dec. 31, 1982.\nReargument Denied Feb. 1, 1983.\nLee Ruslander, Chief, Appeals Div., West Chester, for appellant.\nCarol E. Haltrecht, West Chester, for appellee.\nBefore O\u2019BRIEN, C.J., and ROBERTS, NIX, LARSEN, FLAHERTY, McDERMOTT and HUTCHINSON, JJ."
+  },
+  "file_name": "0109-01",
+  "first_page_order": 159,
+  "last_page_order": 170
+}

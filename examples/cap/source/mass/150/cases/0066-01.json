@@ -1,0 +1,246 @@
+{
+  "id": 780555,
+  "name": "Commonwealth vs. Barbara E. Freelove",
+  "name_abbreviation": "Commonwealth v. Freelove",
+  "decision_date": "1889-11-11",
+  "docket_number": "",
+  "first_page": "66",
+  "last_page": "67",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "150 Mass. 66"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "Mass.",
+    "id": 8825,
+    "name": "Massachusetts Supreme Judicial Court"
+  },
+  "jurisdiction": {
+    "id": 4,
+    "name_long": "Massachusetts",
+    "name": "Mass."
+  },
+  "cites_to": [
+    {
+      "cite": "16 Vt. 551",
+      "category": "reporters:state",
+      "reporter": "Vt.",
+      "case_ids": [
+        4419090
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/vt/16/0551-01"
+      ]
+    },
+    {
+      "cite": "5 Rand. 627",
+      "category": "reporters:state",
+      "reporter": "Rand.",
+      "pin_cites": [
+        {
+          "page": "632"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "2 Met. 190",
+      "category": "reporters:state",
+      "reporter": "Met.",
+      "case_ids": [
+        2041035
+      ],
+      "pin_cites": [
+        {
+          "page": "191"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/43/0190-01"
+      ]
+    },
+    {
+      "cite": "21 Pick. 509",
+      "category": "reporters:state",
+      "reporter": "Pick.",
+      "case_ids": [
+        2048071
+      ],
+      "pin_cites": [
+        {
+          "page": "511"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/38/0509-01"
+      ]
+    },
+    {
+      "cite": "100 Mass. 287",
+      "category": "reporters:state",
+      "reporter": "Mass.",
+      "case_ids": [
+        2141799
+      ],
+      "pin_cites": [
+        {
+          "page": "295"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/100/0287-01"
+      ]
+    },
+    {
+      "cite": "11 Pick. 432",
+      "category": "reporters:state",
+      "reporter": "Pick.",
+      "pin_cites": [
+        {
+          "page": "438"
+        }
+      ],
+      "opinion_index": 0
+    },
+    {
+      "cite": "97 Mass. 570",
+      "category": "reporters:state",
+      "reporter": "Mass.",
+      "case_ids": [
+        708188
+      ],
+      "pin_cites": [
+        {
+          "page": "574"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/97/0570-01"
+      ]
+    },
+    {
+      "cite": "3 Gray, 458",
+      "category": "reporters:state",
+      "reporter": "Gray",
+      "case_ids": [
+        2077157
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/69/0458-01"
+      ]
+    },
+    {
+      "cite": "29 Mich. 232",
+      "category": "reporters:state",
+      "reporter": "Mich.",
+      "case_ids": [
+        1936695
+      ],
+      "pin_cites": [
+        {
+          "page": "237"
+        }
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mich/29/0232-01"
+      ]
+    },
+    {
+      "cite": "27 Vt. 553",
+      "category": "reporters:state",
+      "reporter": "Vt.",
+      "case_ids": [
+        740352
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/vt/27/0553-01"
+      ]
+    },
+    {
+      "cite": "118 Mass. 443",
+      "category": "reporters:state",
+      "reporter": "Mass.",
+      "case_ids": [
+        2154093
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/118/0443-01"
+      ]
+    },
+    {
+      "cite": "45 Ind. 338",
+      "category": "reporters:state",
+      "reporter": "Ind.",
+      "case_ids": [
+        1428451
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/ind/45/0338-01"
+      ]
+    },
+    {
+      "cite": "130 Mass. 35",
+      "category": "reporters:state",
+      "reporter": "Mass.",
+      "case_ids": [
+        2127962
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/mass/130/0035-01"
+      ]
+    }
+  ],
+  "analysis": {
+    "cardinality": 243,
+    "char_count": 2707,
+    "ocr_confidence": 0.55,
+    "pagerank": {
+      "raw": 1.7119401009998266e-07,
+      "percentile": 0.7025272515887991
+    },
+    "sha256": "a6f65e8d5275c4d7add1c1520b2693f92fe45cd52d4fafd49d9e883744de7035",
+    "simhash": "1:008fa019476c4d88",
+    "word_count": 453
+  },
+  "last_updated": "2024-02-27T19:29:00.927466+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [],
+    "parties": [
+      "Commonwealth vs. Barbara E. Freelove."
+    ],
+    "opinions": [
+      {
+        "text": "Holmes, J.\nThis is an indictment for adultery, to which a motion to quash was filed, on the ground that it does not conclude against the peace of the Commonwealth nor against the statute in such cases made and provided. This motion was overruled, and the defendant alleged exceptions. The Pub. Sts. c. 213, \u00a7 16, expressly enact that no indictment shall be quashed on this ground, if the omission does not tend to prejudice the defendant. But it was argued that the statute is unconstitutional. We shall not consider how far the Legislature might go in simplifying indictments before encountering Article XII. of the Massachusetts Bill of Bights. We admit that there are limits to its power in this direction; that, for instance, it could not authorize the omission of allegations necessary to describe a specific crime. Commonwealth v. Harrington, 130 Mass. 35. State v. Learned, 47 Maine, 426, 433. McLaughlin v. State, 45 Ind. 338. Hewitt v. State, 25 Texas, 722. But there is no doubt that it can do a good deal in the way of simplification. Commonwealth v. Bennett, 118 Mass. 443. State v. Corson, 59 Maine, 137. State v. Comstock, 27 Vt. 553. Brown v. People, 29 Mich. 232, 237. We do not think that it needs argument to show that the Legislature may dispense with a purely formal averment which would give the defendant no additional information, and the omission of which would not prejudice him. Commonwealth v. Holley, 3 Gray, 458. \u201c Technical and formal objections of this nature are not constitutional rights.\u201d Commonwealth v. Hall, 97 Mass. 570, 574. See Commonwealth v. Davis, 11 Pick. 432, 438; Stockwell v. Silloway, 100 Mass. 287, 295. The defendant was safe in assuming that the proceeding was under the statute, although he was not informed so in terms. Galizard v. Rigault, 2 Salk. 552; S. C. 2 Ld. Raym. 809. 6 Dane Abr. 676. Commonwealth v. Call, 21 Pick. 509, 511. Commonwealth v. Elwell, 2 Met. 190, 191. Anderson v. Commonwealth, 5 Rand. 627, 632. State v. Cooper, 16 Vt. 551. State v. Brunson, 2 Bailey, 149.\nE. L. Barney, for the defendant.\nH. C. Bliss, First Assistant Attorney General, for the Commonwealth.\nExceptions overruled.",
+        "type": "majority",
+        "author": "Holmes, J."
+      }
+    ],
+    "attorneys": [
+      "E. L. Barney, for the defendant.",
+      "H. C. Bliss, First Assistant Attorney General, for the Commonwealth."
+    ],
+    "corrections": "",
+    "head_matter": "Commonwealth vs. Barbara E. Freelove.\nBristol.\nOctober 22, 1889.\nNovember 11, 1889.\nPresent: Devejsts, C. Allen, Holmes, & Knowlton, JJ.\nIndictment \u2014 Conclusion \u2014 Constitutional Law.\nSection 16 of chapter 213 of the Public Statutes, providing that no indictment shall be quashed because it does not conclude against the peace of the Commonwealth nor against the statute in such cases made and provided, if the omission does not tend to prejudice the defendant, is not unconstitutional as in conflict with Article XII. of the Declaration of Rights."
+  },
+  "file_name": "0066-01",
+  "first_page_order": 86,
+  "last_page_order": 87
+}

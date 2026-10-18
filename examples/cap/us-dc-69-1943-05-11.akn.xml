@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Built by examples/cap/build.py from the Caselaw Access Project case a2d/31/0647-01
+  (D'Elia & Marks Co. v. Lyon, 31 A.2d 647). The text is CAP's, OCR errors included.
+-->
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:cx="https://codexpublicus.org/ns/exemplar">
+  <judgment name="judgment" contains="originalVersion">
+    <meta>
+      <identification source="#org_exemplar">
+        <FRBRWork>
+          <FRBRthis value="us/dc/69/1943-05-11"/>
+          <FRBRuri value="us/dc/69/1943-05-11"/>
+          <FRBRalias name="akn-nc" value="/akn/us/judgment/dc/1943-05-11/69"/>
+          <FRBRalias name="cite" value="cite:31-a2d-647" showAs="31 A.2d 647"/>
+          <FRBRalias name="cap" value="cap:a2d/31/0647-01"/>
+          <FRBRdate date="1943-05-11" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRcountry value="us"/>
+          <FRBRnumber value="69" showAs="No. 69."/>
+          <FRBRname value="D'Elia &amp; Marks Co. v. Lyon"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="us/dc/69/1943-05-11"/>
+          <FRBRuri value="us/dc/69/1943-05-11"/>
+          <FRBRdate date="1943-05-11" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRauthoritative value="false"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="us/dc/69/1943-05-11.akn.xml"/>
+          <FRBRuri value="us/dc/69/1943-05-11.akn.xml"/>
+          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRauthor href="#org_exemplar"/>
+          <FRBRformat value="application/akn+xml"/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#org_exemplar">
+        <TLCOrganization eId="court_dc" href="registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
+        <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
+        <TLCPerson eId="hood" href="examples/cap/judges.json#hood" showAs="Hood"/>
+        <TLCReference eId="printing_31-a2d-647" name="printing" href="cite:31-a2d-647" showAs="31 A.2d 647"/>
+        <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0647-01" showAs="Caselaw Access Project, a2d/31/0647-01"/>
+      </references>
+      <proprietary source="#org_exemplar">
+        <cx:profile version="0.1.1"/>
+        <cx:keys provenance="engine-output">
+          <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="examples/cap/judges.json" version="fixture"/>
+        </cx:keys>
+        <cx:printing ref="#printing_31-a2d-647" type="official" reporter="A.2d" volume="31" firstPage="647" lastPage="649" text="transcribed">
+          <cx:scans source="#source_cap" volume="a2d/31" first="695" last="697"/>
+        </cx:printing>
+        <cx:source ref="#source_cap" agent="#org_cap" record="cap:a2d/31/0647-01" caseId="8152382" lastUpdated="2024-02-27T18:54:06.352297+00:00" sha256="3dcfb24b24b648e04bb5d1b1e447f7e2e97028ba8a0ae351eb45b85853e84c5d" method="ocr">
+          <cx:confidence value="0.61" scope="case" basis="CAP analysis.ocr_confidence"/>
+        </cx:source>
+      </proprietary>
+    </meta>
+    <header>
+      <p eId="header__p_1" class="parties" cx:origin="unknown" cx:blocks="BL_695.3"><docTitle>D’ELIA &amp; MARKS CO., Inc., v. LYON.</docTitle></p>
+      <p eId="header__p_2" class="docketnumber" cx:origin="unknown" cx:blocks="BL_695.4"><docketNumber>No. 69.</docketNumber></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_695.5"><courtType refersTo="#court_dc">Municipal Court of Appeals for the District of Columbia.</courtType></p>
+      <p eId="header__p_4" class="decisiondate" cx:origin="unknown" cx:blocks="BL_695.6"><docDate date="1943-05-11">May 11, 1943.</docDate></p>
+      <p eId="header__p_5" class="attorneys" cx:origin="unknown" cx:blocks="BL_695.32">Charles W. Proctor, of Washington, D. C. (Julius I. Peyser and Henry S. Goodman, both of Washington, D. C., on the brief), for appellant.</p>
+      <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_695.33">Louis B. Arnold, of Washington, D. C. (Irene Kennedy, of Washington, D. C., on the brief), for appellee.</p>
+      <p eId="header__p_7" class="judges" cx:origin="unknown" cx:blocks="BL_695.34">Before RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges.</p>
+    </header>
+    <judgmentBody>
+      <motivation>
+        <hcontainer name="opinion" eId="opinion_opinion.hood" cx:part="us/dc/69/1943-05-11/opinion.hood" cx:authors="hood" cx:sourceType="majority">
+          <heading cx:blocks="BL_695.35"><opinion by="#hood">HOOD, Associate Judge.</opinion></heading>
+          <content>
+            <p eId="opinion_opinion.hood__p_1" cx:blocks="BL_695.36 BL_696.1">On December 11, 1942, D’Elia &amp; Marks Company, Inc., a tailoring concern, brought an action against Dr. James A. Lyon in the sum of $1974 for goods and services. With the complaint was filed an affidavit by an agent of the plaintiff, averring that the defendant was a non-resident of the District of Columbia and was a resident of Rockville, in the State of Maryland; and a writ of attachment before judgment was issued. The attachment was served upon a local bank and funds on deposit there to the credit of the defendant were seized. Thereafter, defendant filed a motion to quash the writ of attachment alleging he was a resident of the District, and later filed an answer denying any indebtedness to the plaintiff. Oral testimony was taken <eop refersTo="#printing_31-a2d-647" number="648" cx:scan="696" cx:provenance="engine-output"/>on the issue raised by the motion to quash and after hearing the trial court entered an order granting the motion. This appeal is from the order granting the motion to quash the attachment. It is an appealable order.<authorialNote eId="opinion_opinion.hood__authorialNote_1" marker="1" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_1__p_1" cx:blocks="BL_696.10">Act of April 1, 1942, Public Law 512, 77th Congress, 2d Sess., Sec. 7(a), 56 Stat. 195.</p></authorialNote></p>
+            <p eId="opinion_opinion.hood__p_2" cx:blocks="BL_696.4">The evidence at the hearing was to the effect that defendant is a physician, with an established office in the District of Columbia where he has been practicing his profession since 1925; that he is a member of various District of Columbia medical societies, a former director of a District of Columbia hospital, a member of the medical board of another District hospital and a director of a District bank; that in 1926 he acquired a farm of some 150 acres located near Rockville, Maryland, improved by a spacious dwelling house which has been listed as his residence until recent times; that at the Maryland residence defendant had four automobiles, all registered in Maryland; and defendant when required to register under the Selective Service Act registered in Rockville, Maryland.</p>
+            <p eId="opinion_opinion.hood__p_3" cx:blocks="BL_696.5">On September 1, 1942, the defendant leased for one year a large and expensive apartment at 2029 Connecticut Avenue in the District of Columbia and with his wife and child moved into that apartment and they have occupied it ever since. When he moved to the apartment he partly furnished it with furniture brought from the Maryland residence and the remaining furniture at the Maryland residence was put in storage; the Maryland residence was boarded up, the telephone suspended subject to restoration, and defendant has not since occupied the residence, even on week ends. He brought one of his automobiles to the District and operated it here under Maryland registration until) the bringing of this action, when he registered it in the District.</p>
+            <p eId="opinion_opinion.hood__p_4" cx:blocks="BL_696.6 BL_696.7">The defendant testified that he intends to remain in the District of Columbia indefinitely. On cross-examination, he admitted he and his family lived in an apartment in the District of Columbia for the winter of 1940. An agent of the plaintiff testified that it had been making clothes for the defendant for some twelve years, delivering the clothes to the defendant sometimes at his office in the District and at other times at his residence in Maryland.</p>
+            <p eId="opinion_opinion.hood__p_5" cx:blocks="BL_696.8">The sole basis for the attachment is the alleged non-residence of defendant. We do not have here the difficult question of domicile, for one’s domicile may be in one State and his .residence in another; and the word non-resident, as used in our statute,<authorialNote eId="opinion_opinion.hood__authorialNote_2" marker="2" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_2__p_1" cx:blocks="BL_696.11">Code 1940, 16—301.</p></authorialNote> must be taken in its ordinary and usual signification.<authorialNote eId="opinion_opinion.hood__authorialNote_3" marker="3" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_3__p_1" cx:blocks="BL_696.12">Robinson v. Morrison, <ref href="cap:app-dc/2/0105-01" cx:cite="2 App. D.C. 105">2 App.D.C. 105</ref>.</p></authorialNote> Residence is the test, and the fact that defendant had an established office in the District and presumably was available for personal service is not material.<authorialNote eId="opinion_opinion.hood__authorialNote_4" marker="4" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_4__p_1" cx:blocks="BL_696.13">Robinson v. <i>Morrison, </i><ref href="cap:app-dc/2/0105-01" cx:cite="2 App. D.C. 105">supra.</ref></p></authorialNote> A man’s residence is where he actually dwells, and ordinarily, but not necessarily, is his home, the place where his wife and children reside.<authorialNote eId="opinion_opinion.hood__authorialNote_5" marker="5" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_5__p_1" cx:blocks="BL_696.14">Robinson v. Morrison, <ref href="cap:app-dc/2/0105-01" cx:cite="2 App. D.C. 105">supra.</ref></p></authorialNote> This residence must be a fixed and permanent abode or dwelling place for the time being and not a mere “temporary locality of existence.” <authorialNote eId="opinion_opinion.hood__authorialNote_6" marker="6" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_6__p_1" cx:blocks="BL_696.15">Barney v. Oelrichs, <ref href="cap:us/138/0529-01" cx:cite="138 U.S. 529">138 U.S. 529</ref>, <ref href="cap:us/138/0529-01" cx:cite="138 U.S. 529">11 S.Ct. 414</ref>, <ref href="cap:us/138/0529-01" cx:cite="138 U.S. 529">34 L.Ed. 1037</ref>.</p></authorialNote> It does not have to be permanent in the strict sense of the word since permanency of abode cannot be known without the gift of prophecy;<authorialNote eId="opinion_opinion.hood__authorialNote_7" marker="7" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_7__p_1" cx:blocks="BL_696.16">District of Columbia v. Murphy, 314 . U.S. 441, <ref href="cap:us/314/0441-01" cx:cite="62 S. Ct. 303">62 S.Ct. 303</ref>, <ref href="cap:us/314/0441-01" cx:cite="62 S. Ct. 303">86 L.Ed. 329</ref>.</p></authorialNote> but it must be more than a place of mere sojourning or transient visiting.<authorialNote eId="opinion_opinion.hood__authorialNote_8" marker="8" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_8__p_1" cx:blocks="BL_696.17">Howard v. Trust Co., <ref href="cap:app-dc/12/0222-01" cx:cite="12 App. D.C. 222">12 App.D.C. 222</ref>.</p></authorialNote> In determining residence, we are to be guided by the ordinary and obvious indicia of such <authorialNote eId="opinion_opinion.hood__authorialNote_9" marker="9" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_9__p_1" cx:blocks="BL_696.18">Raymond v. Leisliman, <ref href="cap:pa/243/0064-01" cx:cite="243 Pa. 64">243 Pa. 64</ref>, <ref href="cite:89-a-791" cx:cite="89 A. 791">89 A. 791</ref>, L.R.A.1915A, 400, Ann.Cas. 1915C, 780.</p></authorialNote> <i> </i>and the question here is defendant’s residence at the time of issuing and serving the writ.<authorialNote eId="opinion_opinion.hood__authorialNote_10" marker="10" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_10__p_1" cx:blocks="BL_696.19">Witbeck v. Marshall-Wells Hardware Co., <ref href="cap:ill/188/0154-01" cx:cite="188 Ill. 154">188 Ill. 154</ref>, <ref href="cite:58-ne-929" cx:cite="58 N.E. 929">58 N.E. 929</ref>; Stafford v. Mills, <ref href="cap:njl/57/0570-01" cx:cite="57 N.J.L. 570">57 N.J.L. 570</ref>, <ref href="cite:31-a-1023" cx:cite="31 A. 1023">31 A. 1023</ref>.</p></authorialNote></p>
+            <p eId="opinion_opinion.hood__p_6" cx:blocks="BL_696.9 BL_697.1">It is clear that defendant was actually living in the District at the time of the attachment and had been so living for several months prior to the attachment. His home, for the time being, was the apartment, regardless of the fact he had residential property in Maryland to which he probably intended returning at some indefinite time. Whether he moved to the District because of the servant problem and gas rationing, as plaintiff suggests, and intends to return to Maryland sometime in the future when he can “afford to go back,” as his testimony suggests, it is evident for <eop refersTo="#printing_31-a2d-647" number="649" cx:scan="697" cx:provenance="engine-output"/>the time being he has quit his Maryland residence and established a fixed abode in the District. Taking a year’s lease on an expensive apartment, moving furniture there from Maryland and placing in storage the remainder of his furniture, indicates his move was not of a temporary or transient nature.</p>
+            <p eId="opinion_opinion.hood__p_7" cx:blocks="BL_697.4">To sustain the writ of attachment, the plaintiff had the burden of proving that defendant was not a resident of the District,<authorialNote eId="opinion_opinion.hood__authorialNote_11" marker="11" placement="bottom"><p eId="opinion_opinion.hood__authorialNote_11__p_1" cx:blocks="BL_697.6 BL_697.7">Waring v. Fletcher, <ref href="cap:ind/152/0620-01" cx:cite="152 Ind. 620">152 Ind. 620</ref>, <ref href="cite:52-ne-203" cx:cite="52 N.E. 203">52 N.E. 203</ref>; National Mutual Church Ins. Co. v. Magill, <ref href="cap:ill-app/306/0534-01" cx:cite="306 Ill. App. 534">306 Ill.App. 534</ref>, <ref href="cite:29-ne2d-306" cx:cite="29 N.E.2d 306">29 N.E.2d 306</ref>; O’Hora v. Tarby, <ref href="cap:misc/141/0402-01" cx:cite="141 Misc. 402">141 Misc. 402</ref>, <ref href="cite:252-nys-646" cx:cite="252 N.Y.S. 646">252 N.Y.S. 646</ref>; Stamford Rolling Mills Co. v. Erie R. Co., <ref href="cap:pa/257/0507-01" cx:cite="257 Pa. 507">257 Pa. 507</ref>, <ref href="cite:101-a-823" cx:cite="101 A. 823">101 A. 823</ref>.</p></authorialNote> and we think the trial court was justified in holding plaintiff failed to sustain that burden. There was ample evidence to support a finding that defendant had an actual dwelling in the District of sufficient duration and sufficiently permanent character to constitute residence with in the meaning of the statute.</p>
+            <p eId="opinion_opinion.hood__p_8" cx:blocks="BL_697.5">Affirmed.</p>
+          </content>
+        </hcontainer>
+      </motivation>
+    </judgmentBody>
+  </judgment>
+</akomaNtoso>

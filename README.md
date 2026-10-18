@@ -18,7 +18,7 @@ It defines, independently of any one implementation:
 | `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from |
 | `schema/` | JSON Schema for the court registry; the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents and sidecars |
-| `examples/` | Complete sample documents built from Caselaw Access Project data, each with its viewer sidecar |
+| `examples/` | Sample documents built from Caselaw Access Project data, each with its viewer sidecar: `minimal/`, the hand-built excerpt the profile quotes, and `cap/`, complete documents generated from CAP cases |
 | `validator/` | The reference validator, which runs the XSD, the Schematron rules and the sidecar schema, and the vendored SchXslt2 transpiler it uses |
 | `tests/` | Checks that the vectors agree with the specs' grammars and rules |
 
@@ -47,6 +47,29 @@ uv run python validator/validate.py [PATH ...]
 ```
 
 It checks each `*.akn.xml` against the Akoma Ntoso schema and then the Schematron rules, and each `*.sidecar.json` against its JSON Schema and its document. It runs the Schematron with Saxon HE (`saxonche`) and SchXslt2's transpiler, vendored unchanged from the SchXslt2 1.11.2 release (<https://codeberg.org/SchXslt/schxslt2>) at `validator/vendor/schxslt2/`, retrieved 2026-10-18. `validator/vendor/schxslt2/source.json` records the release archive's URL and SHA-256, each file's SHA-256, and the notice the files state: the MIT License, copyright David Maus.
+
+## Examples from CAP data
+
+`examples/cap/` holds seven complete documents, each with its sidecar, generated from Caselaw Access Project cases by `examples/cap/build.py`:
+
+| Document | CAP case | What it shows |
+|---|---|---|
+| `us-dc-69-1943-05-11` | `a2d/31/0647-01`, D'Elia & Marks Co. v. Lyon | a short single-opinion decision |
+| `us-dc-30-1943-02-12`, `us-dc-68-1943-05-11` | `a2d/31/0657-01` and `-02` | two decisions that begin on 31 A.2d 657 (profile section 13.2) |
+| `us-pa-1428-1983-02-01` | `pa/500/0256-01`, Commonwealth ex rel. Zaffarano v. Genaro | an opinion, a concurrence and a dissent; a parallel A.2d printing whose text CAP withheld; page breaks inside paragraphs, a word and a footnote; footnotes, block quotations and citations |
+| `us-pa-59e.d.misc.dkt.1983-1983-04-20` | `pa/500/0510-01`, Marutani v. Pawelec | a per curiam order with a dissenting statement |
+| `us-pa-rpt.500-pa-109-1982-12-31` | `pa/500/0109-01`, Commonwealth v. Barry | no docket in CAP: the reporter fallback key; two dissents |
+| `us-mass-rpt.150-mass-66-1889-11-11` | `mass/150/0066-01`, Commonwealth v. Freelove | an 1889 Massachusetts Reports case under the reporter fallback, with headnotes |
+
+`examples/cap/manifest.json` lists each case's two source files, the case JSON and HTML from <https://static.case.law>, with the URL each was downloaded from and its SHA-256, and the CAP volume zip each is a member of, with that zip's SHA-256. The files are kept at `examples/cap/source/` under the same paths, so the build runs offline. CAP's data is CC0. The judge slugs come from `examples/cap/judges.json`, a fixture standing in for a judge registry like `examples/minimal/judges.json`.
+
+```
+uv run python examples/cap/build.py           # rebuild the examples
+uv run python examples/cap/build.py --check   # fail if a rebuild differs from the committed files
+uv run python examples/cap/build.py --fetch   # download the source files again, check their pins, rebuild
+```
+
+The build is deterministic, and the checks run `--check`. It refuses a case rather than guess at anything the profile or the court record key spec leaves open, and says which. Invalid counterparts of these documents are in `vectors/akn-profile/documents.jsonl` (ids starting `cap-`).
 
 ## Court registry
 

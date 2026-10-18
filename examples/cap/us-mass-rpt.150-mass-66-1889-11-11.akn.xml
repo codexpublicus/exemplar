@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Built by examples/cap/build.py from the Caselaw Access Project case mass/150/0066-01
+  (Commonwealth v. Freelove, 150 Mass. 66). The text is CAP's, OCR errors included.
+-->
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:cx="https://codexpublicus.org/ns/exemplar">
+  <judgment name="judgment" contains="originalVersion">
+    <meta>
+      <identification source="#org_exemplar">
+        <FRBRWork>
+          <FRBRthis value="us/mass/rpt.150-mass-66/1889-11-11"/>
+          <FRBRuri value="us/mass/rpt.150-mass-66/1889-11-11"/>
+          <FRBRalias name="akn-nc" value="/akn/us/judgment/mass/1889-11-11/rpt.150-mass-66"/>
+          <FRBRalias name="cite" value="cite:150-mass-66" showAs="150 Mass. 66"/>
+          <FRBRalias name="cap" value="cap:mass/150/0066-01"/>
+          <FRBRdate date="1889-11-11" name="decided"/>
+          <FRBRauthor href="#court_mass"/>
+          <FRBRcountry value="us"/>
+          <FRBRname value="Commonwealth v. Freelove"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="us/mass/rpt.150-mass-66/1889-11-11"/>
+          <FRBRuri value="us/mass/rpt.150-mass-66/1889-11-11"/>
+          <FRBRdate date="1889-11-11" name="decided"/>
+          <FRBRauthor href="#court_mass"/>
+          <FRBRauthoritative value="false"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="us/mass/rpt.150-mass-66/1889-11-11.akn.xml"/>
+          <FRBRuri value="us/mass/rpt.150-mass-66/1889-11-11.akn.xml"/>
+          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRauthor href="#org_exemplar"/>
+          <FRBRformat value="application/akn+xml"/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#org_exemplar">
+        <TLCOrganization eId="court_mass" href="registry/courts.json#mass" showAs="Massachusetts Supreme Judicial Court"/>
+        <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
+        <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
+        <TLCPerson eId="holmes" href="examples/cap/judges.json#holmes" showAs="Holmes"/>
+        <TLCReference eId="printing_150-mass-66" name="printing" href="cite:150-mass-66" showAs="150 Mass. 66"/>
+        <TLCReference eId="source_cap" name="source" href="cap:mass/150/0066-01" showAs="Caselaw Access Project, mass/150/0066-01"/>
+      </references>
+      <proprietary source="#org_exemplar">
+        <cx:profile version="0.1.1"/>
+        <cx:keys provenance="engine-output">
+          <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="examples/cap/judges.json" version="fixture"/>
+        </cx:keys>
+        <cx:printing ref="#printing_150-mass-66" type="official" reporter="Mass." volume="150" firstPage="66" lastPage="67" text="transcribed">
+          <cx:scans source="#source_cap" volume="mass/150" first="86" last="87"/>
+        </cx:printing>
+        <cx:source ref="#source_cap" agent="#org_cap" record="cap:mass/150/0066-01" caseId="780555" lastUpdated="2024-02-27T19:29:00.927466+00:00" sha256="a6f65e8d5275c4d7add1c1520b2693f92fe45cd52d4fafd49d9e883744de7035" method="ocr">
+          <cx:confidence value="0.55" scope="case" basis="CAP analysis.ocr_confidence"/>
+        </cx:source>
+      </proprietary>
+    </meta>
+    <header>
+      <p eId="header__p_1" class="parties" cx:origin="unknown" cx:blocks="BL_86.3"><docTitle>Commonwealth <i>vs. </i>Barbara E. Freelove.</docTitle></p>
+      <p eId="header__p_2" class="court" cx:origin="unknown" cx:blocks="BL_86.4">Bristol.</p>
+      <p eId="header__p_3" class="otherdate" cx:origin="unknown" cx:blocks="BL_86.5">October 22, 1889.</p>
+      <p eId="header__p_4" class="decisiondate" cx:origin="unknown" cx:blocks="BL_86.6"><docDate date="1889-11-11">November 11, 1889.</docDate></p>
+      <p eId="header__p_5" class="headmatter" cx:origin="unknown" cx:blocks="BL_86.7">Present: Devejsts, C. Allen, Holmes, &amp; Knowlton, JJ.</p>
+      <p eId="header__p_6" class="headnotes" cx:origin="unknown" cx:blocks="BL_86.8"><i>Indictment </i>— <i>Conclusion </i>— <i>Constitutional Law.</i></p>
+      <p eId="header__p_7" class="headnotes" cx:origin="unknown" cx:blocks="BL_86.9">Section 16 of chapter 213 of the Public Statutes, providing that no indictment shall be quashed because it does not conclude against the peace of the Commonwealth nor against the statute in such cases made and provided, if the omission does not tend to prejudice the defendant, is not unconstitutional as in conflict with Article XII. of the Declaration of Rights.</p>
+    </header>
+    <judgmentBody>
+      <motivation>
+        <hcontainer name="opinion" eId="opinion_opinion.holmes" cx:part="us/mass/rpt.150-mass-66/1889-11-11/opinion.holmes" cx:authors="holmes" cx:sourceType="majority">
+          <heading cx:blocks="BL_86.10"><opinion by="#holmes">Holmes, J.</opinion></heading>
+          <content>
+            <p eId="opinion_opinion.holmes__p_1" cx:blocks="BL_86.11 BL_86.12 BL_87.3">This is an indictment for adultery, to which a motion to quash was filed, on the ground that it does not conclude against the peace of the Commonwealth nor against the statute in such cases made and provided. This motion was overruled, and the defendant alleged exceptions. The Pub. Sts. c. 213, § 16, expressly enact that no indictment shall be quashed on this ground, if the omission does not tend to prejudice the defendant. But it was argued that the statute is unconstitutional. We shall not consider how far the Legislature might go in simplifying indictments before encountering Article XII. of the Massachusetts Bill of Bights. We admit that there are limits to its power in this direction; that, for instance, it could not authorize the omission of allegations necessary to describe a specific crime. <i>Commonwealth </i>v. Harrington, <ref href="cap:mass/130/0035-01" cx:cite="130 Mass. 35">130 Mass. 35</ref>. <i>State </i>v. <i>Learned, </i>47 Maine, 426, 433. <i>McLaughlin </i>v. <i>State, </i><ref href="cap:ind/45/0338-01" cx:cite="45 Ind. 338">45 Ind. 338</ref>. <i>Hewitt </i>v. <i>State, </i>25 Texas, 722. But there is no doubt that it can do a good deal in the way of simplification. <i>Commonwealth </i>v. <i>Bennett, </i><ref href="cap:mass/118/0443-01" cx:cite="118 Mass. 443">118 Mass. 443</ref>. <i>State </i>v. <i>Corson, </i>59 Maine, 137. <i>State </i>v. <i>Comstock, </i><ref href="cap:vt/27/0553-01" cx:cite="27 Vt. 553">27 Vt. 553</ref>. <i>Brown </i>v. <i>People, </i><ref href="cap:mich/29/0232-01" cx:cite="29 Mich. 232">29 Mich. 232</ref>, 237. We do not think that it needs argument to show that the Legislature may dispense with a purely formal averment which would give the defendant no additional information, and the omission of which would not prejudice him. <i>Commonwealth </i>v. <i>Holley, </i>3 Gray, 458. “ Technical and formal objections of this nature are not constitutional rights.” <i>Commonwealth </i>v. <i>Hall, </i><ref href="cap:mass/97/0570-01" cx:cite="97 Mass. 570">97 Mass. 570</ref>, 574. See <i>Commonwealth </i>v. <eop refersTo="#printing_150-mass-66" number="67" cx:scan="87" cx:provenance="engine-output"/> <i>Davis, </i><ref href="cite:11-pick-432" cx:cite="11 Pick. 432">11 Pick. 432</ref>, 438; <i>Stockwell </i>v. <i>Silloway, </i><ref href="cap:mass/100/0287-01" cx:cite="100 Mass. 287">100 Mass. 287</ref>, 295. The defendant was safe in assuming that the proceeding was under the statute, although he was not informed so in terms. <i>Galizard </i>v. <i>Rigault, </i>2 Salk. 552; <i>S. C. </i>2 Ld. Raym. 809. 6 Dane Abr. 676. <i>Commonwealth </i>v. <i>Call, </i><ref href="cap:mass/38/0509-01" cx:cite="21 Pick. 509">21 Pick. 509</ref>, 511. <i>Commonwealth </i>v. <i>Elwell, </i><ref href="cap:mass/43/0190-01" cx:cite="2 Met. 190">2 Met. 190</ref>, 191. <i>Anderson </i>v. <i>Commonwealth, </i><ref href="cite:5-rand-627" cx:cite="5 Rand. 627">5 Rand. 627</ref>, 632. <i>State </i>v. <i>Cooper, </i><ref href="cap:vt/16/0551-01" cx:cite="16 Vt. 551">16 Vt. 551</ref>. <i>State </i>v. <i>Brunson, </i>2 Bailey, 149.</p>
+            <p eId="opinion_opinion.holmes__p_2" class="attorneys" cx:blocks="BL_87.1"><i>E. L. Barney, </i>for the defendant.</p>
+            <p eId="opinion_opinion.holmes__p_3" class="attorneys" cx:blocks="BL_87.2"><i>H. C. Bliss, </i>First Assistant Attorney General, for the Commonwealth.</p>
+            <p eId="opinion_opinion.holmes__p_4" cx:blocks="BL_87.6"><i>Exceptions overruled.</i></p>
+          </content>
+        </hcontainer>
+      </motivation>
+    </judgmentBody>
+  </judgment>
+</akomaNtoso>

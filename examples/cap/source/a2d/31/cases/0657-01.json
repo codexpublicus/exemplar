@@ -1,0 +1,64 @@
+{
+  "id": 8152570,
+  "name": "BROOKS v. DISTRICT OF COLUMBIA",
+  "name_abbreviation": "Brooks v. District of Columbia",
+  "decision_date": "1943-02-12",
+  "docket_number": "No. 30",
+  "first_page": "657",
+  "last_page": "657",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "31 A.2d 657"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "D.C.",
+    "id": 21806,
+    "name": "District of Columbia Municipal Court of Appeals"
+  },
+  "jurisdiction": {
+    "id": 56,
+    "name_long": "District of Columbia",
+    "name": "D.C."
+  },
+  "cites_to": [],
+  "analysis": {
+    "cardinality": 124,
+    "char_count": 1350,
+    "ocr_confidence": 0.734,
+    "sha256": "a968b0f6598e4861c346d86bfd9a814a2be26105eb139318dafe7fa67f889a47",
+    "simhash": "1:b4635820b5e307ca",
+    "word_count": 218
+  },
+  "last_updated": "2023-07-14T15:08:13.669495+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [
+      "Before RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges."
+    ],
+    "parties": [
+      "BROOKS v. DISTRICT OF COLUMBIA."
+    ],
+    "opinions": [
+      {
+        "text": "HOOD, Associate Judge.\nAppellant appeals from his convictions on four charges of indecent exposure. Trial was had before the court without a jury.\nAppellant contends (1) that the testimony of the complaining witnesses was improbable, (2) that the identification of appellant was vague and indefinite, (3) that the court failed to give full credence to the volume of character evidence offered on behalf of appellant, (4) that the findings of guilt were contrary to the evidence, and (5) that appellant\u2019s guilt was not established beyond a reasonable doubt.\nAll these contentions involve matters of fact peculiarly within the province of the trial court who heard and observed the witnesses and whose duty and power it is to pass upon the credibility of witnesses and -the weight of evidence.\nThere was substantial evidence to support the findings of the trial court and under such circumstances this court has no power to substitute its judgment for that of the trial court.\nAffirmed.",
+        "type": "majority",
+        "author": "HOOD, Associate Judge."
+      }
+    ],
+    "attorneys": [
+      "Nathan A. Dobbins, of Washington, D. C., for appellant.",
+      "Richmond B. Keech, Corp. Counsel, and Vernon E. West, Principal Asst. Corp. Counsel, both of Washington, D. C., for appellee."
+    ],
+    "corrections": "",
+    "head_matter": "BROOKS v. DISTRICT OF COLUMBIA.\nNo. 30.\nMunicipal Court of Appeals for the District of Columbia.\nFeb. 12, 1943.\nNathan A. Dobbins, of Washington, D. C., for appellant.\nRichmond B. Keech, Corp. Counsel, and Vernon E. West, Principal Asst. Corp. Counsel, both of Washington, D. C., for appellee.\nBefore RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges."
+  },
+  "file_name": "0657-01",
+  "first_page_order": 705,
+  "last_page_order": 705
+}
