@@ -1,0 +1,55 @@
+{
+  "profile": "0.1.0",
+  "document": "us/dc/57/1943-04-06.akn.xml",
+  "work": "us/dc/57/1943-04-06",
+  "expression": "us/dc/57/1943-04-06",
+  "parts": [
+    {
+      "eId": "opinion_opinion.hood",
+      "key": "us/dc/57/1943-04-06/opinion.hood",
+      "role": "opinion",
+      "authors": ["hood"]
+    },
+    {
+      "eId": "opinion_dissent.cayton",
+      "key": "us/dc/57/1943-04-06/dissent.cayton",
+      "role": "dissent",
+      "authors": ["cayton"]
+    }
+  ],
+  "printings": [
+    {
+      "ref": "printing_31-a2d-683",
+      "citation": "31 A.2d 683",
+      "type": "official",
+      "firstPage": "683",
+      "lastPage": "687",
+      "text": "transcribed",
+      "pages": [
+        {"number": "684", "eId": "opinion_opinion.hood__p_1", "scan": 732},
+        {"number": "685", "eId": "opinion_opinion.hood", "scan": 733},
+        {"number": "686", "eId": "opinion_opinion.hood", "scan": 734},
+        {"number": "687", "eId": "opinion_dissent.cayton", "scan": 735}
+      ]
+    }
+  ],
+  "blocks": {
+    "BL_731.10": {"scan": 731, "rect": [225, 1753, 604, 69]},
+    "BL_731.11": {"scan": 731, "rect": [473, 1846, 110, 26]},
+    "BL_731.12": {"scan": 731, "rect": [262, 1914, 524, 68]},
+    "BL_731.13": {"scan": 731, "rect": [419, 2006, 214, 30]},
+    "BL_731.14": {"scan": 731, "rect": [253, 2064, 536, 30]},
+    "BL_731.28": {"scan": 731, "rect": [934, 2001, 744, 77]},
+    "BL_731.29": {"scan": 731, "rect": [933, 2092, 747, 118]},
+    "BL_731.30": {"scan": 731, "rect": [932, 2233, 747, 120]},
+    "BL_731.31": {"scan": 731, "rect": [970, 2401, 432, 36]},
+    "BL_731.32": {"scan": 731, "rect": [932, 2453, 749, 121]},
+    "BL_732.1": {"scan": 732, "rect": [213, 240, 746, 500]},
+    "BL_732.9": {"scan": 732, "rect": [993, 1752, 745, 203]},
+    "BL_732.12": {"scan": 732, "rect": [255, 2397, 656, 213]},
+    "BL_734.4": {"scan": 734, "rect": [284, 324, 153, 29]},
+    "BL_734.5": {"scan": 734, "rect": [284, 406, 474, 37]},
+    "BL_734.6": {"scan": 734, "rect": [779, 405, 209, 38]},
+    "BL_734.7": {"scan": 734, "rect": [247, 456, 742, 114]}
+  }
+}

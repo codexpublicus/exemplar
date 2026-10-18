@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Test vector for spec/akoma-ntoso-profile.md 0.1.0 section 13.1, a decision with no released text.
+  Constructed from examples/minimal by hand: its identifiers and printing are the example's, and
+  the printing's text="withheld" is invented for this vector. It describes no real source record.
+-->
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:cx="https://codexpublicus.org/ns/exemplar">
+  <judgment name="judgment" contains="originalVersion">
+    <meta>
+      <identification source="#org_exemplar">
+        <FRBRWork>
+          <FRBRthis value="us/dc/57/1943-04-06"/>
+          <FRBRuri value="us/dc/57/1943-04-06"/>
+          <FRBRalias name="akn-nc" value="/akn/us/judgment/dc/1943-04-06/57"/>
+          <FRBRalias name="cite" value="cite:31-a2d-683" showAs="31 A.2d 683"/>
+          <FRBRdate date="1943-04-06" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRcountry value="us"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="us/dc/57/1943-04-06"/>
+          <FRBRuri value="us/dc/57/1943-04-06"/>
+          <FRBRdate date="1943-04-06" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRauthoritative value="false"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="us/dc/57/1943-04-06.akn.xml"/>
+          <FRBRuri value="us/dc/57/1943-04-06.akn.xml"/>
+          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRauthor href="#org_exemplar"/>
+          <FRBRformat value="application/akn+xml"/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#org_exemplar">
+        <TLCOrganization eId="court_dc" href="registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
+        <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
+      </references>
+      <proprietary source="#org_exemplar">
+        <cx:profile version="0.1.0"/>
+        <cx:keys provenance="engine-output">
+          <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
+        </cx:keys>
+        <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="withheld"/>
+      </proprietary>
+    </meta>
+    <header>
+      <p eId="header__p_1" class="parties" cx:origin="producer"><docTitle>Taylor v. Yellow Cab Co.</docTitle></p>
+      <p eId="header__p_2" class="docketnumber" cx:origin="producer"><docketNumber>No. 57.</docketNumber></p>
+      <p eId="header__p_3" class="decisiondate" cx:origin="producer"><docDate date="1943-04-06">1943-04-06</docDate></p>
+    </header>
+    <judgmentBody>
+      <introduction>
+        <p class="no-text" cx:origin="producer">The text of this decision was not released. It is printed at 31 A.2d 683.</p>
+      </introduction>
+    </judgmentBody>
+  </judgment>
+</akomaNtoso>
