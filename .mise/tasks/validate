@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Validate Akoma Ntoso documents and viewer sidecars against the XSD, the Schematron rules and the sidecar JSON Schema"
+#USAGE arg "[path]" var=#true help="Files or directories to validate (default: examples/ and vectors/akn-profile/)"
+set -euo pipefail
+eval "paths=(${usage_path:-})"
+exec uv run python validator/validate.py "${paths[@]}"

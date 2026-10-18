@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Run every check CI runs: ruff, the reference validator and pytest"
+set -euo pipefail
+uv run ruff check .
+uv run ruff format --check .
+uv run python validator/validate.py examples vectors/akn-profile
+uv run pytest
