@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Built by examples/cap/build.py from the Caselaw Access Project case a2d/31/0657-01
+  (Brooks v. District of Columbia, 31 A.2d 657). The text is CAP's, OCR errors included.
+-->
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:cx="https://codexpublicus.org/ns/exemplar">
+  <judgment name="judgment" contains="originalVersion">
+    <meta>
+      <identification source="#org_exemplar">
+        <FRBRWork>
+          <FRBRthis value="us/dc/30/1943-02-12"/>
+          <FRBRuri value="us/dc/30/1943-02-12"/>
+          <FRBRalias name="akn-nc" value="/akn/us/judgment/dc/1943-02-12/30"/>
+          <FRBRalias name="cite" value="cite:31-a2d-657" showAs="31 A.2d 657"/>
+          <FRBRalias name="cap" value="cap:a2d/31/0657-01"/>
+          <FRBRdate date="1943-02-12" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRcountry value="us"/>
+          <FRBRnumber value="30" showAs="No. 30."/>
+          <FRBRname value="Brooks v. District of Columbia"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="us/dc/30/1943-02-12"/>
+          <FRBRuri value="us/dc/30/1943-02-12"/>
+          <FRBRdate date="1943-02-12" name="decided"/>
+          <FRBRauthor href="#court_dc"/>
+          <FRBRauthoritative value="false"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="us/dc/30/1943-02-12.akn.xml"/>
+          <FRBRuri value="us/dc/30/1943-02-12.akn.xml"/>
+          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRauthor href="#org_exemplar"/>
+          <FRBRformat value="application/akn+xml"/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#org_exemplar">
+        <TLCOrganization eId="court_dc" href="registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
+        <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
+        <TLCPerson eId="hood" href="examples/cap/judges.json#hood" showAs="Hood"/>
+        <TLCReference eId="printing_31-a2d-657" name="printing" href="cite:31-a2d-657" showAs="31 A.2d 657"/>
+        <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0657-01" showAs="Caselaw Access Project, a2d/31/0657-01"/>
+      </references>
+      <proprietary source="#org_exemplar">
+        <cx:profile version="0.1.1"/>
+        <cx:keys provenance="engine-output">
+          <cx:registry name="courts" uri="registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="examples/cap/judges.json" version="fixture"/>
+        </cx:keys>
+        <cx:printing ref="#printing_31-a2d-657" type="official" reporter="A.2d" volume="31" firstPage="657" lastPage="657" ordinal="1" text="transcribed">
+          <cx:scans source="#source_cap" volume="a2d/31" first="705" last="705"/>
+        </cx:printing>
+        <cx:source ref="#source_cap" agent="#org_cap" record="cap:a2d/31/0657-01" caseId="8152570" lastUpdated="2023-07-14T15:08:13.669495+00:00" sha256="a968b0f6598e4861c346d86bfd9a814a2be26105eb139318dafe7fa67f889a47" method="ocr">
+          <cx:confidence value="0.734" scope="case" basis="CAP analysis.ocr_confidence"/>
+        </cx:source>
+      </proprietary>
+    </meta>
+    <header>
+      <p eId="header__p_1" class="parties" cx:origin="unknown" cx:blocks="BL_705.3"><docTitle>BROOKS v. DISTRICT OF COLUMBIA.</docTitle></p>
+      <p eId="header__p_2" class="docketnumber" cx:origin="unknown" cx:blocks="BL_705.4"><docketNumber>No. 30.</docketNumber></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_705.5"><courtType refersTo="#court_dc">Municipal Court of Appeals for the District of Columbia.</courtType></p>
+      <p eId="header__p_4" class="decisiondate" cx:origin="unknown" cx:blocks="BL_705.6"><docDate date="1943-02-12">Feb. 12, 1943.</docDate></p>
+      <p eId="header__p_5" class="attorneys" cx:origin="unknown" cx:blocks="BL_705.12">Nathan A. Dobbins, of Washington, D. C., for appellant.</p>
+      <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_705.13">Richmond B. Keech, Corp. Counsel, and Vernon E. West, Principal Asst. Corp. Counsel, both of Washington, D. C., for appellee.</p>
+      <p eId="header__p_7" class="judges" cx:origin="unknown" cx:blocks="BL_705.14">Before RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges.</p>
+    </header>
+    <judgmentBody>
+      <motivation>
+        <hcontainer name="opinion" eId="opinion_opinion.hood" cx:part="us/dc/30/1943-02-12/opinion.hood" cx:authors="hood" cx:sourceType="majority">
+          <heading cx:blocks="BL_705.15"><opinion by="#hood">HOOD, Associate Judge.</opinion></heading>
+          <content>
+            <p eId="opinion_opinion.hood__p_1" cx:blocks="BL_705.16">Appellant appeals from his convictions on four charges of indecent exposure. Trial was had before the court without a jury.</p>
+            <p eId="opinion_opinion.hood__p_2" cx:blocks="BL_705.17">Appellant contends (1) that the testimony of the complaining witnesses was improbable, (2) that the identification of appellant was vague and indefinite, (3) that the court failed to give full credence to the volume of character evidence offered on behalf of appellant, (4) that the findings of guilt were contrary to the evidence, and (5) that appellant’s guilt was not established beyond a reasonable doubt.</p>
+            <p eId="opinion_opinion.hood__p_3" cx:blocks="BL_705.18">All these contentions involve matters of fact peculiarly within the province of the trial court who heard and observed the witnesses and whose duty and power it is to pass upon the credibility of witnesses and -the weight of evidence.</p>
+            <p eId="opinion_opinion.hood__p_4" cx:blocks="BL_705.19">There was substantial evidence to support the findings of the trial court and under such circumstances this court has no power to substitute its judgment for that of the trial court.</p>
+            <p eId="opinion_opinion.hood__p_5" cx:blocks="BL_705.20">Affirmed.</p>
+          </content>
+        </hcontainer>
+      </motivation>
+    </judgmentBody>
+  </judgment>
+</akomaNtoso>

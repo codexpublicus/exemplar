@@ -1,0 +1,161 @@
+{
+  "profile": "0.1.1",
+  "document": "us/mass/rpt.150-mass-66/1889-11-11.akn.xml",
+  "work": "us/mass/rpt.150-mass-66/1889-11-11",
+  "expression": "us/mass/rpt.150-mass-66/1889-11-11",
+  "parts": [
+    {
+      "eId": "opinion_opinion.holmes",
+      "key": "us/mass/rpt.150-mass-66/1889-11-11/opinion.holmes",
+      "role": "opinion",
+      "authors": [
+        "holmes"
+      ]
+    }
+  ],
+  "printings": [
+    {
+      "ref": "printing_150-mass-66",
+      "citation": "150 Mass. 66",
+      "type": "official",
+      "firstPage": "66",
+      "lastPage": "67",
+      "text": "transcribed",
+      "pages": [
+        {
+          "number": "67",
+          "eId": "opinion_opinion.holmes__p_1",
+          "scan": 87
+        }
+      ]
+    }
+  ],
+  "blocks": {
+    "BL_86.3": {
+      "scan": 86,
+      "rect": [
+        374,
+        384,
+        910,
+        35
+      ]
+    },
+    "BL_86.4": {
+      "scan": 86,
+      "rect": [
+        432,
+        484,
+        114,
+        27
+      ]
+    },
+    "BL_86.5": {
+      "scan": 86,
+      "rect": [
+        586,
+        484,
+        273,
+        34
+      ]
+    },
+    "BL_86.6": {
+      "scan": 86,
+      "rect": [
+        914,
+        486,
+        309,
+        32
+      ]
+    },
+    "BL_86.7": {
+      "scan": 86,
+      "rect": [
+        356,
+        565,
+        942,
+        36
+      ]
+    },
+    "BL_86.8": {
+      "scan": 86,
+      "rect": [
+        468,
+        650,
+        715,
+        29
+      ]
+    },
+    "BL_86.9": {
+      "scan": 86,
+      "rect": [
+        224,
+        737,
+        1210,
+        193
+      ]
+    },
+    "BL_86.10": {
+      "scan": 86,
+      "rect": [
+        265,
+        986,
+        216,
+        38
+      ]
+    },
+    "BL_86.11": {
+      "scan": 86,
+      "rect": [
+        527,
+        987,
+        906,
+        43
+      ]
+    },
+    "BL_86.12": {
+      "scan": 86,
+      "rect": [
+        217,
+        1039,
+        1217,
+        1323
+      ]
+    },
+    "BL_87.3": {
+      "scan": 87,
+      "rect": [
+        196,
+        306,
+        1215,
+        419
+      ]
+    },
+    "BL_87.1": {
+      "scan": 87,
+      "rect": [
+        241,
+        788,
+        612,
+        43
+      ]
+    },
+    "BL_87.2": {
+      "scan": 87,
+      "rect": [
+        197,
+        841,
+        1212,
+        88
+      ]
+    },
+    "BL_87.6": {
+      "scan": 87,
+      "rect": [
+        967,
+        735,
+        396,
+        43
+      ]
+    }
+  }
+}

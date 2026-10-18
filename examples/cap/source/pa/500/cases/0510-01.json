@@ -1,0 +1,79 @@
+{
+  "id": 1781027,
+  "name": "William M. MARUTANI, Joseph R. Glancey, Vincent A. Cirillo, Paul Ribner, Phyllis W. Beck, Lawrence Prattis, Frank J. Montemuro, Jr., James G. Colins and John J. Chiovero, Petitioners, v. Edmund S. PAWELEC, Charles L. Durham and James D. McCrudden, Acting Members of County Board of Elections of Philadelphia, Joseph E. Coleman et al., Intervenors, Philip Raible, Intervenor",
+  "name_abbreviation": "Marutani v. Pawelec",
+  "decision_date": "1983-04-20",
+  "docket_number": "No. 59 E.D.Misc.Dkt. 1983",
+  "first_page": "510",
+  "last_page": "511",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "500 Pa. 510"
+    },
+    {
+      "type": "parallel",
+      "cite": "458 A.2d 928"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "Pa.",
+    "id": 8832,
+    "name": "Supreme Court of Pennsylvania"
+  },
+  "jurisdiction": {
+    "id": 6,
+    "name_long": "Pennsylvania",
+    "name": "Pa."
+  },
+  "cites_to": [],
+  "analysis": {
+    "cardinality": 164,
+    "char_count": 1645,
+    "ocr_confidence": 0.725,
+    "pagerank": {
+      "raw": 4.688403287882615e-08,
+      "percentile": 0.06467396582923332
+    },
+    "sha256": "466a22650a859322f2231ecc9eb519284b39e5a2c7548f271c1ab43900093f22",
+    "simhash": "1:0bbc325aa3f89716",
+    "word_count": 254
+  },
+  "last_updated": "2023-07-14T22:41:55.536104+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [
+      "Before ROBERTS, C.J., and NIX, LARSEN, FLAHERTY, McDERMOTT, HUTCHINSON and ZAPPALA, JJ.",
+      "ROBERTS, C.J., files a dissenting statement in which McDERMOTT and HUTCHINSON, JJ., join.",
+      "McDERMOTT and HUTCHINSON, JJ., join in this dissenting statement."
+    ],
+    "parties": [
+      "William M. MARUTANI, Joseph R. Glancey, Vincent A. Cirillo, Paul Ribner, Phyllis W. Beck, Lawrence Prattis, Frank J. Montemuro, Jr., James G. Colins and John J. Chiovero, Petitioners, v. Edmund S. PAWELEC, Charles L. Durham and James D. McCrudden, Acting Members of County Board of Elections of Philadelphia, Joseph E. Coleman et al., Intervenors, Philip Raible, Intervenor."
+    ],
+    "opinions": [
+      {
+        "text": "ORDER\nPER CURIAM:\nPetition denied.\nROBERTS, C.J., files a dissenting statement in which McDERMOTT and HUTCHINSON, JJ., join.",
+        "type": "majority",
+        "author": "PER CURIAM:"
+      },
+      {
+        "text": "ROBERTS, Chief Justice,\ndissenting.\nThis record is clear that the City Commissioners, who are candidates for office in the May 1983 Primary Election, acted without authority in establishing the listing of offices, including their own, on ballots in Philadelphia for that election. See 25 P.S. \u00a7 2641(c). Because of the Commissioners\u2019 conflict of interest, which resulted in the self-serving placement of their offices in second position, at the top of the ballot, the offices of City Commissioner should be placed after all other City offices.\nIn accordance with the uniform practice in the rest of the Commonwealth, both in this election and in the past, statewide offices should appear at the top of the ballot.\nMcDERMOTT and HUTCHINSON, JJ., join in this dissenting statement.",
+        "type": "dissent",
+        "author": "ROBERTS, Chief Justice,"
+      }
+    ],
+    "attorneys": [
+      "Joseph A. Prim, Jr., Henry W. Sawyer, III, Robert J. Hoelscher, Philadelphia, for petitioners.",
+      "Ralph J. Teti, Asst. City Sol., David Cohen, Howard Gittis, Philadelphia, for respondents."
+    ],
+    "corrections": "",
+    "head_matter": "458 A.2d 928\nWilliam M. MARUTANI, Joseph R. Glancey, Vincent A. Cirillo, Paul Ribner, Phyllis W. Beck, Lawrence Prattis, Frank J. Montemuro, Jr., James G. Colins and John J. Chiovero, Petitioners, v. Edmund S. PAWELEC, Charles L. Durham and James D. McCrudden, Acting Members of County Board of Elections of Philadelphia, Joseph E. Coleman et al., Intervenors, Philip Raible, Intervenor.\nSupreme Court of Pennsylvania.\nArgued April 18, 1983.\nDecided April 20, 1983.\nJoseph A. Prim, Jr., Henry W. Sawyer, III, Robert J. Hoelscher, Philadelphia, for petitioners.\nRalph J. Teti, Asst. City Sol., David Cohen, Howard Gittis, Philadelphia, for respondents.\nBefore ROBERTS, C.J., and NIX, LARSEN, FLAHERTY, McDERMOTT, HUTCHINSON and ZAPPALA, JJ."
+  },
+  "file_name": "0510-01",
+  "first_page_order": 560,
+  "last_page_order": 561
+}

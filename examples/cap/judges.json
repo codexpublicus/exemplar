@@ -1,0 +1,16 @@
+{
+  "description": "Test fixture standing in for a judge registry (spec/court-record-key.md section 10.2) for the examples in examples/cap only. It is not a judge registry. It holds the judges who author a part of an example, each registered for the court code that example uses. bylines lists the surnames as CAP prints them in an opinion's byline, lowercased with everything but letters removed, which is how examples/cap/build.py links a byline to a slug.",
+  "version": "fixture",
+  "judges": {
+    "cayton": {"name": "Cayton", "courts": ["dc"], "bylines": ["cayton"]},
+    "flaherty": {"name": "Flaherty", "courts": ["pa"], "bylines": ["flaherty"]},
+    "holmes": {"name": "Holmes", "courts": ["mass"], "bylines": ["holmes"]},
+    "hood": {"name": "Hood", "courts": ["dc"], "bylines": ["hood"]},
+    "hutchinson": {"name": "Hutchinson", "courts": ["pa"], "bylines": ["hutchinson"]},
+    "larsen": {"name": "Larsen", "courts": ["pa"], "bylines": ["larsen"]},
+    "mcdermott": {"name": "McDermott", "courts": ["pa"], "bylines": ["mcdermott"]},
+    "nix": {"name": "Nix", "courts": ["pa"], "bylines": ["nix"]},
+    "richardson": {"name": "Richardson", "courts": ["dc"], "bylines": ["richardson"]},
+    "roberts": {"name": "Roberts", "courts": ["pa"], "bylines": ["roberts"]}
+  }
+}

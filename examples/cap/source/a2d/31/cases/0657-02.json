@@ -1,0 +1,129 @@
+{
+  "id": 8152606,
+  "name": "WATERMAN v. RAILWAY EXPRESS AGENCY, Inc.",
+  "name_abbreviation": "Waterman v. Railway Express Agency, Inc.",
+  "decision_date": "1943-05-11",
+  "docket_number": "No. 68",
+  "first_page": "657",
+  "last_page": "658",
+  "citations": [
+    {
+      "type": "official",
+      "cite": "31 A.2d 657"
+    }
+  ],
+  "court": {
+    "name_abbreviation": "D.C.",
+    "id": 21806,
+    "name": "District of Columbia Municipal Court of Appeals"
+  },
+  "jurisdiction": {
+    "id": 56,
+    "name_long": "District of Columbia",
+    "name": "D.C."
+  },
+  "cites_to": [
+    {
+      "cite": "126 A. L.R. 1262",
+      "category": "reporters:specialty",
+      "reporter": "A.L.R.",
+      "opinion_index": 0
+    },
+    {
+      "cite": "60 Nev. 35",
+      "category": "reporters:state",
+      "reporter": "Nev.",
+      "case_ids": [
+        5018433
+      ],
+      "weight": 2,
+      "opinion_index": 0,
+      "case_paths": [
+        "/nev/60/0035-01"
+      ]
+    },
+    {
+      "cite": "82 A.L.R. 1027",
+      "category": "reporters:specialty",
+      "reporter": "A.L.R.",
+      "opinion_index": 0
+    },
+    {
+      "cite": "240 N.W. 901",
+      "category": "reporters:state_regional",
+      "reporter": "N.W.",
+      "opinion_index": 0
+    },
+    {
+      "cite": "185 Minn. 290",
+      "category": "reporters:state",
+      "reporter": "Minn.",
+      "case_ids": [
+        254366
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/minn/185/0290-01"
+      ]
+    },
+    {
+      "cite": "85 F.2d 725",
+      "category": "reporters:federal",
+      "reporter": "F.2d",
+      "case_ids": [
+        925194
+      ],
+      "opinion_index": 0,
+      "case_paths": [
+        "/f2d/85/0725-01"
+      ]
+    },
+    {
+      "cite": "66 App.D.C. 226",
+      "category": "reporters:state",
+      "reporter": "App. D.C.",
+      "opinion_index": 0
+    }
+  ],
+  "analysis": {
+    "cardinality": 284,
+    "char_count": 3695,
+    "ocr_confidence": 0.697,
+    "pagerank": {
+      "raw": 4.03580807328026e-08,
+      "percentile": 0.20087464558744544
+    },
+    "sha256": "ff146e4a790b5596341a69136e00d55d3667e6586a409733e0d9d945163ee17e",
+    "simhash": "1:ec2799a94d0e13d0",
+    "word_count": 614
+  },
+  "last_updated": "2024-02-27T18:54:06.352297+00:00",
+  "provenance": {
+    "date_added": "2019-08-29",
+    "source": "Harvard",
+    "batch": "2018"
+  },
+  "casebody": {
+    "judges": [
+      "Before RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges."
+    ],
+    "parties": [
+      "WATERMAN v. RAILWAY EXPRESS AGENCY, Inc."
+    ],
+    "opinions": [
+      {
+        "text": "RICHARDSON, Chief Judge.\nSuit was brought by appellant as plaintiff against appellee for damage to the contents, of a box shipped by her from New York to Washington. When delivered to her by defendant, she claimed the contents were mutilated and certain antique articles, a crystal clock, a copper urn and pewter ware, were damaged \u201cbeyond replacement or proper repair\u201d. She claimed damages in the sum of $85, plus $40 for incidental personal expense of telephone calls, railroad fare and an effort to employ an attorney in New York.\nThe case was tried by the court and it found that the evidence established liability. No evidence of the value of the damaged articles or of the cost of repair or replacement was submitted. Plaintiff attempted to introduce letters from various business houses containing certain information as to the cost of replacement of a filing cabinet and of the repair of the pewter set, which were not admitted in evidence.\nAt the close of the trial the court continued the hearing to enable plaintiff to produce and exhibit the articles for which damage was claimed in her complaint. After examining these items the court on October 8, 1942, made a finding for the plaintiff in the sum of $15.\nPlaintiff seasonably filed a motion for new trial, alleging that the amount was inadequate, and that the finding was contrary to law and to the weight of the evidence. This motion was denied and judgment entered on the finding.\nThereafter, within the time for noting an appeal, plaintiff filed a motion for rehearing of the motion for new trial. In the alternative plaintiff moved for a judgment on the pleadings, evidence, newly discovered evidence and her affidavit setting forth claims for additional damages which she asked be regarded as an amended complaint. The motion was denied and this appeal then taken.\nThe proffer of ex parte letters as evidence of value or cost of repair was properly denied. In the absence of testimony by plaintiff or some person qualified to estimate the value of the damaged articles, from which the court could properly determine the damage sustained, plaintiff\u2019s case was not complete. However, the court, doubtlessly influenced by the fact that plaintiff was without legal counsel, exercised a wise discretion in continuing the case to permit an examination by it of the damaged articles, resulting in the finding of which complaint is now made.\nSince we find no error in the trial and judgment it must be affirmed. This disposes of plaintiff\u2019s motion for a new trial and for a rehearing of that motion.\nPlaintiff\u2019s alternative motion for judgment (which was in substance to rehear the case upon the theories set forth in an extensive accompanying affidavit) was properly denied. While newly discovered evidence was referred to in the motion, no evidence susceptible of that characterization was submitted. When an action has been tried, and judgment entered, a plaintiff may not enlarge her cause of action to include additional claims and introduce new theories of recovery not theretofore asserted.\nAffirmed.\nBabor v. Baessell, 66 App.D.C. 226, 85 F.2d 725.\nHayes v. Iluddleson, 40 App.D.O. 183, Ann.Cas.l914B, 1037; Gibbons v. Hanseli, 185 Minn. 290, 240 N.W. 901, 82 A.L.R. 1027; Gottwals v. Rencher, 60 Nev. 35, 92 P.2cl 1000, 98 P.2d 481, 126 A. L.R. 1262; 41 Am.Jur. 495; Rule 15(b), Federal Rules of Civil Procedure, 28 U. S.C.A. following section 723c.",
+        "type": "majority",
+        "author": "RICHARDSON, Chief Judge."
+      }
+    ],
+    "attorneys": [
+      "John E. Powell, of Washington, D. C., for appellee."
+    ],
+    "corrections": "",
+    "head_matter": "WATERMAN v. RAILWAY EXPRESS AGENCY, Inc.\nNo. 68.\nMunicipal Court of Appeals for the District of Columbia.\nMay 11, 1943.\nRehearing Denied May 19, 1943.\nJohn E. Powell, of Washington, D. C., for appellee.\nBefore RICHARDSON, Chief Judge, and CAYTON and HOOD, Associate Judges."
+  },
+  "file_name": "0657-02",
+  "first_page_order": 705,
+  "last_page_order": 706
+}
