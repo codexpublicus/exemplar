@@ -47,6 +47,12 @@ def one(doc: etree._ElementTree, path: str) -> Any:
     return found
 
 
+def key_of(uri: str) -> str:
+    """The key a key reference names (CRK section 2.6); the test fails if uri isn't one."""
+    assert uri.startswith("crk:"), uri
+    return uri.removeprefix("crk:")
+
+
 def spec_version() -> str:
     text = SPEC.read_text("utf-8")
     m = re.search(r"^Specification version: \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*", text, re.M)
@@ -84,16 +90,18 @@ def test_example_declares_this_profile_version(path: Path) -> None:
 
 
 @pytest.mark.parametrize("path", EXAMPLES, ids=ids(EXAMPLES))
-def test_frbr_uris_are_court_record_keys(path: Path) -> None:
+def test_frbr_uris_are_court_record_key_references(path: Path) -> None:
     doc = etree.parse(str(path))
-    work = one(doc, "//a:FRBRWork/a:FRBRuri/@value")
-    assert one(doc, "//a:FRBRWork/a:FRBRthis/@value") == work
+    work_uri = one(doc, "//a:FRBRWork/a:FRBRuri/@value")
+    assert one(doc, "//a:FRBRWork/a:FRBRthis/@value") == work_uri
+    work = key_of(work_uri)
     assert crk_check.classify(work) is None
     parts = crk_check.parse(work)
     assert parts["role"] is None and parts["revised"] is None, "work URI is a decision key"
 
-    expression = one(doc, "//a:FRBRExpression/a:FRBRuri/@value")
-    assert one(doc, "//a:FRBRExpression/a:FRBRthis/@value") == expression
+    expression_uri = one(doc, "//a:FRBRExpression/a:FRBRuri/@value")
+    assert one(doc, "//a:FRBRExpression/a:FRBRthis/@value") == expression_uri
+    expression = key_of(expression_uri)
     assert crk_check.classify(expression) is None
     expr_parts = crk_check.parse(expression)
     assert expr_parts["role"] is None
@@ -102,13 +110,13 @@ def test_frbr_uris_are_court_record_keys(path: Path) -> None:
     assert contains == ("singleVersion" if expr_parts["revised"] else "originalVersion")
 
     manifestation = one(doc, "//a:FRBRManifestation/a:FRBRuri/@value")
-    assert manifestation == expression + ".akn.xml"
+    assert manifestation == expression_uri + ".akn.xml"
 
 
 @pytest.mark.parametrize("path", EXAMPLES, ids=ids(EXAMPLES))
 def test_parts_carry_their_keys(path: Path) -> None:
     doc = etree.parse(str(path))
-    work = one(doc, "//a:FRBRWork/a:FRBRuri/@value")
+    work = key_of(one(doc, "//a:FRBRWork/a:FRBRuri/@value"))
     containers = doc.xpath("//a:judgmentBody//a:hcontainer[@cx:part]", namespaces=NS)
     assert containers
     for hc in containers:
@@ -149,7 +157,7 @@ def test_minimal_example_keys_follow_from_printed_facts() -> None:
         "decided": one(doc, "//a:header//a:docDate/@date"),
     }
     work = crk_check.compute(facts, COURTS, MINIMAL_JUDGES)
-    assert work == one(doc, "//a:FRBRWork/a:FRBRuri/@value")
+    assert "crk:" + work == one(doc, "//a:FRBRWork/a:FRBRuri/@value")
     for hc in doc.xpath("//a:hcontainer[@cx:part]", namespaces=NS):
         part_facts = dict(
             facts, role=hc.get("name"), authors=hc.get(f"{{{CX}}}authors", "").split()

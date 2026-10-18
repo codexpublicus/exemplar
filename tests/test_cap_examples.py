@@ -78,7 +78,7 @@ def test_keys_follow_from_cap_fields(entry: dict[str, Any]) -> None:
     work = crk_check.compute(facts, COURTS, JUDGES)
     assert work == entry["key"]
     doc = etree.parse(str(document(entry)))
-    assert doc.xpath("string(//a:FRBRWork/a:FRBRthis/@value)", namespaces=NS) == work
+    assert doc.xpath("string(//a:FRBRWork/a:FRBRthis/@value)", namespaces=NS) == "crk:" + work
     for hc in doc.xpath("//a:hcontainer[@cx:part]", namespaces=NS):
         authors = hc.get(f"{{{CX}}}authors", "").split()
         part = crk_check.compute(dict(facts, role=hc.get("name"), authors=authors), COURTS, JUDGES)

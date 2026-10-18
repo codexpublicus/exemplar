@@ -1,6 +1,6 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.1.0",
+  "spec_version": "0.2.0",
   "courts_registry": "registry/courts.json",
   "judges_fixture": "judges-fixture.json",
   "provenance": {
@@ -47,7 +47,7 @@
     "alias.jsonl": {
       "checks": "printed normalizes to alias under scheme; alias matches the alias grammar; resolves_to lists the keys a resolver returns.",
       "fields": {
-        "scheme": "alias scheme, spec section 11.1 (docket for a key-shaped alias)",
+        "scheme": "alias scheme, spec section 11.1 (crk for a key-shaped alias, written as a key reference, section 2.6)",
         "printed": "identifier as printed, when the vector tests normalization",
         "alias": "alias string",
         "resolves_to": "keys, when known"

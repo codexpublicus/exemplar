@@ -22,7 +22,7 @@ SOURCE = ROOT / "registry" / "sources" / "courts-db" / "courts.json"
 OUTPUT = ROOT / "registry" / "courts.json"
 
 VERSION = "2026.10.18"
-SPEC_VERSION = "0.1.0"
+SPEC_VERSION = "0.2.0"
 
 PROVENANCE = {
     "name": "courts-db",

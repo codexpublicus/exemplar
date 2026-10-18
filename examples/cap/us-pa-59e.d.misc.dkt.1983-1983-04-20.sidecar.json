@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml",
-  "work": "us/pa/59e.d.misc.dkt.1983/1983-04-20",
-  "expression": "us/pa/59e.d.misc.dkt.1983/1983-04-20",
+  "profile": "0.2.0",
+  "document": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml",
+  "work": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20",
+  "expression": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20",
   "parts": [
     {
       "eId": "opinion_per-curiam",

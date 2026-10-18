@@ -1,6 +1,6 @@
 # Court record key
 
-Specification version: **0.1.0** (draft). Status: not yet stable; see section 13.
+Specification version: **0.2.0** (draft). Status: not yet stable; see section 13.
 
 A court record key (CRK) is a deterministic identifier for a US court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation.
 
@@ -98,6 +98,20 @@ A validator that reports why it rejected a string SHOULD use these classes. When
 | `role` | The part's role is not in the role vocabulary |
 | `author` | An author fails the `author` rule, or a `per-curiam` part has authors |
 | `revised` | `revised` fails the `date` rule, is not a calendar date, or is earlier than `decided` |
+
+### 2.6 Key references: the `crk` URI scheme
+
+A key written where a URI is expected, such as a link or an identifier that other systems dereference, is a **key reference**: the scheme name `crk`, a colon, and the key, unchanged.
+
+```abnf
+crk-ref     = %s"crk:" crk
+```
+
+`crk:us/ca10/14-9585/2016-08-23` refers to that decision, and `crk:us/ca10/14-9585/2016-08-23/concurrence.gorsuch` to the concurrence. The scheme name is lowercase. Nothing comes between the colon and the key (no `//` authority, no leading `/`), and nothing follows the key (no query, no fragment); the key is not percent-encoded (section 2.4). A key reference is valid when the string after `crk:` is a valid key (section 2.3). A string without the prefix, or with it in another letter case, is not a key reference.
+
+In RFC 3986 terms a key reference is an absolute URI with scheme `crk` and a rootless path, so a consumer never resolves it against the URL of the document it appears in. A resolver maps `crk:{key}` to the record for `{key}`, or, for a key-shaped alias (section 11.1), to the key it is an alias of. The `crk` scheme is not registered with IANA; neither are the alias schemes of section 11.1.
+
+The prefix is not part of the key. A key is computed, compared, frozen and listed without it; a format that carries keys says which of its fields hold a key and which hold a key reference.
 
 ## 3. Country
 
@@ -266,10 +280,10 @@ A producer MUST record, alongside the keys it mints (for example in a release ma
 
 | Registry | URI | Version |
 |---|---|---|
-| Courts | `registry/courts.json` | `2026.10.18` |
+| Courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json` | `2026.10.18` |
 | Judges | supplied by the consumer | the consumer's |
 
-The court registry's URI is that path in codexpublicus/exemplar at the release tag the consumer pins, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). This version of the spec is published with court registry `2026.10.18`. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
+The court registry's URI is the raw file URL of `registry/courts.json` at the release tag of codexpublicus/exemplar the consumer pins, with `{tag}` replaced by that tag, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). The raw URL returns the registry file itself, as tagged; a `github.com/.../blob/{tag}/...` URL returns an HTML page about the file, whose fragments GitHub uses for its own line anchors. A judge registry's URI is an absolute URI that names one snapshot, chosen by whoever publishes it. This version of the spec is published with court registry `2026.10.18`. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
 
 ## 11. Aliases and relations
 
@@ -277,11 +291,11 @@ The court registry's URI is that path in codexpublicus/exemplar at the release t
 
 Every other identifier a decision or part carries is kept as an **alias** that resolves to its key. An alias is never a key and is never minted as one. A resolver MUST accept any registered alias and return the key or keys it resolves to. An alias MAY resolve to more than one key (a reporter page shared by several decisions; a GovInfo package covering every decision in a docket); a resolver MUST then return all of them and MUST NOT choose one.
 
-Aliases are written `{scheme}:{value}`, except that a non-lead docket of a consolidated case is written as a key-shaped string.
+Aliases are written `{scheme}:{value}`. A non-lead docket of a consolidated case is a key-shaped alias: a key reference (section 2.6) to the key the docket would have had. That key is never minted, and a resolver maps the reference to the lead docket's decision key.
 
 | Scheme | Value | Example | Resolves to |
 |---|---|---|---|
-| (key-shaped) | the key the docket would have had | `us/scotus/17-1623/2020-06-15` | the lead docket's decision key |
+| `crk` | the key the docket would have had (key-shaped alias) | `crk:us/scotus/17-1623/2020-06-15` | the lead docket's decision key |
 | `cite` | reporter citation, as `{volume}-{slug}-{page}` (slug as in 5.6) | `cite:834-f3d-1142` | a decision key |
 | `neutral` | state or territorial neutral citation, as a slug (5.6 rule applied to the whole citation) | `neutral:2017-wi-1` | a decision key |
 | `scotus-r` | Supreme Court Reporter's R-number, as `{term year}-{n}` | `scotus-r:2023-54` | a decision key |
@@ -293,7 +307,7 @@ Aliases are written `{scheme}:{value}`, except that a non-lead docket of a conso
 | `cl-opinion` | CourtListener opinion id | `cl-opinion:{id}` | a part key |
 
 ```abnf
-alias          = crk / cite-alias / neutral-alias / scotus-r-alias / ca6-alias
+alias          = crk-ref / cite-alias / neutral-alias / scotus-r-alias / ca6-alias
                / cmecf-alias / govinfo-alias / cap-alias / cl-alias
 cite-alias     = %s"cite:" 1*DIGIT "-" slug "-" 1*DIGIT
 neutral-alias  = %s"neutral:" slug
@@ -343,6 +357,8 @@ An ordinal of 1 means the first instance and produces no mark. Every key a produ
 - **Patch:** editorial changes and new test vectors that don't change any expected result.
 
 While the version is 0.x, a minor version MAY break these rules (SemVer item 4). Consumers pin a release tag of this repository and SHOULD record the spec version they implement.
+
+**0.2.0.** This version changes two things from 0.1.0, under SemVer item 4: a key-shaped alias is written as a key reference, `crk:` followed by the key, and the bare key-shaped string is no longer an alias (sections 2.6 and 11.1); and the court registry's URI is an absolute URL that names the release tag (section 10.3). No key changes: the same facts compute the same key, and every valid key stays valid.
 
 **Registry versions.** The court registry has its own CalVer version (section 10.3). Adding courts, or assigning an existing profile to a court or date range that had none, is a new registry version and not a new spec version. A release tag of this repository pins both.
 

@@ -167,8 +167,8 @@ def test_every_profile_rule_is_exercised_by_a_vector() -> None:
 
 @cache
 def _functions() -> Any:
-    """The Schematron's xsl:functions, wrapped in a stylesheet that applies f:is-key and
-    f:alias-scheme to each line of its input."""
+    """The Schematron's xsl:functions, wrapped in a stylesheet that applies f:is-key,
+    f:alias-scheme and f:is-key(f:key-of-uri(.)) to each line of its input."""
     tree = etree.parse(str(SCHEMATRON))
     functions = "".join(
         etree.tostring(f, encoding="unicode")
@@ -181,7 +181,8 @@ def _functions() -> Any:
       {functions}
       <xsl:template match="/">
         <xsl:for-each select="/strings/s">
-          <xsl:value-of select="f:is-key(string(.)), f:alias-scheme(string(.))" separator="|"/>
+          <xsl:value-of select="f:is-key(string(.)), f:alias-scheme(string(.)),
+            f:is-key(f:key-of-uri(string(.)))" separator="|"/>
           <xsl:text>&#10;</xsl:text>
         </xsl:for-each>
       </xsl:template>
@@ -191,6 +192,10 @@ def _functions() -> Any:
 
 
 def evaluate(strings: list[str]) -> list[tuple[bool, str]]:
+    return [(is_key, scheme) for is_key, scheme, _ in evaluate_all(strings)]
+
+
+def evaluate_all(strings: list[str]) -> list[tuple[bool, str, bool]]:
     root = etree.Element("strings")
     for s in strings:
         etree.SubElement(root, "s").text = s
@@ -198,8 +203,8 @@ def evaluate(strings: list[str]) -> list[tuple[bool, str]]:
     out = _functions().transform_to_string(xdm_node=node)
     results = []
     for line in out.splitlines():
-        is_key, scheme = line.split("|")
-        results.append((is_key == "true", scheme))
+        is_key, scheme, is_reference = line.split("|")
+        results.append((is_key == "true", scheme, is_reference == "true"))
     assert len(results) == len(strings)
     return results
 
@@ -221,17 +226,27 @@ def test_is_key_agrees_with_the_crk_reading_on_computed_keys() -> None:
 
 
 def test_alias_scheme_recognizes_every_alias_vector() -> None:
-    vectors = [v for v in jsonl(CRK_VECTORS / "alias.jsonl") if v["scheme"] != "docket"]
+    vectors = [v for v in jsonl(CRK_VECTORS / "alias.jsonl") if v["scheme"] != "crk"]
     results = evaluate([v["alias"] for v in vectors])
     for v, (_, scheme) in zip(vectors, results, strict=True):
         assert scheme == v["scheme"], v["alias"]
 
 
-def test_key_shaped_aliases_are_keys() -> None:
-    vectors = [v for v in jsonl(CRK_VECTORS / "alias.jsonl") if v["scheme"] == "docket"]
+def test_key_shaped_aliases_are_key_references() -> None:
+    vectors = [v for v in jsonl(CRK_VECTORS / "alias.jsonl") if v["scheme"] == "crk"]
     assert vectors
-    for v, (ok, _) in zip(vectors, evaluate([v["alias"] for v in vectors]), strict=True):
-        assert ok, v["alias"]
+    results = evaluate_all([v["alias"] for v in vectors])
+    for v, (is_key, scheme, is_reference) in zip(vectors, results, strict=True):
+        assert is_reference and not is_key and scheme == "", v["alias"]
+
+
+def test_key_of_uri_reads_only_key_references() -> None:
+    keys = [v["key"] for v in jsonl(CRK_VECTORS / "parse.jsonl")]
+    results = evaluate_all(keys + ["crk:" + k for k in keys] + ["CRK:" + k for k in keys])
+    n = len(keys)
+    assert [r[2] for r in results[:n]] == [False] * n, "a bare key is not a key reference"
+    assert [r[2] for r in results[n : 2 * n]] == [True] * n
+    assert [r[2] for r in results[2 * n :]] == [False] * n, "the scheme name is lowercase"
 
 
 # The document vectors.

@@ -1,8 +1,8 @@
 {
-  "profile": "0.1.1",
-  "document": "us/mass/rpt.150-mass-66/1889-11-11.akn.xml",
-  "work": "us/mass/rpt.150-mass-66/1889-11-11",
-  "expression": "us/mass/rpt.150-mass-66/1889-11-11",
+  "profile": "0.2.0",
+  "document": "crk:us/mass/rpt.150-mass-66/1889-11-11.akn.xml",
+  "work": "crk:us/mass/rpt.150-mass-66/1889-11-11",
+  "expression": "crk:us/mass/rpt.150-mass-66/1889-11-11",
   "parts": [
     {
       "eId": "opinion_opinion.holmes",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Schematron rules for spec/akoma-ntoso-profile.md 0.1.x.
+  Schematron rules for spec/akoma-ntoso-profile.md 0.2.x.
 
   These rules check what the Akoma Ntoso 1.0 XML Schema can't: the profile's rules marked
   "Schematron" in section 16.2 of the profile. Run them after XSD validation; a document that
@@ -13,13 +13,13 @@
   the vendored SchXslt2 transpiler); any ISO Schematron processor with XSLT 2.0 or later should
   give the same results.
 
-  Open questions O2 (the form of key URIs) and O7 (decisions without a decision key) are to be
-  settled with codexpublicus/exemplar#4. These rules implement the 0.1.1 text, which takes
-  option (a) for both: FRBR URIs and ref targets are bare keys, and every document has one.
-  They don't check anything those questions leave open. Registry hrefs are checked only for
-  their fragment and their agreement with cx:registry/@uri, not for the form of the URI, and
-  every check that reads a key from a URI goes through f:key-of-uri, the one function O2
-  would change.
+  Key references (profile section 5.1, CRK spec section 2.6): FRBR URIs and ref targets that
+  name a key are crk: followed by the key, and every check that reads a key from a URI goes
+  through f:key-of-uri. @cx:part holds the part key itself, with no scheme. Registry URIs are
+  absolute (section 5.3): the court registry's is its raw file URL at a release tag.
+
+  Open question O7 (decisions without a decision key) is still open. These rules implement the
+  0.2.0 text, which takes its option (a): every document has a decision key.
 -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -27,7 +27,7 @@
         xmlns:f="https://codexpublicus.org/ns/exemplar/functions"
         queryBinding="xslt2">
 
-  <title>Akoma Ntoso judgment profile for US decisions, 0.1.x</title>
+  <title>Akoma Ntoso judgment profile for US decisions, 0.2.x</title>
 
   <ns prefix="a" uri="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"/>
   <ns prefix="cx" uri="https://codexpublicus.org/ns/exemplar"/>
@@ -56,10 +56,16 @@
       '^cl-opinion:[1-9][0-9]*$')"/>
   </xsl:function>
 
-  <!-- O2: the key a URI value names. Under 0.1.1 (option a) the value is the bare key. -->
+  <!-- The key a key reference names: the string after "crk:" (CRK spec section 2.6), or '' when
+       the value is not a crk: URI. f:is-key decides whether what follows the prefix is a key. -->
   <xsl:function name="f:key-of-uri" as="xs:string">
     <xsl:param name="uri" as="xs:string?"/>
-    <xsl:sequence select="string($uri)"/>
+    <xsl:sequence select="if (starts-with(string($uri), 'crk:')) then substring(string($uri), 5) else ''"/>
+  </xsl:function>
+
+  <!-- The court registry's URI at a release tag (profile section 5.3, CRK spec section 10.3). -->
+  <xsl:function name="f:courts-uri-regex" as="xs:string">
+    <xsl:sequence select="'^https://raw\.githubusercontent\.com/codexpublicus/exemplar/[^/?#\s]+/registry/courts\.json$'"/>
   </xsl:function>
 
   <xsl:function name="f:is-date" as="xs:boolean">
@@ -155,7 +161,7 @@
     <xsl:sequence select="if (matches($n, '^[1-9][0-9]*$')) then xs:integer($n) else -1"/>
   </xsl:function>
 
-  <let name="profile-line" value="'0.1'"/>
+  <let name="profile-line" value="'0.2'"/>
   <let name="meta" value="/a:akomaNtoso/a:judgment/a:meta"/>
   <let name="work" value="f:key-of-uri($meta/a:identification/a:FRBRWork/a:FRBRthis/@value)"/>
   <let name="expression" value="f:key-of-uri($meta/a:identification/a:FRBRExpression/a:FRBRthis/@value)"/>
@@ -192,8 +198,8 @@
     </rule>
     <rule context="a:identification/a:FRBRWork">
       <let name="this" value="f:key-of-uri(a:FRBRthis/@value)"/>
-      <assert test="f:is-key($this) and f:part($this) eq '' and f:revised($this) eq ''">[AKN-9] The work URI "<value-of select="$this"/>" is a valid decision key.</assert>
-      <assert test="every $u in a:FRBRuri satisfies f:key-of-uri($u/@value) eq $this">[AKN-9] FRBRWork/FRBRuri equals FRBRthis.</assert>
+      <assert test="f:is-key($this) and f:part($this) eq '' and f:revised($this) eq ''">[AKN-9] The work URI "<value-of select="a:FRBRthis/@value"/>" is a key reference, crk: followed by a valid decision key.</assert>
+      <assert test="every $u in a:FRBRuri satisfies string($u/@value) eq string(a:FRBRthis/@value)">[AKN-9] FRBRWork/FRBRuri equals FRBRthis.</assert>
       <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq 'decided' and string($d/@date) eq f:decided($this)))">[AKN-11] FRBRWork/FRBRdate is the decision date, <value-of select="f:decided($this)"/>, named "decided".</assert>
       <assert test="every $a in a:FRBRauthor satisfies $a/@href eq $court-ref">[AKN-12] FRBRWork/FRBRauthor/@href is "<value-of select="$court-ref"/>".</assert>
       <assert test="a:FRBRcountry/@value eq 'us'">[AKN-13] FRBRcountry/@value is "us".</assert>
@@ -205,20 +211,21 @@
       <assert test="if (@name eq 'akn-nc') then (f:decision-ordinal($key) ne '' or @value eq $akn-nc)
                     else if (@name eq 'vendor') then normalize-space(@value) ne ''
                     else if (@name = f:alias-schemes()) then (@name ne 'cl-opinion' and f:alias-scheme(@value) eq @name)
-                    else (f:is-key(@value) and f:part(@value) eq '' and f:revised(@value) eq '')">[AKN-10] FRBRalias name="<value-of select="@name"/>" value="<value-of select="@value"/>" is an alias of the decision under that scheme (CRK section 11.1), "akn-nc", "vendor", or a key-shaped alias.</assert>
+                    else if (@name eq 'crk') then (f:is-key(f:key-of-uri(@value)) and f:part(f:key-of-uri(@value)) eq '' and f:revised(f:key-of-uri(@value)) eq '')
+                    else false()">[AKN-10] FRBRalias name="<value-of select="@name"/>" value="<value-of select="@value"/>" is an alias of the decision under that scheme (CRK section 11.1), "akn-nc", "vendor", or a key-shaped alias named "crk" whose value is crk: followed by a decision key.</assert>
     </rule>
     <rule context="a:identification/a:FRBRExpression">
       <let name="this" value="f:key-of-uri(a:FRBRthis/@value)"/>
       <let name="date-name" value="if (f:revised($this) ne '') then 'revised' else 'decided'"/>
       <let name="date" value="if (f:revised($this) ne '') then f:revised($this) else f:decided($this)"/>
-      <assert test="f:is-key($this) and f:part($this) eq '' and f:decision-key($this) eq $work">[AKN-15] The expression URI "<value-of select="$this"/>" is a valid version key of the work "<value-of select="$work"/>".</assert>
-      <assert test="every $u in a:FRBRuri satisfies f:key-of-uri($u/@value) eq $this">[AKN-15] FRBRExpression/FRBRuri equals FRBRthis.</assert>
+      <assert test="f:is-key($this) and f:part($this) eq '' and f:decision-key($this) eq $work">[AKN-15] The expression URI "<value-of select="a:FRBRthis/@value"/>" is a key reference, crk: followed by a valid version key of the work "<value-of select="$work"/>".</assert>
+      <assert test="every $u in a:FRBRuri satisfies string($u/@value) eq string(a:FRBRthis/@value)">[AKN-15] FRBRExpression/FRBRuri equals FRBRthis.</assert>
       <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq $date-name and string($d/@date) eq $date))">[AKN-16] FRBRExpression/FRBRdate is named "<value-of select="$date-name"/>" with date <value-of select="$date"/>.</assert>
       <assert test="every $a in a:FRBRauthor satisfies $a/@href eq $court-ref">[5.1.2] FRBRExpression/FRBRauthor/@href is "<value-of select="$court-ref"/>", as in FRBRWork.</assert>
       <assert test="a:FRBRauthoritative/@value eq 'false'">[AKN-17] FRBRauthoritative/@value is "false".</assert>
     </rule>
     <rule context="a:identification/a:FRBRManifestation">
-      <let name="this" value="concat($expression, '.akn.xml')"/>
+      <let name="this" value="concat('crk:', $expression, '.akn.xml')"/>
       <assert test="a:FRBRthis/@value eq $this and (every $u in a:FRBRuri satisfies $u/@value eq $this)">[AKN-18] The manifestation URI is "<value-of select="$this"/>".</assert>
       <assert test="matches(string(a:FRBRauthor/@href), '^#org_') and $references/a:TLCOrganization[concat('#', @eId) eq current()/a:FRBRauthor/@href]">[AKN-19] FRBRManifestation/FRBRauthor/@href references the producer's TLCOrganization (an org_ eId).</assert>
       <assert test="a:FRBRformat/@value eq 'application/akn+xml'">[AKN-20] FRBRformat/@value is "application/akn+xml".</assert>
@@ -273,6 +280,7 @@
     </rule>
     <rule context="cx:keys/cx:registry">
       <assert test="@name = ('courts', 'judges') and normalize-space(@uri) ne '' and normalize-space(@version) ne ''">[AKN-23] cx:registry has @name "courts" or "judges", a @uri and a @version.</assert>
+      <assert test="if (@name eq 'courts') then matches(@uri, f:courts-uri-regex()) else matches(@uri, '^[A-Za-z][A-Za-z0-9+.-]*:[^#\s]+$')">[AKN-23] cx:registry/@uri "<value-of select="@uri"/>" is <value-of select="if (@name eq 'courts') then 'the raw file URL of the court registry at a release tag, https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json' else 'an absolute URI with no fragment'"/>.</assert>
     </rule>
     <rule context="cx:printing">
       <let name="ref" value="$references/a:TLCReference[@name = 'printing'][concat('#', @eId) eq current()/@ref]"/>
@@ -383,7 +391,7 @@
     <rule context="a:ref">
       <let name="target" value="f:key-of-uri(@href)"/>
       <assert test="normalize-space(.) ne ''">[AKN-50] A ref's text is the citation as printed.</assert>
-      <assert test="f:is-key($target) or f:alias-scheme(@href) ne ''">[AKN-51] ref/@href "<value-of select="@href"/>" is a key or an alias of a decision.</assert>
+      <assert test="f:is-key($target) or f:alias-scheme(@href) ne ''">[AKN-51] ref/@href "<value-of select="@href"/>" is a key reference (crk: followed by a key) or an alias of a decision.</assert>
     </rule>
   </pattern>
 

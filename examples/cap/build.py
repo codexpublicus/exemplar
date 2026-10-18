@@ -146,6 +146,12 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def registry_uri(manifest: dict[str, Any], name: str) -> str:
+    """A registry's URI: its raw file URL at the release tag (profile section 5.3)."""
+    registries = manifest["registries"]
+    return registries["uriBase"] + registries[name]
+
+
 # Keys (spec/court-record-key.md).
 
 
@@ -681,8 +687,8 @@ def build(
 
     ident = el(meta, "identification", source=f"#{producer['eId']}")
     work = el(ident, "FRBRWork")
-    el(work, "FRBRthis", value=key.key)
-    el(work, "FRBRuri", value=key.key)
+    el(work, "FRBRthis", value=f"crk:{key.key}")
+    el(work, "FRBRuri", value=f"crk:{key.key}")
     el(
         work,
         "FRBRalias",
@@ -716,15 +722,15 @@ def build(
         el(work, "FRBRnumber", value=key.docket, showAs=shown)
     el(work, "FRBRname", value=case["name_abbreviation"])
     expr = el(ident, "FRBRExpression")
-    el(expr, "FRBRthis", value=key.key)
-    el(expr, "FRBRuri", value=key.key)
+    el(expr, "FRBRthis", value=f"crk:{key.key}")
+    el(expr, "FRBRuri", value=f"crk:{key.key}")
     el(expr, "FRBRdate", date=key.decided, name="decided")
     el(expr, "FRBRauthor", href=f"#court_{key.court}")
     el(expr, "FRBRauthoritative", value="false")
     el(expr, "FRBRlanguage", language="eng")
     man = el(ident, "FRBRManifestation")
-    el(man, "FRBRthis", value=f"{key.key}.akn.xml")
-    el(man, "FRBRuri", value=f"{key.key}.akn.xml")
+    el(man, "FRBRthis", value=f"crk:{key.key}.akn.xml")
+    el(man, "FRBRuri", value=f"crk:{key.key}.akn.xml")
     el(man, "FRBRdate", date=manifest["generated"], name="generated")
     el(man, "FRBRauthor", href=f"#{producer['eId']}")
     el(man, "FRBRformat", value="application/akn+xml")
@@ -734,7 +740,7 @@ def build(
         refs,
         "TLCOrganization",
         eId=f"court_{key.court}",
-        href=f"{manifest['registries']['courts']}#{key.court}",
+        href=f"{registry_uri(manifest, 'courts')}#{key.court}",
         showAs=courts["courts"][key.court]["name"],
     )
     el(
@@ -756,7 +762,7 @@ def build(
             refs,
             "TLCPerson",
             eId=s,
-            href=f"{manifest['registries']['judges']}#{s}",
+            href=f"{registry_uri(manifest, 'judges')}#{s}",
             showAs=judges[s]["name"],
         )
     for p in prints:
@@ -782,7 +788,7 @@ def build(
         keys,
         "cx:registry",
         name="courts",
-        uri=manifest["registries"]["courts"],
+        uri=registry_uri(manifest, "courts"),
         version=courts["version"],
     )
     if any(info["authors"] for info in built):
@@ -790,7 +796,7 @@ def build(
             keys,
             "cx:registry",
             name="judges",
-            uri=manifest["registries"]["judges"],
+            uri=registry_uri(manifest, "judges"),
             version=judges_doc["version"],
         )
     for p in prints:

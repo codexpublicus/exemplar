@@ -1,6 +1,6 @@
 {
   "description": "The CAP examples: each entry is a Caselaw Access Project case, the source files examples/cap/build.py reads (with the URL each was downloaded from and its SHA-256), the decision key the build must compute, and why the case was chosen. Source files are in examples/cap/source/, at the same path as on static.case.law. CAP data is CC0; this manifest records the source and nothing more. Each source file is byte-identical to the member of its CAP volume zip that volume.members names; the zip's SHA-256 is recorded as downloaded.",
-  "profile": "0.1.1",
+  "profile": "0.2.0",
   "generated": "2026-10-18",
   "producer": {
     "eId": "org_exemplar",
@@ -8,6 +8,8 @@
     "showAs": "codexpublicus/exemplar"
   },
   "registries": {
+    "uriBase": "https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/",
+    "uriNote": "Registry URIs in the documents are uriBase followed by the registry's path: the raw file URL at the release tag these examples are published in (profile section 5.3).",
     "courts": "registry/courts.json",
     "courtsVersion": "2026.10.18",
     "judges": "examples/cap/judges.json"
