@@ -120,7 +120,7 @@ A producer MUST take the court code from the registry and MUST NOT construct one
 
 ## 5. Docket
 
-The docket segment is the docket number as printed on the decision, normalized by the docket profile that the court registry assigns to the court for the decision date. If the decision lists several dockets (a consolidated case), the producer MUST use the first docket listed in the caption of the decision as first issued; every other docket becomes an alias (section 11).
+The docket segment is the docket number as printed on the decision, normalized by the docket profile that the court registry assigns to the court for the decision date. When the registry assigns the court no profile for that date, a producer MUST refuse with `no-docket-profile` before looking at the docket; nothing else in this section applies, the reporter fallback included (section 5.6). If the decision lists several dockets (a consolidated case), the producer MUST use the first docket listed in the caption of the decision as first issued; every other docket becomes an alias (section 11).
 
 ### 5.1 Cleaning
 
@@ -170,7 +170,9 @@ Letter case-type codes are part of the docket wherever they appear and are kept:
 
 ### 5.6 Reporter fallback: `rpt.`
 
-When the decision has no docket (the cleaned docket is empty or the source records none), or the court's profile rejects the docket it has, a producer MUST use the reporter fallback if the decision has a reporter citation, and MUST otherwise refuse (`no-docket` or `docket-profile`, section 12). This mostly affects historical Caselaw Access Project (CAP) cases whose scan carries no usable docket.
+When the court has a docket profile for the decision date, and the decision has no docket (the cleaned docket is empty or the source records none) or that profile rejects the docket it has, a producer MUST use the reporter fallback if the decision has a reporter citation, and MUST otherwise refuse (`no-docket` or `docket-profile`, section 12). This mostly affects historical Caselaw Access Project (CAP) cases whose scan carries no usable docket.
+
+The fallback replaces only the docket. It needs the same complete decision date as any other key (section 6), so it never yields a key for a decision dated only to the year or month.
 
 The fallback docket segment is `rpt.{volume}-{reporter}-{page}` where:
 
@@ -189,13 +191,15 @@ When several decisions begin on the same reporter page and share a decision date
 
 A fallback key is **non-canonical**: it is deterministic, but it rests on a citation a publisher assigned after the fact, and the `rpt.` prefix marks that. If a docket number is later recovered, the producer mints the docket key and records the fallback key as `replaced-by` that key (section 11). The fallback key MUST NOT be deleted or reused.
 
-The fallback is not used when the decision has a docket but the court has no docket profile for the decision date (section 16): the docket exists, and a profile added later would mint a second key for the same decision. A producer MUST refuse with `no-docket-profile`.
+The fallback is never used for a court that has no docket profile for the decision date (section 5): the Supreme Court before 1971-07-01, and the Federal Circuit. A producer MUST refuse those decisions with `no-docket-profile` whether or not the decision has a docket or a reporter citation, because a profile added later would mint a docket key for decisions that already had a fallback key. A producer that needs keys for them, such as stare for the pre-1971 Supreme Court decisions in CAP, is responsible for finding the dockets and dates it needs; this spec doesn't supply them, and they become computable when a later version adds the profile.
 
 ## 6. Decision date
 
 `decided` is the date printed on the decision as the date of decision: "Decided" (Supreme Court), the "FILED" stamp date (courts of appeals), or the entry date of an order. A producer MUST NOT use the date an opinion was posted, published or received by a publisher.
 
 The date MUST be a complete calendar date. When the source gives only a year, or a year and month, a producer MUST refuse with `incomplete-date` and MUST NOT pad the missing parts; a padded date would present an invented fact as the court's.
+
+A consumer that generates data in exemplar's formats is responsible for determining the full decision date, by whatever means it has (the court's records, a docket sheet, another edition of the report). This spec doesn't supply the date or infer it, and a decision whose full date the consumer can't determine has no key.
 
 ## 7. Ordinals
 
@@ -314,7 +318,7 @@ A producer computes a key from: the country; the court code; the docket as print
 | Class | When |
 |---|---|
 | `unregistered-court` | The court code is not in the court registry |
-| `no-docket-profile` | The registry gives the court no docket profile for the decision date |
+| `no-docket-profile` | The registry gives the court no docket profile for the decision date; checked before the docket, and the fallback doesn't apply (5.6) |
 | `docket-profile` | The docket doesn't fit the profile, and there is no reporter citation for the fallback |
 | `no-docket` | The decision has no docket, and no reporter citation for the fallback |
 | `no-decision-date` | The decision date is unknown |
@@ -340,11 +344,11 @@ An ordinal of 1 means the first instance and produces no mark. Every key a produ
 
 While the version is 0.x, a minor version MAY break these rules (SemVer item 4). Consumers pin a release tag of this repository and SHOULD record the spec version they implement.
 
+**Registry versions.** The court registry has its own CalVer version (section 10.3). Adding courts, or assigning an existing profile to a court or date range that had none, is a new registry version and not a new spec version. A release tag of this repository pins both.
+
 ## 14. Test vectors
 
 `vectors/court-record-key/` holds language-neutral vectors as JSON Lines, one object per line; `manifest.json` there describes each file's fields.
-
-**Registry versions.** The court registry has its own CalVer version (section 10.3). Adding courts, or assigning an existing profile to a court or date range that had none, is a new registry version and not a new spec version. A release tag of this repository pins both.
 
 | File | Checks |
 |---|---|
@@ -368,14 +372,13 @@ These are derived from a key, never canonical. For `us/ca10/14-9585/2016-08-23`:
 - Akoma Ntoso work IRI: `/akn/us/judgment/ca10/2016-08-23/14-9585`, expression `…/eng@2016-08-23`. A part maps to an inline `<opinion>` with `eId` `opinion_concurrence.gorsuch`.
 - URN:LEX ([RFC 9676](https://www.rfc-editor.org/rfc/rfc9676.html)): `urn:lex:us:court.appeals.10.circuit:decision:2016-08-23;14-9585`. The US jurisdiction table is empty, so the authority name is not standardized.
 - ECLI-shaped string: `ECLI:US:CA10:20160823:14.9585`. This is not a real ECLI; the US has no ECLI coordinator.
+
 ## 16. Open issues
 
 Non-normative. Each is a gap this version leaves for a later one.
 
-
-- Supreme Court dockets before 1971-07-01 were not year-prefixed; their format needs a profile. Until then, producers refuse with `no-docket-profile`.
+- Supreme Court dockets before 1971-07-01 were not year-prefixed; their format needs a profile. Until then, producers refuse with `no-docket-profile` (section 5.6).
 - The Federal Circuit's dockets (`2021-1234`) need a profile.
-- Decisions whose source gives only a year or year and month have no key (section 6).
 - The Eleventh Circuit's letter suffix is dropped, but its meaning is unverified.
 - The court registry registers every US court in courts-db, but no one has checked that each court CAP names maps to one of its codes; CAP publishes no list of its courts, only one per volume.
 - The `us-district` profile is assigned to historical district courts, whose dockets predate the PACER form and so fall to `rpt.`; they may want a profile of their own.
