@@ -63,7 +63,8 @@ def test_every_source_court_is_registered_or_excluded() -> None:
 
 
 def test_spec_names_this_registry_version() -> None:
-    assert f"| Courts | `registry/courts.json` | `{REGISTRY['version']}` |" in SPEC
+    uri = "https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json"
+    assert f"| Courts | `{uri}` | `{REGISTRY['version']}` |" in SPEC
     assert f"Specification version: **{REGISTRY['spec_version']}**" in SPEC
 
 

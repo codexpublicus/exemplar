@@ -145,17 +145,48 @@ class TestAlias:
     def test_vector(self, v: dict[str, Any]) -> None:
         alias = v["alias"]
         assert abnf_accepts("alias", alias)
-        if v["scheme"] == "docket":
-            assert regex_accepts(alias)
-        else:
-            assert alias.startswith(f"{v['scheme']}:")
-            assert not regex_accepts(alias)
+        assert alias.startswith(f"{v['scheme']}:")
+        assert not regex_accepts(alias)
+        if v["scheme"] == "crk":
+            assert abnf_accepts("crk-ref", alias)
+            assert regex_accepts(alias.removeprefix("crk:"))
         if "printed" in v:
             assert crk_check.normalize_alias(v["scheme"], v["printed"]) == alias
         for key in v.get("resolves_to", []):
             assert regex_accepts(key)
             assert crk_check.classify(key) is None
             assert alias != key
+
+
+    def test_a_bare_key_is_not_an_alias(self) -> None:
+        for v in load("alias.jsonl"):
+            if v["scheme"] == "crk":
+                assert not abnf_accepts("alias", v["alias"].removeprefix("crk:"))
+
+
+class TestKeyReference:
+    """Section 2.6: a key reference is crk: followed by a key, and nothing else."""
+
+    @pytest.mark.parametrize("v", load("parse.jsonl"), ids=ids("parse.jsonl"))
+    def test_every_key_has_a_reference(self, v: dict[str, Any]) -> None:
+        assert abnf_accepts("crk-ref", "crk:" + v["key"])
+        assert not abnf_accepts("crk-ref", v["key"])
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "CRK:us/ca10/14-9585/2016-08-23",
+            "crk:/us/ca10/14-9585/2016-08-23",
+            "crk://us/ca10/14-9585/2016-08-23",
+            "crk:us/ca10/14-9585/2016-08-23#opinion",
+            "crk:us/ca10/14-9585/2016-08-23?v=1",
+            "crk:us/ca10/14-9585/2016-08-23.akn.xml",
+            "crk:us%2Fca10%2F14-9585%2F2016-08-23",
+            "crk:",
+        ],
+    )
+    def test_rejects(self, text: str) -> None:
+        assert not abnf_accepts("crk-ref", text)
 
 
 def _vector_courts() -> list[tuple[str, str]]:
@@ -169,7 +200,9 @@ def _vector_courts() -> list[tuple[str, str]]:
     found += [(v["id"], v["court"]) for v in load("docket.jsonl")]
     found += [(v["id"], crk_check.parse(v["key"])["court"]) for v in load("parse.jsonl")]
     for v in load("alias.jsonl"):
-        keys = v.get("resolves_to", []) + ([v["alias"]] if v["scheme"] == "docket" else [])
+        keys = v.get("resolves_to", []) + (
+            [v["alias"].removeprefix("crk:")] if v["scheme"] == "crk" else []
+        )
         found += [(v["id"], crk_check.parse(key)["court"]) for key in keys]
     return found
 
