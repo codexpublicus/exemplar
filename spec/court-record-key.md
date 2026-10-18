@@ -105,16 +105,18 @@ The first segment is the country whose courts issued the decision, as a lowercas
 
 ## 4. Courts
 
-The court segment is a code from the court registry (section 10.1).
+The court segment is a code from the court registry (section 10.1). The registry's codes are Free Law Project's courts-db ids, taken from the snapshot the registry names, and codes the registry mints itself for courts courts-db lacks.
 
-| Court family | Code source | Examples |
+| Court family | Code | Examples |
 |---|---|---|
-| US Supreme Court | fixed | `scotus` |
-| Federal courts of appeals, district and bankruptcy courts | the court's `*.uscourts.gov` host label | `ca10`, `ca6`, `cod`, `meb` |
-| State and territorial courts | the court registry, seeded from a frozen snapshot of Free Law Project's courts-db ids | registry-assigned |
-| Historical and defunct courts | courts-db, or a code the registry mints | registry-assigned |
+| US Supreme Court | `scotus` | `scotus` |
+| Federal courts of appeals, district and bankruptcy courts | the courts-db id, which is the court's `*.uscourts.gov` host label (one exception, below) | `ca10`, `ca6`, `cod`, `meb` |
+| State and territorial courts | the courts-db id | `mass`, `wis`, `wisctapp` |
+| Historical and defunct courts | the courts-db id, or a code the registry mints | `circtdnj`, `cc` |
 
-A producer MUST take the court code from the registry and MUST NOT construct one. Once minted, a court code MUST NOT be renamed or reused. A court that merges or splits gets a new code, and the old code stays valid for decisions issued under it. Federal codes are judiciary-assigned; state and historical codes are not, and are the one input to the key that the court itself doesn't supply.
+The one federal court whose courts-db id is not its host label is the Bankruptcy Court for the District of Nebraska: courts-db gives `neb` to the Nebraska Supreme Court, so the bankruptcy court is `nebraskab`, not `neb`.
+
+A producer MUST take the court code from the registry and MUST NOT construct one. Once minted, a court code MUST NOT be renamed or reused. A court that merges or splits gets a new code, and the old code stays valid for decisions issued under it. Federal codes match what the judiciary assigns; state and historical codes are not court-assigned, and are the one input to the key that the court itself doesn't supply.
 
 ## 5. Docket
 
@@ -238,28 +240,32 @@ A new decision gets a new key, not a version: an en banc decision, a decision af
 
 ## 10. Registries
 
-A key depends on two maintained registries. This spec defines what they contain and how a consumer pins them; it does not fix where they are published.
+A key depends on two registries: a court registry, which this repository publishes, and a judge registry, which it doesn't.
 
 ### 10.1 Court registry
 
-Each entry has a court code (section 4), its country, the court's name, and its docket profiles with the date range each applies to (for example `scotus`: `scotus-ot1971` from 1971-07-01, nothing before). An entry MAY list alias codes (other services' ids for the same court) and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
+The court registry is `registry/courts.json` in codexpublicus/exemplar, validated by `schema/courts-registry.schema.json`. Each entry has a court code (section 4), its country, the court's name, its docket profiles with the date each applies from (for example `scotus`: `scotus-ot1971` from 1971-07-01, nothing before), and the source of its code. An entry MAY list alias codes (other services' ids for the same court) and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
+
+The registry is built by `registry/build_courts.py` from a copy of courts-db's `courts.json`, vendored at `registry/sources/courts-db/` and pinned by commit and SHA-256 in the registry's `source` block, which also records the license courts-db states for it. Every US court in that snapshot is registered; the registry's `excluded` block lists the ids left out (courts outside the United States, and one id that fails the `court` rule) with the reason for each. The docket profiles are this registry's assignments, not courts-db's: `scotus-ot1971` for the Supreme Court from 1971-07-01; `us-coa` for the twelve regional courts of appeals; `us-district` for federal district and bankruptcy courts; none for the Federal Circuit; `printed` for every other court.
 
 ### 10.2 Judge registry
 
-Each entry has a slug, the judge's name, and the court codes the slug is registered for. A slug matches `author` (`^[a-z][a-z-]*$`; no digits, so a second Justice Harlan is `harlan-ii`). A slug identifies one judge within each court it is registered for; a registry MAY make slugs unique across all courts, and SHOULD give a judge who sat on several courts one slug for all of them. Slugs are never renamed, reused or deleted.
+This repository publishes no judge registry. Judge slugs come from a registry the consumer supplies and identifies by URI and version (section 10.3), such as one computed and published from the consumer's own corpus.
+
+Whatever its source, a judge registry used with this spec MUST meet these rules. Each entry has a slug, the judge's name, and the court codes the slug is registered for. A slug matches `author` (`^[a-z][a-z-]*$`; no digits, so a second Justice Harlan is `harlan-ii`). A slug identifies one judge within each court it is registered for; a registry MAY make slugs unique across all courts, and SHOULD give a judge who sat on several courts one slug for all of them. Slugs are never renamed, reused or deleted.
 
 ### 10.3 Pinning
 
-Each registry is published as numbered, immutable snapshots, each identified by a URI and a version. Registries are append-only: a later snapshot adds entries and never changes or removes one, so a key computed under an earlier snapshot is still computable under a later one.
+Each registry is published as numbered, immutable snapshots, each identified by a URI and a version. Registries are append-only: a later snapshot adds entries and never removes one or changes its code or the profile it already assigns for a date. It MAY assign a profile for a date range that had none, once a version of this spec defines that profile. A key computed under an earlier snapshot is therefore still computable under a later one.
 
 A producer MUST record, alongside the keys it mints (for example in a release manifest), the URI and version of each registry snapshot it used. The registry version is not part of the key.
 
 | Registry | URI | Version |
 |---|---|---|
-| Courts | not yet assigned | |
-| Judges | not yet assigned | |
+| Courts | `registry/courts.json` | `2026.10.18` |
+| Judges | supplied by the consumer | the consumer's |
 
-Until the URIs are assigned, the test vectors carry their own fixture registry (`vectors/court-record-key/registry-fixture.json`), which is a test fixture and not a registry snapshot.
+The court registry's URI is that path in codexpublicus/exemplar at the release tag the consumer pins, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). This version of the spec is published with court registry `2026.10.18`. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
 
 ## 11. Aliases and relations
 
@@ -338,6 +344,8 @@ While the version is 0.x, a minor version MAY break these rules (SemVer item 4).
 
 `vectors/court-record-key/` holds language-neutral vectors as JSON Lines, one object per line; `manifest.json` there describes each file's fields.
 
+**Registry versions.** The court registry has its own CalVer version (section 10.3). Adding courts, or assigning an existing profile to a court or date range that had none, is a new registry version and not a new spec version. A release tag of this repository pins both.
+
 | File | Checks |
 |---|---|
 | `parse.jsonl` | key to parts, and parts back to the same key (round trip) |
@@ -364,9 +372,11 @@ These are derived from a key, never canonical. For `us/ca10/14-9585/2016-08-23`:
 
 Non-normative. Each is a gap this version leaves for a later one.
 
+
 - Supreme Court dockets before 1971-07-01 were not year-prefixed; their format needs a profile. Until then, producers refuse with `no-docket-profile`.
 - The Federal Circuit's dockets (`2021-1234`) need a profile.
 - Decisions whose source gives only a year or year and month have no key (section 6).
 - The Eleventh Circuit's letter suffix is dropped, but its meaning is unverified.
-- State court codes depend on a courts-db snapshot that hasn't been frozen.
+- The court registry registers every US court in courts-db, but no one has checked that each court CAP names maps to one of its codes; CAP publishes no list of its courts, only one per volume.
+- The `us-district` profile is assigned to historical district courts, whose dockets predate the PACER form and so fall to `rpt.`; they may want a profile of their own.
 

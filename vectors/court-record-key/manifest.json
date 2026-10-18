@@ -1,7 +1,8 @@
 {
   "spec": "spec/court-record-key.md",
   "spec_version": "0.1.0",
-  "registry_fixture": "registry-fixture.json",
+  "courts_registry": "registry/courts.json",
+  "judges_fixture": "judges-fixture.json",
   "provenance": {
     "human-curated": "A person checked it against the primary source. Ground truth: where it disagrees with any other vector, it wins.",
     "hand-checked": "Taken from a worked example in gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md.",
@@ -26,7 +27,7 @@
       }
     },
     "compute.jsonl": {
-      "checks": "A producer given facts and the registry fixture emits key, or refuses with error.",
+      "checks": "A producer given facts, the court registry (registry/courts.json) and the judges fixture emits key, or refuses with error.",
       "fields": {
         "facts": "{country, court, docket (as printed, or null), decided (ISO date, possibly partial, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}}",
         "key": "expected key, when the producer succeeds",
@@ -35,12 +36,22 @@
       }
     },
     "docket.jsonl": {
-      "checks": "The court's docket profile (from the registry fixture) maps printed to segment, or refuses with error.",
-      "fields": {"court": "court code", "printed": "docket as printed", "segment": "expected docket segment", "error": "refusal class"}
+      "checks": "The court's docket profile (from registry/courts.json) maps printed to segment, or refuses with error.",
+      "fields": {
+        "court": "court code",
+        "printed": "docket as printed",
+        "segment": "expected docket segment",
+        "error": "refusal class"
+      }
     },
     "alias.jsonl": {
       "checks": "printed normalizes to alias under scheme; alias matches the alias grammar; resolves_to lists the keys a resolver returns.",
-      "fields": {"scheme": "alias scheme, spec section 11.1 (docket for a key-shaped alias)", "printed": "identifier as printed, when the vector tests normalization", "alias": "alias string", "resolves_to": "keys, when known"}
+      "fields": {
+        "scheme": "alias scheme, spec section 11.1 (docket for a key-shaped alias)",
+        "printed": "identifier as printed, when the vector tests normalization",
+        "alias": "alias string",
+        "resolves_to": "keys, when known"
+      }
     }
   }
 }

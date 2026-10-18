@@ -52,7 +52,8 @@ def load(name: str) -> list[dict[str, Any]]:
     return [json.loads(line) for line in lines if line.strip()]
 
 
-REGISTRY = json.loads((VECTORS / "registry-fixture.json").read_text(encoding="utf-8"))
+COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-8"))["courts"]
+JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
 
 
@@ -111,14 +112,14 @@ class TestCompute:
     @pytest.mark.parametrize("v", load("compute.jsonl"), ids=ids("compute.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "key" in v:
-            key = crk_check.compute(v["facts"], REGISTRY)
+            key = crk_check.compute(v["facts"], COURTS, JUDGES)
             assert key == v["key"]
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
             assert crk_check.parse(key)["fallback"] is v["fallback"]
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.compute(v["facts"], REGISTRY)
+                crk_check.compute(v["facts"], COURTS, JUDGES)
             assert refusal.value.args[0] == v["error"]
 
 
@@ -128,12 +129,12 @@ class TestDocket:
     @pytest.mark.parametrize("v", load("docket.jsonl"), ids=ids("docket.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "segment" in v:
-            segment = crk_check.docket_segment(REGISTRY, v["court"], v["printed"])
+            segment = crk_check.docket_segment(COURTS, v["court"], v["printed"])
             assert segment == v["segment"]
             assert abnf_accepts("docket", segment)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.docket_segment(REGISTRY, v["court"], v["printed"])
+                crk_check.docket_segment(COURTS, v["court"], v["printed"])
             assert refusal.value.args[0] == v["error"]
 
 
@@ -155,6 +156,35 @@ class TestAlias:
             assert regex_accepts(key)
             assert crk_check.classify(key) is None
             assert alias != key
+
+
+def _vector_courts() -> list[tuple[str, str]]:
+    """(vector id, court code) for every court code a vector resolves or names in a valid key."""
+    found = []
+    for v in load("compute.jsonl"):
+        if v.get("error") != "unregistered-court":
+            found.append((v["id"], v["facts"]["court"]))
+        if "key" in v:
+            found.append((v["id"], crk_check.parse(v["key"])["court"]))
+    found += [(v["id"], v["court"]) for v in load("docket.jsonl")]
+    found += [(v["id"], crk_check.parse(v["key"])["court"]) for v in load("parse.jsonl")]
+    for v in load("alias.jsonl"):
+        keys = v.get("resolves_to", []) + ([v["alias"]] if v["scheme"] == "docket" else [])
+        found += [(v["id"], crk_check.parse(key)["court"]) for key in keys]
+    return found
+
+
+class TestVectorCourts:
+    """Every court code the vectors resolve is in registry/courts.json."""
+
+    @pytest.mark.parametrize(("vid", "court"), _vector_courts())
+    def test_registered(self, vid: str, court: str) -> None:
+        assert court in COURTS, f"{vid}: {court} is not in registry/courts.json"
+
+    def test_unregistered_court_vectors_are_unregistered(self) -> None:
+        for v in load("compute.jsonl"):
+            if v.get("error") == "unregistered-court":
+                assert v["facts"]["court"] not in COURTS, v["id"]
 
 
 class TestGrammarAgreement:

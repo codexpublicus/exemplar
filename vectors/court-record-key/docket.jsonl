@@ -35,3 +35,4 @@
 {"id": "printed-spaces-colon-slash", "court": "miss", "printed": "No. 2001 CA:12/3", "segment": "2001ca_12_3", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5; illustrative docket"}
 {"id": "printed-illegal-char", "court": "miss", "printed": "#1234", "error": "docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5"}
 {"id": "printed-reserved-rpt", "court": "mass", "printed": "rpt.12", "error": "docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5"}
+{"id": "cafc-no-profile", "court": "cafc", "printed": "2021-1234", "error": "no-docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.6; registry/courts.json; illustrative facts"}

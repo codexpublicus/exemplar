@@ -191,15 +191,15 @@ def profile_for(court: dict[str, Any], decided: str | None) -> str | None:
 
 
 def docket_segment(
-    registry: dict[str, Any], court: str, printed: str, decided: str | None = None
+    courts: dict[str, Any], court: str, printed: str, decided: str | None = None
 ) -> str:
-    """The docket segment, or Refusal(no-docket / no-docket-profile / docket-profile)."""
+    """The docket segment, or Refusal(no-docket-profile / no-docket / docket-profile)."""
+    profile = profile_for(courts[court], decided)
+    if profile is None:
+        raise Refusal("no-docket-profile")
     text = clean(printed)
     if not text:
         raise Refusal("no-docket")
-    profile = profile_for(registry["courts"][court], decided)
-    if profile is None:
-        raise Refusal("no-docket-profile")
     segment = PROFILES[profile](text)
     if segment is None:
         raise Refusal("docket-profile")
@@ -215,10 +215,14 @@ def rpt_segment(citation: dict[str, str]) -> str:
     return f"rpt.{citation['volume']}-{slug(citation['reporter'])}-{citation['page']}"
 
 
-def compute(facts: dict[str, Any], registry: dict[str, Any]) -> str:
-    """Spec section 12: a key from facts, or Refusal."""
+def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any]) -> str:
+    """Spec section 12: a key from facts, or Refusal.
+
+    courts is the court registry's "courts" map; judges is a judge registry's
+    "judges" map (spec section 10.2; the vectors use a fixture).
+    """
     court = facts["court"]
-    if facts.get("country") != "us" or court not in registry["courts"]:
+    if facts.get("country") != "us" or court not in courts:
         raise Refusal("unregistered-court")
     decided = facts.get("decided")
     if decided is None:
@@ -227,14 +231,16 @@ def compute(facts: dict[str, Any], registry: dict[str, Any]) -> str:
         raise Refusal("incomplete-date")
     if not is_date(decided):
         raise Refusal("date")
+    if profile_for(courts[court], decided) is None:
+        raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
     citation = facts.get("reporter_citation")
     printed = facts.get("docket")
     try:
         if printed is None:
             raise Refusal("no-docket")
-        docket = docket_segment(registry, court, printed, decided)
-    except Refusal as refusal:
-        if refusal.args[0] == "no-docket-profile" or citation is None:
+        docket = docket_segment(courts, court, printed, decided)
+    except Refusal:
+        if citation is None:
             raise
         docket = rpt_segment(citation)
     ordinal = facts.get("decision_ordinal", 1)
@@ -258,7 +264,7 @@ def compute(facts: dict[str, Any], registry: dict[str, Any]) -> str:
         if role == "per-curiam" and authors:
             raise Refusal("per-curiam-author")
         for author in authors:
-            if court not in registry["judges"].get(author, {}).get("courts", []):
+            if court not in judges.get(author, {}).get("courts", []):
                 raise Refusal("unregistered-author")
         part_ordinal = facts.get("part_ordinal", 1)
         if part_ordinal < 1:
