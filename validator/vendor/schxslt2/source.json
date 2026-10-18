@@ -1,0 +1,24 @@
+{
+  "description": "Vendored copy of SchXslt2's transpiler, which turns an ISO Schematron schema into an XSLT stylesheet that validates documents. validator/validate.py runs it with Saxon HE (saxonche). The files are byte-for-byte the files in the release archive below.",
+  "project": "SchXslt2",
+  "repository": "https://codeberg.org/SchXslt/schxslt2",
+  "version": "1.11.2",
+  "release": "https://codeberg.org/SchXslt/schxslt2/releases/download/v1.11.2/schxslt2-1.11.2.zip",
+  "release_sha256": "a0f5be3173113eb5ff4b5cf246fd9d1af0497a90df37023d3c0ccf60422af37c",
+  "retrieved": "2026-10-18",
+  "files": {
+    "transpile.xsl": {
+      "path_in_release": "schxslt2-1.11.2/transpile.xsl",
+      "sha256": "b0e07b08298db37b39d7d83223cb6d7cc54c47a3b590db3e732bd0e43043b224"
+    },
+    "LICENSE": {
+      "path_in_release": "schxslt2-1.11.2/LICENSE",
+      "sha256": "7839a9d2e2904e7dcb96b2db67e2177e1f69ee44d9e586b346b8d90b2cba8332"
+    },
+    "VERSION": {
+      "path_in_release": "schxslt2-1.11.2/VERSION",
+      "sha256": "e57c33955d2090799096e9057fef078635256275602cdbfa6a9520208c87c414"
+    }
+  },
+  "notice_as_stated": "LICENSE states the MIT License with 'Copyright (c) David Maus'; transpile.xsl's header comment states the same terms with 'Copyright (C) by David Maus <dmaus@dmaus.name>'."
+}
