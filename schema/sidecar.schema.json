@@ -10,7 +10,7 @@
     "profile": {
       "description": "The profile version the document declares in cx:profile/@version. The sidecar's shape follows the same version.",
       "type": "string",
-      "pattern": "^0\\.3\\.(0|[1-9][0-9]*)$"
+      "pattern": "^0\\.4\\.(0|[1-9][0-9]*)$"
     },
     "document": {
       "description": "The document's manifestation URI (FRBRManifestation/FRBRthis/@value): crk:, the expression key, .akn.xml.",
