@@ -136,15 +136,54 @@ def format_key(parts: dict[str, Any]) -> str:
 
 # Docket profiles (spec section 5).
 
-_LABEL = re.compile(r"^(?:Docket No\.|Case No\.|Nos?\.)\s*")
+_LABEL = re.compile(
+    r"(?:(?:docket|case|appeals|appeal|record|file|gen\.|general),?\s*)?"
+    r"(numbers|number|nos|no)\b\.?\s*[,:]?\s*",
+    re.IGNORECASE,
+)
 _DASHES = str.maketrans(dict.fromkeys("‐‑‒–—−", "-"))
+_THOUSANDS = re.compile(r"(?<=[0-9]),(?=[0-9]{3}(?:[^0-9]|$))")
+
+
+def _unlabel(text: str) -> tuple[str, bool]:
+    """Step 2: the text without a leading label, and whether the label was plural."""
+    m = _LABEL.match(text)
+    if not m:
+        return text, False
+    return text[m.end() :], m.group(1).lower() in ("nos", "numbers")
+
+
+def _strip_period(text: str) -> str:
+    return text[:-1] if text.endswith(".") and not text.endswith("Orig.") else text
+
+
+def clean_all(printed: str) -> list[str]:
+    """Spec section 5.1: the cleaned docket first, then every other docket the list names.
+
+    An empty list means the decision has no docket.
+    """
+    text, plural = _unlabel(printed.strip().translate(_DASHES))
+    text = _THOUSANDS.sub("", text)
+    items = [text]
+    if plural or ";" in text:
+        separators = r";|,|&|\band\b" if plural else r";"
+        items = [i.strip() for i in re.split(separators, text) if i.strip()]
+        items = [_unlabel(i)[0].strip() for i in items]
+        if (
+            len(items) > 1
+            and re.fullmatch(r"[0-9]+", items[0])
+            and (tail := re.fullmatch(r"[0-9]+(\s+.+)", items[-1]))
+        ):
+            items[0] += tail.group(1)
+    items = [_strip_period(i) for i in items]
+    if not items or not items[0] or not re.search(r"[0-9]", items[0]):
+        return []
+    return items
 
 
 def clean(printed: str) -> str:
-    text = _LABEL.sub("", printed.strip()).translate(_DASHES)
-    if text.endswith(".") and not text.endswith("Orig."):
-        text = text[:-1]
-    return text
+    """The cleaned docket, or "" when the decision has no docket."""
+    return (clean_all(printed) or [""])[0]
 
 
 def _scotus(text: str) -> str | None:
@@ -175,7 +214,8 @@ def _district(text: str) -> str | None:
 
 
 def _printed(text: str) -> str | None:
-    text = re.sub(r"\s+", "", text.lower()).replace(":", "_").replace("/", "_")
+    text = re.sub(r"(?<=[0-9]),(?=\s*[0-9])", "_", text.lower()).replace(",", "")
+    text = re.sub(r"\s+", "", text).replace(":", "_").replace("/", "_")
     return text if DOCKET.fullmatch(text) and not text.startswith("rpt.") else None
 
 
@@ -204,6 +244,15 @@ def docket_segment(
     if segment is None:
         raise Refusal("docket-profile")
     return segment
+
+
+def other_dockets(
+    courts: dict[str, Any], court: str, printed: str, decided: str | None = None
+) -> list[str]:
+    """Docket segments of the other dockets a printed list names (sections 5.1, 11.1)."""
+    profile = profile_for(courts[court], decided)
+    segments = [PROFILES[profile](item) for item in clean_all(printed)[1:]] if profile else []
+    return [s for s in segments if s is not None]
 
 
 def slug(text: str) -> str:
@@ -244,6 +293,10 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
             raise
         docket = rpt_segment(citation)
     ordinal = facts.get("decision_ordinal", 1)
+    if docket.startswith("rpt.") and "page_decisions" in facts:
+        # Section 5.6: count every decision that begins on the page and shares the date.
+        before = facts["page_decisions"][: facts["page_position"]]
+        ordinal = sum(1 for d in before if d["decided"] == decided)
     if ordinal < 1:
         raise Refusal("ordinal")
     parts: dict[str, Any] = {
@@ -277,6 +330,31 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
     key = format_key(parts)
     assert classify(key) is None, key
     return key
+
+
+def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str) -> list[str]:
+    """Key-shaped aliases for the other dockets of a consolidated case (section 11.1)."""
+    printed = facts.get("docket")
+    if printed is None or parse(key)["fallback"]:
+        return []
+    others = other_dockets(courts, facts["court"], printed, facts["decided"])
+    decision = parse(key)
+    return ["crk:" + decision_key({**decision, "docket": d, "decision_ordinal": 1}) for d in others]
+
+
+def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:
+    """Section 10.2: the slug whose name or printed forms equal a byline's name, for the court."""
+    found = [
+        slug
+        for slug, entry in sorted(judges.items())
+        if court in entry.get("courts", [])
+        and (
+            printed == entry.get("name") or printed in [f["form"] for f in entry.get("printed", [])]
+        )
+    ]
+    if len(found) != 1:
+        raise Refusal("unregistered-author")
+    return found[0]
 
 
 # Aliases (spec section 11.1).

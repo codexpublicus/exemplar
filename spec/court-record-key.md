@@ -1,6 +1,6 @@
 # Court record key
 
-Specification version: **0.2.0** (draft). Status: not yet stable; see section 13.
+Specification version: **0.3.0** (draft). Status: not yet stable; see section 13.
 
 A court record key (CRK) is a deterministic identifier for a US court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation.
 
@@ -140,12 +140,15 @@ The docket segment is the docket number as printed on the decision, normalized b
 
 Every profile first cleans the printed docket:
 
-1. Trim surrounding whitespace.
-2. Remove a leading label `No.`, `Nos.`, `Docket No.` or `Case No.`, with the whitespace after it.
-3. Replace U+2010, U+2011, U+2012, U+2013, U+2014 and U+2212 with `-`.
-4. Remove one trailing `.`, unless the docket ends in `Orig.`.
+1. Trim surrounding whitespace, and replace U+2010, U+2011, U+2012, U+2013, U+2014 and U+2212 with `-`.
+2. Remove a leading label, ignoring letter case: optionally one of the words `Docket`, `Case`, `Appeal`, `Appeals`, `Record`, `File`, `Gen.` or `General`, with an optional comma after it; then `No`, `Nos`, `Number` or `Numbers`, with an optional `.`; then an optional `,` or `:`; and the whitespace after the label. Other words before `No.` name a docket series and stay: `Civ. No. 15693` keeps `Civ. No.`, and `S. F. No. 16720` keeps `S. F. No.`.
+3. Remove each comma that has a digit before it and exactly three digits after it, followed by a non-digit or the end: `31,079` becomes `31079`.
+4. The docket lists several dockets when the label removed in step 2 was plural (`Nos.`, `Numbers`) or the docket contains `;`. Split it at each `;` and, under a plural label, also at each `,`, each `&` and each word `and`. The first non-empty item, with a label removed from it as in step 2, is the docket. If that item is only digits, and the last item is digits followed by whitespace and more text, that whitespace and text are appended to it: `Nos. 22 & 23 WAP 2015` gives `22 WAP 2015`. Every other item is another docket of the decision (section 11.1).
+5. Remove one trailing `.`, unless the docket ends in `Orig.`.
 
-An empty result means the decision has no docket (section 5.6).
+A result that is empty or has no digit means the decision has no docket (section 5.6).
+
+Known residue of these rules: an unlabelled list (`753, 763` in 500 Pa.) gives `753_763` under the `printed` profile; a hyphenated range (`Nos. 3493-3494`) stays whole; `Appeal No. E.D. Appeal Docket 1982`, printed without its number, gives `e.d.appealdocket1982`, a valid segment that no rule here can tell from a real docket.
 
 ### 5.2 Profile `scotus-ot1971`: Supreme Court, dockets from 1971-07-01
 
@@ -176,15 +179,16 @@ The cleaned docket MUST match, ignoring case, `^(\d):(\d{2})-([a-z]{1,4})-(\d{1,
 ### 5.5 Profile `printed`: state, territorial and other courts
 
 1. Lowercase the cleaned docket.
-2. Remove all whitespace.
-3. Replace each `:` and `/` with `_`.
-4. The result MUST match the `docket` rule and MUST NOT begin with `rpt.`.
+2. Replace each comma that has a digit before it and, after any whitespace, a digit after it with `_`; delete every other comma. `131, 1997` gives `131_1997`; `31 E.D. Appeal Docket, 1982` gives `31e.d.appealdocket1982`, the same segment as the same docket printed without the comma.
+3. Remove all whitespace.
+4. Replace each `:` and `/` with `_`.
+5. The result MUST match the `docket` rule and MUST NOT begin with `rpt.`.
 
 Letter case-type codes are part of the docket wherever they appear and are kept: Louisiana `2004-CA-1580` becomes `2004-ca-1580`; Mississippi `95-KA-01234-SCT` becomes `95-ka-01234-sct`.
 
 ### 5.6 Reporter fallback: `rpt.`
 
-When the court has a docket profile for the decision date, and the decision has no docket (the cleaned docket is empty or the source records none) or that profile rejects the docket it has, a producer MUST use the reporter fallback if the decision has a reporter citation, and MUST otherwise refuse (`no-docket` or `docket-profile`, section 12). This mostly affects historical Caselaw Access Project (CAP) cases whose scan carries no usable docket.
+When the court has a docket profile for the decision date, and the decision has no docket (the cleaned docket is empty or has no digit, or the source records none) or that profile rejects the docket it has, a producer MUST use the reporter fallback if the decision has a reporter citation, and MUST otherwise refuse (`no-docket` or `docket-profile`, section 12). This mostly affects historical Caselaw Access Project (CAP) cases whose scan carries no usable docket.
 
 The fallback replaces only the docket. It needs the same complete decision date as any other key (section 6), so it never yields a key for a decision dated only to the year or month.
 
@@ -201,7 +205,7 @@ slug        = ( LC / DIGIT ) *( LC / DIGIT / "-" )
 
 Example: 1 Mass. 1, decided 1804-03-01, gives `us/mass/rpt.1-mass-1/1804-03-01`.
 
-When several decisions begin on the same reporter page and share a decision date, the decision-level ordinal (section 7) separates them, in the order the reporter prints them (CAP's file ordinal: `-01`, `-02`).
+When a decision takes the fallback, its decision ordinal (section 7) is its position, in the order the reporter prints them (CAP's file ordinal: `-01`, `-02`), among all the decisions that begin on the same reporter page and share its decision date, whether or not they take the fallback themselves. The first is unmarked and the second takes `~2`, even when no decision on the page has the unmarked fallback key. Glover, printed second on 500 Pa. 524 after the docketed Kibler and decided the same day, is `us/pa/rpt.500-pa-524/1983-04-27~2`.
 
 A fallback key is **non-canonical**: it is deterministic, but it rests on a citation a publisher assigned after the fact, and the `rpt.` prefix marks that. If a docket number is later recovered, the producer mints the docket key and records the fallback key as `replaced-by` that key (section 11). The fallback key MUST NOT be deleted or reused.
 
@@ -219,7 +223,7 @@ A consumer that generates data in exemplar's formats is responsible for determin
 
 The first instance of anything is unmarked. Later instances take `~2`, `~3`, and so on, in decimal with no leading zero. `~0` and `~1` are invalid.
 
-- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
+- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Under the reporter fallback, the ordinal is counted as section 5.6 says. Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
 - **Part ordinal.** When the same role and the same author list appear twice in one decision, the second takes `~2`, in the order printed. The same author in two different roles is already unique (Gorsuch wrote both the opinion and a concurrence in Gutierrez-Brizuela v. Lynch).
 
 ## 8. Parts: roles and authors
@@ -271,6 +275,8 @@ The registry is built by `registry/build_courts.py` from a copy of courts-db's `
 This repository publishes no judge registry. Judge slugs come from a registry the consumer supplies and identifies by URI and version (section 10.3), such as one computed and published from the consumer's own corpus.
 
 Whatever its source, a judge registry used with this spec MUST meet these rules. Each entry has a slug, the judge's name, and the court codes the slug is registered for. A slug matches `author` (`^[a-z][a-z-]*$`; no digits, so a second Justice Harlan is `harlan-ii`). A slug identifies one judge within each court it is registered for; a registry MAY make slugs unique across all courts, and SHOULD give a judge who sat on several courts one slug for all of them. Slugs are never renamed, reused or deleted.
+
+An entry MAY list printed forms: the strings in which a source prints the judge's name in a byline, misprints and OCR errors included, each with the source it was seen in. A producer maps a byline to a slug only through an entry's name or printed forms, for the key's court; a byline that matches no entry, or more than one, is `unregistered-author`. A printed form is a fact about a source's text that a person has checked; a producer MUST NOT match a byline to a name by edit distance or any other approximation.
 
 ### 10.3 Pinning
 
@@ -360,6 +366,14 @@ While the version is 0.x, a minor version MAY break these rules (SemVer item 4).
 
 **0.2.0.** This version changes two things from 0.1.0, under SemVer item 4: a key-shaped alias is written as a key reference, `crk:` followed by the key, and the bare key-shaped string is no longer an alias (sections 2.6 and 11.1); and the court registry's URI is an absolute URL that names the release tag (section 10.3). No key changes: the same facts compute the same key, and every valid key stays valid.
 
+**0.3.0.** This version changes three things from 0.2.0, under SemVer item 4, as ruled on codexpublicus/exemplar#12, #13 and #14 (2026-10-23):
+
+- docket cleaning (section 5.1) removes more label forms, ignoring letter case, removes thousands separators, and keys a list of dockets by its first; the `printed` profile (section 5.5) turns a comma between digits into `_` and deletes every other comma. The same printed docket can give a different segment than under 0.2.0, and a decision that took the reporter fallback under 0.2.0 can now have a docket key;
+- a fallback decision's ordinal counts every decision that begins on its page and shares its date, whether or not that decision takes the fallback (sections 5.6, 7), which settles a reading 0.2.0 left open;
+- a judge registry entry MAY list printed forms of the judge's name, matched exactly (section 10.2), which adds keys for parts that 0.2.0 refused and changes none.
+
+A producer that minted a key under 0.2.0 that these rules compute differently records the 0.2.0 key `replaced-by` the 0.3.0 key (section 11.2). Every valid key stays valid.
+
 **Registry versions.** The court registry has its own CalVer version (section 10.3). Adding courts, or assigning an existing profile to a court or date range that had none, is a new registry version and not a new spec version. A release tag of this repository pins both.
 
 ## 14. Test vectors
@@ -372,6 +386,7 @@ While the version is 0.x, a minor version MAY break these rules (SemVer item 4).
 | `reject.jsonl` | strings a validator rejects, with the error class (section 2.5) |
 | `compute.jsonl` | facts to key, or to a refusal class (section 12) |
 | `docket.jsonl` | printed docket to docket segment, per profile |
+| `byline.jsonl` | the name a byline prints to a judge slug, through the judge registry's names and printed forms |
 | `alias.jsonl` | printed identifier to alias string, and alias to key |
 
 Every vector records its `provenance`:
