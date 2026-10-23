@@ -1,5 +1,5 @@
 {
-  "profile": "0.2.0",
+  "profile": "0.3.0",
   "document": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml",
   "work": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20",
   "expression": "crk:us/pa/59e.d.misc.dkt.1983/1983-04-20",
@@ -30,7 +30,7 @@
       "pages": [
         {
           "number": "511",
-          "eId": "opinion_per-curiam",
+          "eId": "opinion_per-curiam__p_1",
           "scan": 561
         }
       ]
@@ -126,15 +126,6 @@
         96
       ]
     },
-    "BL_561.4": {
-      "scan": 561,
-      "rect": [
-        230,
-        400,
-        289,
-        34
-      ]
-    },
     "BL_561.3": {
       "scan": 561,
       "rect": [
@@ -142,6 +133,15 @@
         331,
         149,
         33
+      ]
+    },
+    "BL_561.4": {
+      "scan": 561,
+      "rect": [
+        230,
+        400,
+        289,
+        34
       ]
     },
     "BL_561.5": {

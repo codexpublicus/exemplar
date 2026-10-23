@@ -117,6 +117,11 @@ class TestCompute:
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
             assert crk_check.parse(key)["fallback"] is v["fallback"]
+            if "aliases" in v:
+                aliases = crk_check.consolidated_aliases(v["facts"], COURTS, key)
+                assert aliases == v["aliases"]
+                for alias in aliases:
+                    assert abnf_accepts("crk-ref", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
                 crk_check.compute(v["facts"], COURTS, JUDGES)
@@ -136,6 +141,25 @@ class TestDocket:
             with pytest.raises(crk_check.Refusal) as refusal:
                 crk_check.docket_segment(COURTS, v["court"], v["printed"])
             assert refusal.value.args[0] == v["error"]
+
+
+class TestByline:
+    """byline.jsonl: a byline's printed name maps to a slug only through a name or printed form."""
+
+    @pytest.mark.parametrize("v", load("byline.jsonl"), ids=ids("byline.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        if "author" in v:
+            assert crk_check.author_for(v["printed"], v["court"], JUDGES) == v["author"]
+            assert abnf_accepts("author", v["author"])
+        else:
+            with pytest.raises(crk_check.Refusal) as refusal:
+                crk_check.author_for(v["printed"], v["court"], JUDGES)
+            assert refusal.value.args[0] == v["error"]
+
+    def test_printed_forms_name_their_source(self) -> None:
+        for slug, entry in JUDGES.items():
+            for form in entry.get("printed", []):
+                assert form["form"].strip() and form["source"].strip(), slug
 
 
 class TestAlias:
@@ -197,6 +221,7 @@ def _vector_courts() -> list[tuple[str, str]]:
         if "key" in v:
             found.append((v["id"], crk_check.parse(v["key"])["court"]))
     found += [(v["id"], v["court"]) for v in load("docket.jsonl")]
+    found += [(v["id"], v["court"]) for v in load("byline.jsonl")]
     found += [(v["id"], crk_check.parse(v["key"])["court"]) for v in load("parse.jsonl")]
     for v in load("alias.jsonl"):
         keys = v.get("resolves_to", []) + (

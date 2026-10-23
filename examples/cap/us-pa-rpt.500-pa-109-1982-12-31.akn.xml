@@ -30,41 +30,41 @@
         <FRBRManifestation>
           <FRBRthis value="crk:us/pa/rpt.500-pa-109/1982-12-31.akn.xml"/>
           <FRBRuri value="crk:us/pa/rpt.500-pa-109/1982-12-31.akn.xml"/>
-          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRdate date="2026-10-23" name="generated"/>
           <FRBRauthor href="#org_exemplar"/>
           <FRBRformat value="application/akn+xml"/>
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
+        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="hutchinson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#hutchinson" showAs="Hutchinson"/>
-        <TLCPerson eId="mcdermott" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#mcdermott" showAs="McDermott"/>
-        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
+        <TLCPerson eId="hutchinson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#hutchinson" showAs="Hutchinson"/>
+        <TLCPerson eId="mcdermott" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#mcdermott" showAs="McDermott"/>
+        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
         <TLCReference eId="printing_500-pa-109" name="printing" href="cite:500-pa-109" showAs="500 Pa. 109"/>
         <TLCReference eId="printing_454-a2d-985" name="printing" href="cite:454-a2d-985" showAs="454 A.2d 985"/>
         <TLCReference eId="source_cap" name="source" href="cap:pa/500/0109-01" showAs="Caselaw Access Project, pa/500/0109-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_500-pa-109" type="official" reporter="Pa." volume="500" firstPage="109" lastPage="120" text="transcribed">
           <cx:scans source="#source_cap" volume="pa/500" first="159" last="170"/>
         </cx:printing>
-        <cx:printing ref="#printing_454-a2d-985" type="parallel" reporter="A.2d" volume="454" firstPage="985" text="withheld"/>
+        <cx:printing ref="#printing_454-a2d-985" type="parallel" reporter="A.2d" volume="454" firstPage="985" text="withheld" cx:provenance="engine-output"/>
         <cx:source ref="#source_cap" agent="#org_cap" record="cap:pa/500/0109-01" caseId="1781127" lastUpdated="2024-02-27T23:49:15.316484+00:00" sha256="c33bfa4f0b495e8595663d9ece2b2a5e132cd094a61dc52f9923799905eba044" method="ocr">
           <cx:confidence value="0.745" scope="case" basis="CAP analysis.ocr_confidence"/>
         </cx:source>
       </proprietary>
     </meta>
     <header>
-      <p eId="header__p_1" class="headmatter" cx:origin="unknown" cx:blocks="BL_159.8">454 A.2d 985</p>
+      <p eId="header__p_1" class="citation" cx:origin="unknown" cx:blocks="BL_159.8">454 A.2d 985</p>
       <p eId="header__p_2" class="parties" cx:origin="unknown" cx:blocks="BL_159.9"><docTitle>COMMONWEALTH of Pennsylvania, Appellant, v. Dale BARRY.</docTitle></p>
-      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_159.10"><courtType refersTo="#court_pa">Supreme Court of Pennsylvania.</courtType></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_159.10"><courtType refersTo="#court_pa" cx:provenance="engine-output">Supreme Court of Pennsylvania.</courtType></p>
       <p eId="header__p_4" class="otherdate" cx:origin="unknown" cx:blocks="BL_159.11">Argued Oct. 18, 1982.</p>
       <p eId="header__p_5" class="decisiondate" cx:origin="unknown" cx:blocks="BL_159.12"><docDate date="1982-12-31">Decided Dec. 31, 1982.</docDate></p>
       <p eId="header__p_6" class="otherdate" cx:origin="unknown" cx:blocks="BL_159.13">Reargument Denied Feb. 1, 1983.</p>
@@ -75,9 +75,9 @@
     <judgmentBody>
       <motivation>
         <hcontainer name="opinion" eId="opinion_opinion.roberts" cx:part="us/pa/rpt.500-pa-109/1982-12-31/opinion.roberts" cx:authors="roberts" cx:sourceType="majority">
-          <heading cx:blocks="BL_161.8"><opinion by="#roberts">ROBERTS, Justice.</opinion></heading>
+          <heading><span eId="opinion_opinion.roberts__p_1" cx:blocks="BL_161.7">OPINION OF THE COURT</span></heading>
+          <subheading cx:blocks="BL_161.8"><opinion by="#roberts">ROBERTS, Justice.</opinion></subheading>
           <content>
-            <p eId="opinion_opinion.roberts__p_1" cx:blocks="BL_161.7">OPINION OF THE COURT</p>
             <p eId="opinion_opinion.roberts__p_2" cx:blocks="BL_161.9">Following a trial by jury, appellee Dale Barry was found guilty of murder of the second degree, robbery, theft, and conspiracy in connection with the stabbing death of Oliver Jack Schugardt and the theft of Schugardt’s car in Downingtown, Chester County, on February 5, 1977. At trial, over defense objection, the Commonwealth introduced into evidence an inculpatory statement that appellee had given to police following his arrest in Niskayuna, New York on February 8, 1977. On post-trial motions, the Court of Common Pleas of Chester County sitting en banc entered an order granting a new trial on the ground that the statement had been erroneously admitted.<authorialNote eId="opinion_opinion.roberts__authorialNote_1" marker="1" placement="bottom"><p eId="opinion_opinion.roberts__authorialNote_1__p_1" cx:blocks="BL_161.11">. Because of its ruling, the court did not reach the remainder of appellee’s claims of error.</p></authorialNote> Appellant, District Attorney’s Office of Chester County, filed this direct appeal. We affirm.<authorialNote eId="opinion_opinion.roberts__authorialNote_2" marker="2" placement="bottom"><p eId="opinion_opinion.roberts__authorialNote_2__p_1" cx:blocks="BL_161.12 BL_162.2">. This appeal was filed prior to the amendment of 42 Pa.C.S. § 722, which transferred jurisdiction of direct appeals in most homicide <eop refersTo="#printing_500-pa-109" number="112" cx:scan="162" cx:provenance="engine-output"/>matters from this Court to the Superior Court. In addition, a separate appeal was filed in the Superior Court seeking review of the order of the court of common pleas as it relates to the charges of robbery, theft and conspiracy. That appeal was transferred to this Court and consolidated with the appeal relating to the charge of homicide.</p></authorialNote></p>
             <p eId="opinion_opinion.roberts__p_3" cx:blocks="BL_161.10 BL_162.1">Writing for the court en banc in support of its order granting a new trial, the trial judge determined that the <eop refersTo="#printing_500-pa-109" number="112" cx:scan="162" cx:provenance="engine-output"/>admission of the challenged statement at trial had been erroneous on two grounds. First, appellee, who was sixteen years of age at the time of his inculpatory statement, had not been provided an opportunity to consult with an adult interested in his welfare prior to waiving his <i>Miranda </i>rights, see <i>Commonwealth v. McCutchen, </i><ref href="cap:pa/463/0090-01" cx:cite="463 Pa. 90">463 Pa. 90</ref>, <ref href="cite:343-a2d-669" cx:cite="343 A.2d 669">343 A.2d 669</ref> (1975); second, the Commonwealth had not introduced evidence from which it could be concluded under the “totality of the circumstances” that appellee had understood and knowingly and voluntarily waived his <i>Miranda </i>rights. See <i>Fare v. Michael C., </i><ref href="cap:us/442/0707-01" cx:cite="442 U.S. 707">442 U.S. 707</ref>, <ref href="cap:us/442/0707-01" cx:cite="442 U.S. 707">99 S.Ct. 2560</ref>, <ref href="cap:us/442/0707-01" cx:cite="442 U.S. 707">61 L.Ed.2d 197</ref> (1979).</p>
             <p eId="opinion_opinion.roberts__p_4" cx:blocks="BL_162.5">Appellant challenges both of these grounds as a basis for a new trial. Because appellee was arrested and questioned by New York police, who were not obliged under New York law to provide appellee with an opportunity to consult with an interested adult, appellant argues that the failure to provide such an opportunity should not bar admission of the statement. Appellant also argues that even if the lack of an opportunity to consult with an interested adult should have resulted in the statement’s inadmissibility at trial, this Court should abolish the “interested-adult” rule. We do not address these arguments, because appellant has not established its threshold challenge to the court’s determination that the evidence fails to establish a valid waiver of appellee’s <i>Miranda </i>rights under the “totality of the circumstances.”</p>
@@ -96,8 +96,8 @@
             <p eId="opinion_opinion.roberts__p_17" cx:blocks="BL_165.6 BL_166.1">The Commonwealth attempts to cure deficiencies in the trial record noted by the court en banc through evidence presented at bail hearings conducted both before and after appellee’s trial. The Commonwealth’s reliance on such evi<eop refersTo="#printing_500-pa-109" number="116" cx:scan="166" cx:provenance="engine-output"/>dence, however, is misplaced. In order to have appellee’s statement properly admitted into evidence, the Commonwealth had the “heavy burden” of demonstrating to the trial court that appellee’s waiver of his privilege against self-incrimination and his right to retained or appointed counsel constituted “an intentional relinquishment or abandonment of a known right or privilege.” <i>Johnson v. Zerbst, </i><ref href="cap:us/304/0458-01" cx:cite="304 U.S. 458">304 U.S. 458</ref>, 464, <ref href="cap:us/304/0458-01" cx:cite="304 U.S. 458">58 S.Ct. 1019</ref>, 1023, <ref href="cap:us/304/0458-01" cx:cite="304 U.S. 458">82 L.Ed. 1461</ref> (1938); <i>Miranda v. Arizona, </i>supra, 384 U.S. at 475, 86 S.Ct. at 1628; <i>Fare v. Michael C., </i>supra, <ref href="cap:us/442/0707-01" cx:cite="442 U.S. 707">442 U.S. at 724</ref>, 99 S.Ct. at 2571. See generally <i>Commonwealth v. Tyler, </i><ref href="cap:pa/468/0193-01" cx:cite="468 Pa. 193">468 Pa. 193</ref>, <ref href="cap:pa/468/0193-01" cx:cite="468 Pa. 193">360 A.2d 617</ref> (1976); <i>Commonwealth v. Barnette, </i><ref href="cap:pa/445/0288-01" cx:cite="445 Pa. 288">445 Pa. 288</ref>, <ref href="cite:285-a2d-141" cx:cite="285 A.2d 141">285 A.2d 141</ref> (1971). Moreover, even if the evidence presented at the bail hearings had been presented to the trial court, that evidence — the fact that appellee had completed the ninth grade of school and had once been adjudicated a delinquent — would not have been sufficient to establish that appellee’s waiver of his <i>Miranda </i>rights was knowing and intelligent. Unlike in <i>Fare </i>v. <i>Michael C., </i>supra, where “the police officers conducting the interrogation took care to ensure that [the accused] understood his rights . . . and ascertained that [the accused] understood those rights,” <ref href="cap:us/442/0707-01" cx:cite="442 U.S. 707">442 U.S. at 726</ref>, 99 S.Ct. at 2572, on this record it cannot be concluded that appellee understood the <i>Miranda </i>rights as written on the form that he was told to read or that he understood the consequences of signing his name under the “Waiver of Rights” portion of the form. As Detective Pasquariello testified, appellee was simply handed the form and told by the police that “he would have to read it and sign that waiver of rights.”</p>
             <p eId="opinion_opinion.roberts__p_18" cx:blocks="BL_166.4">As the record supports the determination of the court en banc that appellee is entitled to a new trial, the order of the Court of Common Pleas of Chester County is affirmed.</p>
             <p eId="opinion_opinion.roberts__p_19" cx:blocks="BL_166.5">Order affirmed.</p>
-            <p eId="opinion_opinion.roberts__p_20" class="judges" cx:blocks="BL_166.6">McDERMOTT, J., files a dissenting opinion in which LARSEN and HUTCHINSON, JJ., join.</p>
-            <p eId="opinion_opinion.roberts__p_21" class="judges" cx:blocks="BL_166.7">HUTCHINSON, J., files a dissenting opinion in which LARSEN and McDERMOTT, JJ., join.</p>
+            <p eId="opinion_opinion.roberts__p_20" class="judges" cx:origin="unknown" cx:blocks="BL_166.6">McDERMOTT, J., files a dissenting opinion in which LARSEN and HUTCHINSON, JJ., join.</p>
+            <p eId="opinion_opinion.roberts__p_21" class="judges" cx:origin="unknown" cx:blocks="BL_166.7">HUTCHINSON, J., files a dissenting opinion in which LARSEN and McDERMOTT, JJ., join.</p>
           </content>
         </hcontainer>
         <hcontainer name="dissent" eId="opinion_dissent.mcdermott" cx:part="us/pa/rpt.500-pa-109/1982-12-31/dissent.mcdermott" cx:authors="mcdermott" cx:sourceType="dissent">
@@ -115,7 +115,7 @@
             <p eId="opinion_dissent.mcdermott__p_10" cx:blocks="BL_169.4">Furthermore, even applying the totality of the circumstances test to the instant case, I would uphold the decision of the suppression court admitting appellee’s statement.</p>
             <p eId="opinion_dissent.mcdermott__p_11" cx:blocks="BL_169.5">The suppression judge concluded that appellee’s waiver of his <i>Miranda </i>rights was knowing and intelligent and voluntary. The record shows that appellant was twice informed of his rights; read and signed a written waiver; acknowledged that he had read each line of the waiver form; and read, corrected, and initialed each page of his statement. The conclusion of the suppression judge had ample support in the record. Under the totality of the circumstances approach, the court <i>en banc </i>had no valid basis for disturbing the judgment of the suppression court. Appellee’s statement was properly admitted for consideration by the jury in its search for the truth.</p>
             <p eId="opinion_dissent.mcdermott__p_12" cx:blocks="BL_169.6"><i>Per se, </i>prophylactic rules, in almost every instance foreclose the truth of a case. They are the classics of “technicality,” a galvanic, judicial punch board; wonderful for arithmetic, “mechanical” jurisprudence. If people were digits and cases geometric, if the totality of the circumstances were all squares and circles, such rules might have provided a shorthand. They have proved a failure of justice, however, in more instances than they ever were designed to serve.</p>
-            <p eId="opinion_dissent.mcdermott__p_13" class="judges" cx:blocks="BL_169.7">LARSEN and HUTCHINSON, JJ., join in this dissenting opinion.</p>
+            <p eId="opinion_dissent.mcdermott__p_13" class="judges" cx:origin="unknown" cx:blocks="BL_169.7">LARSEN and HUTCHINSON, JJ., join in this dissenting opinion.</p>
           </content>
         </hcontainer>
         <hcontainer name="dissent" eId="opinion_dissent.hutchinson" cx:part="us/pa/rpt.500-pa-109/1982-12-31/dissent.hutchinson" cx:authors="hutchinson" cx:sourceType="dissent">
@@ -125,7 +125,7 @@
             <p eId="opinion_dissent.hutchinson__p_2" cx:blocks="BL_169.10 BL_170.1">I join the dissenting opinion of Mr. Justice McDermott. I also wish to add that, unlike silence in the face of <i>Miranda </i>warnings, an express written waiver is sufficient to meet <eop refersTo="#printing_500-pa-109" number="120" cx:scan="170" cx:provenance="engine-output"/>the Commonwealth’s burden of proving a waiver of <i>Miranda </i>rights. Contrary to the majority position, <i>North Carolina v. </i>Butler, <ref href="cap:us/441/0369-01" cx:cite="441 U.S. 369">441 U.S. 369</ref>, <ref href="cap:us/441/0369-01" cx:cite="441 U.S. 369">99 S.Ct. 1755</ref>, <ref href="cap:us/441/0369-01" cx:cite="441 U.S. 369">60 L.Ed.2d 286</ref> (1979) supports this view. In that case, the United States Supreme Court neither held nor said that a signature on a waiver form could never by itself satisfy the <i>Miranda </i>requirement that the defendant make a knowing, intelligent and voluntary waiver of his right to remain silent. In fact, in <i>Butler </i>the United States Supreme Court said</p>
             <block name="blockquote" eId="opinion_dissent.hutchinson__p_3" cx:blocks="BL_170.4">[a]n express written or oral statement of waiver of the right to remain silent or of the right to counsel is usually strong proof of the validity of that waiver, but is not inevitably either necessary or sufficient to establish waiver.</block>
             <p eId="opinion_dissent.hutchinson__p_4" cx:blocks="BL_170.5"><i><ref href="cap:us/441/0369-01" cx:cite="441 U.S. 369">Id. </ref></i><ref href="cap:us/441/0369-01" cx:cite="441 U.S. 369">at 373</ref>, 99 S.Ct. at 1757. This statement, to my mind, leaves the decision as to whether a written waiver is valid within the sound discretion of the trial court. Since the suppression court had sufficient basis for finding a valid waiver, I believe the trial court <i>en banc </i>and the Superior Court erred in reversing the suppression court. I would, therefore, reverse.</p>
-            <p eId="opinion_dissent.hutchinson__p_5" class="judges" cx:blocks="BL_170.6">LARSEN and McDERMOTT, JJ., join in this dissenting opinion.</p>
+            <p eId="opinion_dissent.hutchinson__p_5" class="judges" cx:origin="unknown" cx:blocks="BL_170.6">LARSEN and McDERMOTT, JJ., join in this dissenting opinion.</p>
           </content>
         </hcontainer>
       </motivation>

@@ -31,41 +31,41 @@
         <FRBRManifestation>
           <FRBRthis value="crk:us/pa/1428/1983-02-01.akn.xml"/>
           <FRBRuri value="crk:us/pa/1428/1983-02-01.akn.xml"/>
-          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRdate date="2026-10-23" name="generated"/>
           <FRBRauthor href="#org_exemplar"/>
           <FRBRformat value="application/akn+xml"/>
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
+        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="flaherty" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#flaherty" showAs="Flaherty"/>
-        <TLCPerson eId="larsen" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#larsen" showAs="Larsen"/>
-        <TLCPerson eId="nix" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#nix" showAs="Nix"/>
+        <TLCPerson eId="flaherty" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#flaherty" showAs="Flaherty"/>
+        <TLCPerson eId="larsen" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#larsen" showAs="Larsen"/>
+        <TLCPerson eId="nix" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#nix" showAs="Nix"/>
         <TLCReference eId="printing_500-pa-256" name="printing" href="cite:500-pa-256" showAs="500 Pa. 256"/>
         <TLCReference eId="printing_455-a2d-1180" name="printing" href="cite:455-a2d-1180" showAs="455 A.2d 1180"/>
         <TLCReference eId="source_cap" name="source" href="cap:pa/500/0256-01" showAs="Caselaw Access Project, pa/500/0256-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_500-pa-256" type="official" reporter="Pa." volume="500" firstPage="256" lastPage="267" text="transcribed">
           <cx:scans source="#source_cap" volume="pa/500" first="306" last="317"/>
         </cx:printing>
-        <cx:printing ref="#printing_455-a2d-1180" type="parallel" reporter="A.2d" volume="455" firstPage="1180" text="withheld"/>
+        <cx:printing ref="#printing_455-a2d-1180" type="parallel" reporter="A.2d" volume="455" firstPage="1180" text="withheld" cx:provenance="engine-output"/>
         <cx:source ref="#source_cap" agent="#org_cap" record="cap:pa/500/0256-01" caseId="1781149" lastUpdated="2024-02-27T23:49:15.316484+00:00" sha256="92fe1e77fbb8123001f9a103cdbfcf0cbcecaffae99bb9233fe33d385f886e5e" method="ocr">
           <cx:confidence value="0.781" scope="case" basis="CAP analysis.ocr_confidence"/>
         </cx:source>
       </proprietary>
     </meta>
     <header>
-      <p eId="header__p_1" class="headmatter" cx:origin="unknown" cx:blocks="BL_306.7">455 A.2d 1180</p>
+      <p eId="header__p_1" class="citation" cx:origin="unknown" cx:blocks="BL_306.7">455 A.2d 1180</p>
       <p eId="header__p_2" class="parties" cx:origin="unknown" cx:blocks="BL_306.8"><docTitle>COMMONWEALTH ex rel. Ignatius ZAFFARANO and Marion Zaffarano, Appellees, v. Richard GENARO, Appellant.</docTitle></p>
-      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_306.9"><courtType refersTo="#court_pa">Supreme Court of Pennsylvania.</courtType></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_306.9"><courtType refersTo="#court_pa" cx:provenance="engine-output">Supreme Court of Pennsylvania.</courtType></p>
       <p eId="header__p_4" class="otherdate" cx:origin="unknown" cx:blocks="BL_306.10">Argued Dee. 6, 1982.</p>
       <p eId="header__p_5" class="decisiondate" cx:origin="unknown" cx:blocks="BL_306.11"><docDate date="1983-02-01">Decided Feb. 1, 1983.</docDate></p>
       <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_307.11"><eop refersTo="#printing_500-pa-256" number="257" cx:scan="307" cx:provenance="engine-output"/>Mark E. Weand, Steven E. Speece, Ambler, for appellant.</p>
@@ -75,9 +75,9 @@
     <judgmentBody>
       <motivation>
         <hcontainer name="opinion" eId="opinion_opinion.larsen" cx:part="us/pa/1428/1983-02-01/opinion.larsen" cx:authors="larsen" cx:sourceType="majority">
-          <heading cx:blocks="BL_307.15"><opinion by="#larsen">LARSEN, Justice.</opinion></heading>
+          <heading><span eId="opinion_opinion.larsen__p_1" cx:blocks="BL_307.14">OPINION</span></heading>
+          <subheading cx:blocks="BL_307.15"><opinion by="#larsen">LARSEN, Justice.</opinion></subheading>
           <content>
-            <p eId="opinion_opinion.larsen__p_1" cx:blocks="BL_307.14">OPINION</p>
             <p eId="opinion_opinion.larsen__p_2" cx:blocks="BL_307.16 BL_308.1">On April 10, 1980, appellees Ignatius and Marion Zaffarano filed a petition for visitation in the Court of Common Pleas of Montgomery County. The petition sought an order granting appellees “visitation and temporary custody rights” with respect to their granddaughter, Shannon Genaro. After a hearing, the court of common pleas dismissed the petition. On appeal, the Superior Court reversed and re<eop refersTo="#printing_500-pa-256" number="258" cx:scan="308" cx:provenance="engine-output"/>manded the case for the establishment of a partial custody schedule for appellees with their granddaughter. <i>Commonwealth ex rel. Zaffarano v. Genaro, </i><ref href="cap:pa-super/286/0436-01" cx:cite="286 Pa. Super. 436">286 Pa.Super. 436</ref>, <ref href="cap:pa-super/286/0436-01" cx:cite="286 Pa. Super. 436">429 A.2d 17</ref> (1981). We granted allocatur and we now reverse..</p>
             <p eId="opinion_opinion.larsen__p_3" cx:blocks="BL_308.4">Shannon Genaro was born on June 4, 1978, the daughter of appellant, Richard Genaro, and appellees’ daughter, Carmella Genaro. On September 16, 1979, Carmella was critically injured in an automobile accident.<authorialNote eId="opinion_opinion.larsen__authorialNote_1" marker="1" placement="bottom"><p eId="opinion_opinion.larsen__authorialNote_1__p_1" cx:blocks="BL_308.7">. Appellant and Shannon have been living with appellant’s parents since this time.</p></authorialNote> She remained in a coma from the date of the accident until her death on December 9, 1979.</p>
             <p eId="opinion_opinion.larsen__p_4" cx:blocks="BL_308.5">Prior to the accident, appellees saw Shannon frequently. At the hearing, appellee Ignatius Zaffarano testified that he saw Shannon five to seven days a week prior to Carmella’s hospitalization.<authorialNote eId="opinion_opinion.larsen__authorialNote_2" marker="2" placement="bottom"><p eId="opinion_opinion.larsen__authorialNote_2__p_1" cx:blocks="BL_308.8">. Appellee, Marion Zaffarano was not present at the hearing and did not testify. The record reveals that she had been under the care of a doctor for severe depression since the death of Carmella.</p></authorialNote> During these visits he and Carmella would take Shannon to get ice cream, to see the ducks at a nearby pond, to the airport, or to the store. Appellees also babysat for Shannon and kept her overnight on several occasions when her parents went out for the evening. A single visit took place during the six weeks following the accident. Thereafter, during November, 1979, December, 1979, and January, 1980, appellees saw Shannon two or three times each week. Typically, these visits were initiated by a telephone call from appellees to appellant, following which appellant would leave Shannon at appellees’ home for a few hours.<authorialNote eId="opinion_opinion.larsen__authorialNote_3" marker="3" placement="bottom"><p eId="opinion_opinion.larsen__authorialNote_3__p_1" cx:blocks="BL_308.9">. Appellees’ daughter, Donna Zaffarano, testified that on at least one of these occasions, appellant asked appellees to hide their pictures of Carmella while Shannon was in the house.</p></authorialNote></p>
@@ -112,11 +112,11 @@
             <block name="blockquote" eId="opinion_opinion.larsen__p_33" cx:blocks="BL_315.6">Hopefully, bad feelings will cease to exist between the parties, for that certainly would be in the child’s best interests. Since we cannot <i>order </i>such a result, the child’s best interests will be furthered by denying visitation to appellants.</block>
             <p eId="opinion_opinion.larsen__p_34" cx:blocks="BL_315.7"><i>Wick v. Wick, </i><ref href="cap:pa-super/266/0104-01" cx:cite="266 Pa. Super. 104">266 Pa.Super. 104</ref>, 107, <ref href="cap:pa-super/266/0104-01" cx:cite="266 Pa. Super. 104">403 A.2d 115</ref>, 116 (1979) (emphasis in original).</p>
             <p eId="opinion_opinion.larsen__p_35" cx:blocks="BL_315.8">The order of the Superior Court is reversed and the order of the Court of Common Pleas of Montgomery County is reinstated.</p>
-            <p eId="opinion_opinion.larsen__p_36" class="judges" cx:blocks="BL_316.3"><eop refersTo="#printing_500-pa-256" number="266" cx:scan="316" cx:provenance="engine-output"/>O’BRIEN, Former C.J., did not participate in the decision of this case.</p>
-            <p eId="opinion_opinion.larsen__p_37" class="judges" cx:blocks="BL_316.4">ROBERTS, C.J., and McDERMOTT, J., join in the majority-</p>
-            <p eId="opinion_opinion.larsen__p_38" class="judges" cx:blocks="BL_316.5">FLAHERTY, J., joins Order and files concurring opinion.</p>
-            <p eId="opinion_opinion.larsen__p_39" class="judges" cx:blocks="BL_316.6">HUTCHINSON, J., also joins Order and joins with Justice Flaherty’s concurring opinion.</p>
-            <p eId="opinion_opinion.larsen__p_40" class="judges" cx:blocks="BL_316.7">NIX, J., files a dissenting opinion.</p>
+            <p eId="opinion_opinion.larsen__p_36" class="judges" cx:origin="unknown" cx:blocks="BL_316.3"><eop refersTo="#printing_500-pa-256" number="266" cx:scan="316" cx:provenance="engine-output"/>O’BRIEN, Former C.J., did not participate in the decision of this case.</p>
+            <p eId="opinion_opinion.larsen__p_37" class="judges" cx:origin="unknown" cx:blocks="BL_316.4">ROBERTS, C.J., and McDERMOTT, J., join in the majority-</p>
+            <p eId="opinion_opinion.larsen__p_38" class="judges" cx:origin="unknown" cx:blocks="BL_316.5">FLAHERTY, J., joins Order and files concurring opinion.</p>
+            <p eId="opinion_opinion.larsen__p_39" class="judges" cx:origin="unknown" cx:blocks="BL_316.6">HUTCHINSON, J., also joins Order and joins with Justice Flaherty’s concurring opinion.</p>
+            <p eId="opinion_opinion.larsen__p_40" class="judges" cx:origin="unknown" cx:blocks="BL_316.7">NIX, J., files a dissenting opinion.</p>
           </content>
         </hcontainer>
         <hcontainer name="concurrence" eId="opinion_concurrence.flaherty" cx:part="us/pa/1428/1983-02-01/concurrence.flaherty" cx:authors="flaherty" cx:sourceType="concurrence">
@@ -124,7 +124,7 @@
           <content>
             <p eId="opinion_concurrence.flaherty__p_1" cx:blocks="BL_316.9">concurring.</p>
             <p eId="opinion_concurrence.flaherty__p_2" cx:blocks="BL_316.10">I join, but write separately to disagree with the reference in the opinion authored by Mr. Justice Larsen to a “right” favoring uninterrupted parental custody. Reference to “rights” favoring parents over non-parents serves only to becloud the ultimate concern of the child’s well-being, and has been relegated to the past as a basis of inquiry. <i>Albright v. Commonwealth, </i><ref href="cap:pa/491/0320-01" cx:cite="491 Pa. 320">491 Pa. 320</ref>, 328, <ref href="cap:pa/491/0320-01" cx:cite="491 Pa. 320">421 A.2d 157</ref>, 161 (1980). As stated in my concurring opinion in <i>Ellerbe v. Hooks, </i><ref href="cap:pa/490/0363-01" cx:cite="490 Pa. 363">490 Pa. 363</ref>, 373-374, <ref href="cap:pa/490/0363-01" cx:cite="490 Pa. 363">416 A.2d 512</ref>, 517 (1980), the custody inquiry is best conducted without reference to “rights” or “presumptions”, while focusing only upon “the determination of what affiliation will best serve the child’s interests, including physical, emotional intellectual, moral, and spiritual well-being.”</p>
-            <p eId="opinion_concurrence.flaherty__p_3" class="judges" cx:blocks="BL_316.11">HUTCHINSON, J., joins this concurring opinion.</p>
+            <p eId="opinion_concurrence.flaherty__p_3" class="judges" cx:origin="unknown" cx:blocks="BL_316.11">HUTCHINSON, J., joins this concurring opinion.</p>
           </content>
         </hcontainer>
         <hcontainer name="dissent" eId="opinion_dissent.nix" cx:part="us/pa/1428/1983-02-01/dissent.nix" cx:authors="nix" cx:sourceType="dissent">

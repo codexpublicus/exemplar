@@ -36,7 +36,7 @@ Consumers pin a release tag. Releases follow semantic versioning: a change to ho
 
 ## Schematron rules and the viewer sidecar
 
-`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.2.0 text, which takes its option (a), and check nothing it leaves open.
+`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.3.0 text, which takes its option (a), and check nothing it leaves open.
 
 `schema/sidecar.schema.json` is the JSON Schema for the viewer's sidecar, the index the viewer loads beside a document (profile section 16.3): the keys, the parts, each printing's page markers with the eId they sit in, and each scan block's page and bounding box from CAP's `data-blocks`. A sidecar is named after its document (`{stem}.sidecar.json` beside `{stem}.akn.xml`), and everything in it except the bounding boxes must agree with the document.
 
@@ -83,7 +83,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.2.0 (draft), with court registry 2026.10.18; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.2.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.2.0`, which doesn't exist yet.
+Early. Nothing here is stable yet. The court record key spec is at 0.3.0 (draft), with court registry 2026.10.18; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.3.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.3.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
@@ -93,7 +93,7 @@ uv run pytest
 
 or, with mise, `mise run check` (everything CI runs) and `mise run validate [PATH ...]` (the reference validator).
 
-The checks read the ABNF and the regex straight out of the spec, so a grammar change that the vectors don't follow fails. They also validate `registry/courts.json` against its schema, rebuild it from the vendored courts-db snapshot and compare, check the snapshot against its SHA-256 pin, and check that every court code a vector resolves is in the registry.
+The checks read the ABNF and the regex straight out of the spec, so a grammar change that the vectors don't follow fails. They check the CAP source-mapping vectors (`vectors/akn-profile/cap-mapping.jsonl`) against a reading of the profile's mappings for roles, citation links and scan pages. They also validate `registry/courts.json` against its schema, rebuild it from the vendored courts-db snapshot and compare, check the snapshot against its SHA-256 pin, and check that every court code a vector resolves is in the registry.
 
 For the Akoma Ntoso profile, they validate every `examples/**/*.akn.xml` against the vendored Akoma Ntoso 1.0 schema (after checking its files against their pins), check each example's work, expression and part URIs against the court record key rules, and check that the example quoted in the profile is identical to `examples/minimal/`.
 

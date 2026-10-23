@@ -56,6 +56,7 @@ HEADER_CLASSES = {
     "posture",
     "arguments",
     "statement",
+    "citation",
     "headmatter",
 }
 
@@ -142,6 +143,14 @@ def cite_alias(cite: str) -> str:
     return f"cite:{volume}-{slug(reporter)}-{page}"
 
 
+def try_cite_alias(cite: str) -> str | None:
+    """The cite: alias of a citation, or None when it isn't '{volume} {reporter} {page}'."""
+    try:
+        return cite_alias(cite)
+    except Refusal:
+        return None
+
+
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -163,19 +172,43 @@ def profile_for(court: dict[str, Any], decided: str) -> str | None:
     return found
 
 
-def clean_docket(printed: str) -> str:
-    """CRK section 5.1."""
-    s = printed.strip()
-    s = re.sub(r"^(No\.|Nos\.|Docket No\.|Case No\.)\s*", "", s)
-    s = re.sub("[‐‑‒–—−]", "-", s)
-    if s.endswith(".") and not s.endswith("Orig."):
-        s = s[:-1]
-    return s
+DOCKET_LABEL = re.compile(
+    r"(?:(?:docket|case|appeals|appeal|record|file|gen\.|general),?\s*)?"
+    r"(numbers|number|nos|no)\b\.?\s*[,:]?\s*",
+    re.IGNORECASE,
+)
+
+
+def remove_label(s: str) -> tuple[str, bool]:
+    """CRK section 5.1 step 2: s without a leading label, and whether the label was plural."""
+    m = DOCKET_LABEL.match(s)
+    if not m:
+        return s, False
+    return s[m.end() :], m.group(1).lower() in ("nos", "numbers")
+
+
+def clean_docket(printed: str) -> list[str]:
+    """CRK section 5.1: the docket, then the other dockets a list names; [] for no docket."""
+    s = re.sub("[‐‑‒–—−]", "-", printed.strip())
+    s, plural = remove_label(s)
+    s = re.sub(r"(?<=\d),(?=\d{3}(?:\D|$))", "", s)
+    dockets = [s]
+    if plural or ";" in s:
+        dockets = [d.strip() for d in re.split(r";|,|&|\band\b" if plural else ";", s)]
+        dockets = [remove_label(d)[0].strip() for d in dockets if d]
+        shared = re.fullmatch(r"\d+(\s+.+)", dockets[-1]) if len(dockets) > 1 else None
+        if shared and re.fullmatch(r"\d+", dockets[0]):
+            dockets[0] += shared.group(1)
+    dockets = [d[:-1] if d.endswith(".") and not d.endswith("Orig.") else d for d in dockets]
+    if not dockets or not re.search(r"\d", dockets[0]):
+        return []
+    return dockets
 
 
 def printed_profile(cleaned: str) -> str | None:
     """CRK section 5.5; None when the profile rejects the docket."""
-    s = re.sub(r"\s+", "", cleaned.lower()).replace(":", "_").replace("/", "_")
+    s = re.sub(r"(?<=\d),(?=\s*\d)", "_", cleaned.lower()).replace(",", "")
+    s = re.sub(r"\s+", "", s).replace(":", "_").replace("/", "_")
     if DOCKET.fullmatch(s) and not s.startswith("rpt."):
         return s
     return None
@@ -188,7 +221,7 @@ class DecisionKey:
     docket: str
     decided: str
     fallback: bool
-    notes: list[str] = field(default_factory=list)
+    others: list[str] = field(default_factory=list)  # docket segments of a consolidated case
 
 
 def decision_key(case: dict[str, Any], court_code: str, courts: dict[str, Any]) -> DecisionKey:
@@ -209,35 +242,40 @@ def decision_key(case: dict[str, Any], court_code: str, courts: dict[str, Any]) 
     if profile != "printed":
         raise Refusal(f"docket profile {profile} is not implemented by this builder")
     printed = case.get("docket_number") or ""
-    cleaned = clean_docket(printed)
-    segment = printed_profile(cleaned) if cleaned else None
+    dockets = clean_docket(printed)
+    segment = printed_profile(dockets[0]) if dockets else None
     fallback = segment is None
+    others = [] if fallback else [s for s in map(printed_profile, dockets[1:]) if s]
     if fallback:
         official = [c["cite"] for c in case["citations"] if c["type"] == "official"]
         if not official:
-            raise Refusal("no-docket" if not cleaned else "docket-profile")
+            raise Refusal("no-docket" if not dockets else "docket-profile")
         volume, reporter, page = cite_parts(official[0])
         segment = f"rpt.{volume}-{slug(reporter)}-{page}"
         if not case["file_name"].endswith("-01"):
-            # CRK 5.6: several decisions on one page that share a date take decision ordinals in
-            # printed order. Whether that applies when only one of them falls back is open, so
-            # this builder doesn't decide it.
+            # CRK 5.6: the ordinal counts every decision that begins on the page and shares the
+            # date, which needs the volume's case list; this builder reads only the case record.
             raise Refusal("reporter fallback for a decision that isn't first on its page")
     key = f"us/{court_code}/{segment}/{decided}"
     if not KEY.fullmatch(key):
         raise Refusal(f"computed key {key!r} is not valid")
-    return DecisionKey(key, court_code, segment, decided, fallback)
+    return DecisionKey(key, court_code, segment, decided, fallback, others)
 
 
 def author_slugs(byline: str, court: str, judges: dict[str, Any]) -> list[str]:
-    """Judge slugs for a byline, by the registry's printed surnames; [] for none."""
+    """Judge slugs for a byline (CRK section 10.2); [] for a per curiam byline.
+
+    The name is the byline's text before its first comma. It must equal an entry's name or one
+    of its printed forms exactly, for the court.
+    """
     if per_curiam(byline):
         return []
-    surname = re.sub(r"[^a-z]", "", byline.split(",")[0].lower())
+    name = byline.split(",")[0].strip()
     found = [
         s
         for s, j in sorted(judges.items())
-        if court in j["courts"] and surname in [b.lower() for b in j["bylines"]]
+        if court in j["courts"]
+        and (name == j["name"] or name in [f["form"] for f in j.get("printed", [])])
     ]
     if len(found) != 1:
         raise Refusal(f"unregistered-author: byline {byline!r} matches {found or 'no judge'}")
@@ -245,7 +283,21 @@ def author_slugs(byline: str, court: str, judges: dict[str, Any]) -> list[str]:
 
 
 def per_curiam(byline: str) -> bool:
-    return re.sub(r"[^a-z]", "", byline.lower()) == "percuriam"
+    """Profile section 15.4: a majority byline that marks an unsigned opinion of the court."""
+    return re.sub(r"[^a-z]", "", byline.lower()) in ("percuriam", "bythecourt", "thecourt")
+
+
+def byline_text(author: html.HtmlElement) -> str:
+    """A byline's text without the page labels CAP prints inside it."""
+    parts: list[str] = [author.text or ""]
+    for child in author.iterdescendants():
+        if not isinstance(child.tag, str):
+            parts.append(child.tail or "")
+            continue
+        if not (child.tag == "a" and "page-label" in (child.get("class") or "").split()):
+            parts.append(child.text or "")
+        parts.append(child.tail or "")
+    return WS.sub(" ", "".join(parts)).strip()
 
 
 # Conversion.
@@ -357,19 +409,23 @@ def convert_inline(
 def citation(
     a: html.HtmlElement, dst: etree._Element, ctx: Context, scans: dict[str, int], part: Any
 ) -> None:
-    """A CAP citation link: a ref to a decision (profile section 10), or plain text."""
+    """A CAP citation link: a ref to a decision, or plain text (profile sections 10 and 15.2)."""
     cite = a.get("data-cite") or ""
-    category = ctx.categories.get(re.sub(r"\s", "", cite), "")
     paths = [p for p in (a.get("data-case-paths") or "").split(",") if p]
     href = None
-    if category.startswith("reporters:"):
-        if len(paths) == 1 and re.fullmatch(r"/[a-z0-9][a-z0-9-]*/\d+/\d+-\d{2}", paths[0]):
+    if paths:
+        if len(paths) == 1:
+            if not re.fullmatch(r"/[a-z0-9][a-z0-9-]*/\d+/\d+-\d{2}", paths[0]):
+                raise Refusal(f"data-case-paths {paths[0]!r} is not a CAP case path")
             href = "cap:" + paths[0][1:]
         else:
-            try:
-                href = cite_alias(cite)
-            except Refusal:
-                href = None
+            href = try_cite_alias(cite)
+    else:
+        category = ctx.categories.get(re.sub(r"\s", "", cite), "")
+        if category == "reporters:neutral":
+            href = f"neutral:{slug(cite)}"
+        elif category.startswith("reporters:"):
+            href = try_cite_alias(cite)
     if href is None:
         convert_inline(a, dst, ctx, scans, part)
         return
@@ -428,26 +484,22 @@ def normalize(block: etree._Element) -> None:
         block.text = None
 
 
+def head_matter_attrs(src: html.HtmlElement, eid: str) -> dict[str, str]:
+    """eId, and for a paragraph CAP classes as head matter its class and origin (section 8.4)."""
+    cls = (src.get("class") or "").split()
+    if not cls:
+        return {"eId": eid}
+    return {
+        "eId": eid,
+        "class": cls[0] if cls[0] in HEADER_CLASSES else "headmatter",
+        "cx:origin": "unknown",
+    }
+
+
 @dataclass
 class Part:
     eid: str
     notes: int = 0
-
-
-def hoist_page_breaks(p: etree._Element) -> list[etree._Element]:
-    """Detach the page breaks at the very start of p; refuse a page break later in p."""
-    moved = []
-    while len(p) and not (p.text or "").strip() and etree.QName(p[0]).localname == "eop":
-        eop = p[0]
-        p.text = (p.text or "") + (eop.tail or "")
-        eop.tail = None
-        p.remove(eop)
-        moved.append(eop)
-    if p.xpath(".//a:eop", namespaces={"a": AKN}):
-        raise Refusal("a page break inside a paragraph printed before the byline")
-    if not p.text:
-        p.text = None
-    return moved
 
 
 def header(ctx: Context, parent: etree._Element) -> None:
@@ -476,7 +528,13 @@ def header(ctx: Context, parent: etree._Element) -> None:
         elif kind == "docketnumber":
             inner = el(p, "docketNumber")
         elif kind == "court" and "court" in src.text_content().lower():
-            inner = el(p, "courtType", refersTo=f"#court_{ctx.key.court}")
+            # Profile section 6: courtType only on text that names the court. This builder
+            # takes a court line that says "court" to name it, and marks the claim as derived.
+            inner = el(
+                p,
+                "courtType",
+                {"refersTo": f"#court_{ctx.key.court}", "cx:provenance": "engine-output"},
+            )
         elif kind == "decisiondate":
             inner = el(p, "docDate", date=ctx.key.decided)
         convert_inline(src, inner, ctx, scans, None)
@@ -499,7 +557,7 @@ def parts(ctx: Context, judges: dict[str, Any], body: etree._Element) -> list[di
         )
         if author is None:
             raise Refusal(f"a {source_type} opinion has no byline")
-        byline = author.text_content().strip()
+        byline = byline_text(author)
         if source_type not in ROLES:
             raise Refusal(f"CAP opinion type {source_type!r} has no CRK role (open question O8)")
         role = ROLES[source_type]
@@ -526,6 +584,9 @@ def parts(ctx: Context, judges: dict[str, Any], body: etree._Element) -> list[di
 
     block = None
     for info in built:
+        kids = [c for c in info["article"] if isinstance(c.tag, str) and c.tag != "aside"]
+        if kids[-1] is info["author"]:
+            raise Refusal(f"part {info['key']}: the byline is the writing's last element")
         block_name = "decision" if info["role"] in DECISION_ROLES else "motivation"
         if block is None or etree.QName(block).localname != block_name:
             block = el(body, block_name)
@@ -543,40 +604,40 @@ def parts(ctx: Context, judges: dict[str, Any], body: etree._Element) -> list[di
         )
         part = Part(eid)
         heading = el(hc, "heading")
-        set_blocks(heading, info["author"], ctx)
+        titles = kids[: kids.index(info["author"])]
+        # Profile section 7.2: paragraphs printed before the byline ("OPINION", "ORDER") are
+        # spans in the heading, numbered with the part's paragraphs; the byline moves to the
+        # subheading.
+        n = 0
+        for src in titles:
+            if src.tag not in ("p", "blockquote"):
+                raise Refusal(f"unexpected <{src.tag}> before a byline")
+            n += 1
+            if n > 1:
+                el(heading, "br")
+            span = el(heading, "span", head_matter_attrs(src, f"{eid}__p_{n}"))
+            set_blocks(span, src, ctx)
+            convert_inline(src, span, ctx, label_scans(src), part)
+            normalize(span)
+        byline = el(hc, "subheading") if titles else heading
+        set_blocks(byline, info["author"], ctx)
         by = f"#{info['authors'][0]}" if info["authors"] else f"#court_{ctx.key.court}"
-        opinion = el(heading, "opinion", by=by, type=OPINION_TYPES.get(info["role"]))
+        opinion = el(byline, "opinion", by=by, type=OPINION_TYPES.get(info["role"]))
         convert_inline(info["author"], opinion, ctx, label_scans(info["author"]), part)
         normalize(opinion)
         content = el(hc, "content")
-        n = 0
-        before_byline = True
-        hoisted: list[etree._Element] = []
-        for src in info["article"]:
-            if src is info["author"]:
-                before_byline = False
-                continue
-            if src.tag == "aside":
-                continue
+        for src in kids[kids.index(info["author"]) + 1 :]:
             if src.tag not in ("p", "blockquote"):
                 raise Refusal(f"unexpected <{src.tag}> in an opinion")
             n += 1
-            cls = src.get("class")
             if src.tag == "p":
-                p = el(content, "p", {"eId": f"{eid}__p_{n}", "class": cls})
+                p = el(content, "p", head_matter_attrs(src, f"{eid}__p_{n}"))
             else:
                 p = el(content, "block", {"name": "blockquote", "eId": f"{eid}__p_{n}"})
             set_blocks(p, src, ctx)
             convert_inline(src, p, ctx, label_scans(src), part)
             normalize(p)
-            if before_byline:
-                hoisted += hoist_page_breaks(p)
-        # A paragraph CAP prints before the byline ("OPINION", "ORDER") follows the heading here,
-        # because hcontainer puts its heading first. A page break at the start of such a paragraph
-        # moves to the start of the heading, so that the byline stays on the page it was printed on.
-        for i, eop in enumerate(hoisted):
-            heading.insert(i, eop)
-        if n == 0:
+        if n == len(titles):
             raise Refusal(f"part {info['key']} has no paragraphs")
     return built
 
@@ -709,6 +770,8 @@ def build(
         elif c["type"] == "vendor":
             el(work, "FRBRalias", name="vendor", value=c["cite"])
     el(work, "FRBRalias", name="cap", value=f"cap:{cap}")
+    for other in key.others:
+        el(work, "FRBRalias", name="crk", value=f"crk:us/{key.court}/{other}/{key.decided}")
     el(work, "FRBRdate", date=key.decided, name="decided")
     el(work, "FRBRauthor", href=f"#court_{key.court}")
     el(work, "FRBRcountry", value="us")
@@ -812,6 +875,8 @@ def build(
                 "lastPage": p.last,
                 "ordinal": p.ordinal,
                 "text": p.text,
+                # Profile section 5.3: every @text but transcribed is derived from volume records.
+                "cx:provenance": None if p.text == "transcribed" else "engine-output",
             },
         )
         for nom in p.nominative:
@@ -868,7 +933,7 @@ def build(
 
 
 # Elements whose content is text: indent() leaves everything inside them as it is.
-TEXT_HOSTS = {"p", "block", "heading", "note"}
+TEXT_HOSTS = {"p", "block", "heading", "subheading", "note"}
 
 
 def indent(e: etree._Element, level: int = 0) -> None:

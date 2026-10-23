@@ -1,6 +1,6 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.2.0",
+  "spec_version": "0.3.0",
   "courts_registry": "registry/courts.json",
   "judges_fixture": "judges-fixture.json",
   "provenance": {
@@ -29,10 +29,11 @@
     "compute.jsonl": {
       "checks": "A producer given facts, the court registry (registry/courts.json) and the judges fixture emits key, or refuses with error.",
       "fields": {
-        "facts": "{country, court, docket (as printed, or null), decided (ISO date, possibly partial, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}}",
+        "facts": "{country, court, docket (as printed, or null), decided (ISO date, possibly partial, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}, page_decisions? (every decision that begins on the reporter page, in printed order, this one included: {docket (as printed, or null), decided}), page_position? (this decision's 1-based position in page_decisions)}. Under the reporter fallback, page_decisions and page_position give the decision ordinal (spec section 5.6)",
         "key": "expected key, when the producer succeeds",
         "fallback": "true when key uses the rpt. fallback",
-        "error": "refusal class, spec section 12, when it refuses"
+        "error": "refusal class, spec section 12, when it refuses",
+        "aliases": "key-shaped aliases (key references) for the other dockets of a consolidated case, when the vector checks them (spec sections 5.1, 11.1)"
       }
     },
     "docket.jsonl": {
@@ -42,6 +43,15 @@
         "printed": "docket as printed",
         "segment": "expected docket segment",
         "error": "refusal class"
+      }
+    },
+    "byline.jsonl": {
+      "checks": "A producer maps the name a byline prints to a judge slug through the judges fixture's names and printed forms, for the court, or refuses (spec section 10.2).",
+      "fields": {
+        "court": "court code",
+        "printed": "the judge's name as the byline prints it, misprints included",
+        "author": "expected judge slug",
+        "error": "refusal class (unregistered-author)"
       }
     },
     "alias.jsonl": {

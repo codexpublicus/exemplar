@@ -30,24 +30,24 @@
         <FRBRManifestation>
           <FRBRthis value="crk:us/dc/30/1943-02-12.akn.xml"/>
           <FRBRuri value="crk:us/dc/30/1943-02-12.akn.xml"/>
-          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRdate date="2026-10-23" name="generated"/>
           <FRBRauthor href="#org_exemplar"/>
           <FRBRformat value="application/akn+xml"/>
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#hood" showAs="Hood"/>
+        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#hood" showAs="Hood"/>
         <TLCReference eId="printing_31-a2d-657" name="printing" href="cite:31-a2d-657" showAs="31 A.2d 657"/>
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0657-01" showAs="Caselaw Access Project, a2d/31/0657-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_31-a2d-657" type="official" reporter="A.2d" volume="31" firstPage="657" lastPage="657" ordinal="1" text="transcribed">
           <cx:scans source="#source_cap" volume="a2d/31" first="705" last="705"/>
@@ -60,7 +60,7 @@
     <header>
       <p eId="header__p_1" class="parties" cx:origin="unknown" cx:blocks="BL_705.3"><docTitle>BROOKS v. DISTRICT OF COLUMBIA.</docTitle></p>
       <p eId="header__p_2" class="docketnumber" cx:origin="unknown" cx:blocks="BL_705.4"><docketNumber>No. 30.</docketNumber></p>
-      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_705.5"><courtType refersTo="#court_dc">Municipal Court of Appeals for the District of Columbia.</courtType></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_705.5"><courtType refersTo="#court_dc" cx:provenance="engine-output">Municipal Court of Appeals for the District of Columbia.</courtType></p>
       <p eId="header__p_4" class="decisiondate" cx:origin="unknown" cx:blocks="BL_705.6"><docDate date="1943-02-12">Feb. 12, 1943.</docDate></p>
       <p eId="header__p_5" class="attorneys" cx:origin="unknown" cx:blocks="BL_705.12">Nathan A. Dobbins, of Washington, D. C., for appellant.</p>
       <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_705.13">Richmond B. Keech, Corp. Counsel, and Vernon E. West, Principal Asst. Corp. Counsel, both of Washington, D. C., for appellee.</p>
