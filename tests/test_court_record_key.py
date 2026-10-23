@@ -134,12 +134,12 @@ class TestDocket:
     @pytest.mark.parametrize("v", load("docket.jsonl"), ids=ids("docket.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "segment" in v:
-            segment = crk_check.docket_segment(COURTS, v["court"], v["printed"])
+            segment = crk_check.docket_segment(COURTS, v["court"], v["printed"], v.get("decided"))
             assert segment == v["segment"]
             assert abnf_accepts("docket", segment)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.docket_segment(COURTS, v["court"], v["printed"])
+                crk_check.docket_segment(COURTS, v["court"], v["printed"], v.get("decided"))
             assert refusal.value.args[0] == v["error"]
 
 

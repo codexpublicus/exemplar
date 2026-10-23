@@ -27,13 +27,18 @@ ROLES = frozenset(
     }
 )
 
+# Section 3: the jurisdiction codes this version defines.
+COUNTRIES = frozenset(
+    {"us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "hawaii", "texas", "vermont"}
+)
+COUNTRY = re.compile(r"[a-z]{2,16}")
 COURT = re.compile(r"[a-z][a-z0-9-]*")
 DOCKET = re.compile(r"[a-z0-9][a-z0-9_.-]*")
 RPT = re.compile(r"rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+")
 AUTHOR = re.compile(r"[a-z][a-z-]*")
 ORD = re.compile(r"[2-9]|[1-9][0-9]+")
 DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
-PARTIAL_DATE = re.compile(r"[0-9]{4}(-[0-9]{2})?")
+DECIDED = re.compile(r"[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?")
 
 
 class Refusal(Exception):
@@ -50,6 +55,20 @@ def is_date(text: str) -> bool:
     return True
 
 
+def is_decided(text: str) -> bool:
+    """Section 6: a calendar date, or a year and month, or a year."""
+    if not DECIDED.fullmatch(text):
+        return False
+    if len(text) == 10:
+        return is_date(text)
+    return len(text) == 4 or 1 <= int(text[5:7]) <= 12
+
+
+def period_start(decided: str) -> str:
+    """The first day a decided segment can name, for comparing it with a full date."""
+    return {4: decided + "-01-01", 7: decided + "-01"}.get(len(decided), decided)
+
+
 def classify(key: str) -> str | None:
     """The error class of spec section 2.5, or None for a valid key."""
     if key.count("@") > 1:
@@ -59,14 +78,14 @@ def classify(key: str) -> str | None:
     if len(segments) not in (4, 5):
         return "structure"
     country, court, docket, decided = segments[:4]
-    if country != "us":
+    if not COUNTRY.fullmatch(country) or country not in COUNTRIES:
         return "country"
     if not COURT.fullmatch(court):
         return "court"
     if not DOCKET.fullmatch(docket) or (docket.startswith("rpt.") and not RPT.fullmatch(docket)):
         return "docket"
     day, tilde, ordinal = decided.partition("~")
-    if not is_date(day):
+    if not is_decided(day):
         return "date"
     if tilde and not ORD.fullmatch(ordinal):
         return "ordinal"
@@ -81,7 +100,7 @@ def classify(key: str) -> str | None:
             return "author"
         if tilde and not ORD.fullmatch(ordinal):
             return "ordinal"
-    if at and (not is_date(revised) or revised < day):
+    if at and (not is_date(revised) or revised < period_start(day)):
         return "revised"
     return None
 
@@ -200,6 +219,16 @@ def _scotus(text: str) -> str | None:
     return None
 
 
+def _scotus_numbered(text: str) -> str | None:
+    if m := re.fullmatch(r"([0-9]{1,5})", text):
+        return m.group(1)
+    if m := re.fullmatch(r"([0-9]{1,5}),? misc\.?", text, re.IGNORECASE):
+        return f"{m.group(1)}-misc"
+    if m := re.fullmatch(r"([0-9]{1,3})[,.]? orig(?:inal)?\.?", text, re.IGNORECASE):
+        return f"{m.group(1)}-orig"
+    return None
+
+
 def _coa(text: str) -> str | None:
     text = re.sub(r"\s*\(L\)$", "", text)
     text = re.sub(r"(?<=[0-9])-[A-Za-z]$", "", text)
@@ -219,15 +248,36 @@ def _printed(text: str) -> str | None:
     return text if DOCKET.fullmatch(text) and not text.startswith("rpt.") else None
 
 
-PROFILES = {"scotus-ot1971": _scotus, "us-coa": _coa, "us-district": _district, "printed": _printed}
+PROFILES = {
+    "scotus-numbered": _scotus_numbered,
+    "scotus-ot1971": _scotus,
+    "us-coa": _coa,
+    "us-district": _district,
+    "printed": _printed,
+}
+
+
+def _dated(steps: list[dict[str, Any]], field: str, decided: str | None) -> Any:
+    """The value of the last step that starts on or before decided (sections 5, 10.1).
+
+    A partial date picks a step only when its whole period is on or after the step's start.
+    """
+    chosen = None
+    for step in steps:
+        if step["from"] is None or decided is None or step["from"] <= period_start(decided):
+            chosen = step[field]
+    return chosen
 
 
 def profile_for(court: dict[str, Any], decided: str | None) -> str | None:
-    chosen = None
-    for entry in court["profiles"]:
-        if entry["from"] is None or decided is None or entry["from"] <= decided:
-            chosen = entry["profile"]
-    return chosen
+    return _dated(court["profiles"], "profile", decided)
+
+
+def country_for(court: dict[str, Any], decided: str | None) -> str:
+    """Section 3: the issuing sovereign's code for the decision date."""
+    if "countries" in court:
+        return _dated(court["countries"], "country", decided)
+    return court["country"]
 
 
 def docket_segment(
@@ -271,15 +321,14 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
     "judges" map (spec section 10.2; the vectors use a fixture).
     """
     court = facts["court"]
-    if facts.get("country") != "us" or court not in courts:
+    if court not in courts:
         raise Refusal("unregistered-court")
     decided = facts.get("decided")
     if decided is None:
         raise Refusal("no-decision-date")
-    if PARTIAL_DATE.fullmatch(decided):
-        raise Refusal("incomplete-date")
-    if not is_date(decided):
+    if not is_decided(decided):
         raise Refusal("date")
+    country = country_for(courts[court], decided)  # section 3: the registry's, never the facts'
     if profile_for(courts[court], decided) is None:
         raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
     citation = facts.get("reporter_citation")
@@ -300,7 +349,7 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
     if ordinal < 1:
         raise Refusal("ordinal")
     parts: dict[str, Any] = {
-        "country": "us",
+        "country": country,
         "court": court,
         "docket": docket,
         "decided": decided,
@@ -324,7 +373,7 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
             raise Refusal("ordinal")
         parts.update(role=role, authors=authors, part_ordinal=part_ordinal)
     if (revised := facts.get("revised")) is not None:
-        if not is_date(revised) or revised < decided:
+        if not is_date(revised) or revised < period_start(decided):
             raise Refusal("revised")
         parts["revised"] = revised
     key = format_key(parts)

@@ -58,8 +58,40 @@ def test_registry_is_the_build_of_the_vendored_source() -> None:
 def test_every_source_court_is_registered_or_excluded() -> None:
     source = json.loads((ROOT / REGISTRY["source"]["vendored_copy"]).read_bytes())
     ids = {c["id"] for c in source}
-    assert ids == set(REGISTRY["courts"]) | set(REGISTRY["excluded"])
+    from_source = {k for k, v in REGISTRY["courts"].items() if v["source"] == "courts-db"}
+    assert ids == from_source | set(REGISTRY["excluded"])
     assert not set(REGISTRY["courts"]) & set(REGISTRY["excluded"])
+    minted = set(REGISTRY["courts"]) - from_source
+    assert not minted & ids, "a code courts-db has is taken from courts-db"
+
+
+def test_countries_are_in_date_order_and_end_at_country() -> None:
+    for code, entry in REGISTRY["courts"].items():
+        steps = entry.get("countries")
+        if steps is None:
+            continue
+        assert steps[0]["from"] is None, code
+        starts = [s["from"] for s in steps[1:]]
+        assert starts == sorted(set(starts)), code
+        assert steps[-1]["country"] == entry["country"], code
+        assert len({s["country"] for s in steps}) == len(steps), code
+
+
+def test_jurisdiction_codes_are_the_specs() -> None:
+    table = re.search(r"^## 3\. .*?^## 4\.", SPEC, re.M | re.S)
+    assert table
+    in_spec = set(re.findall(r"^\| `([a-z]+)` \|", table.group(0), re.M))
+    assert in_spec == set(crk_check.COUNTRIES)
+    assert set(SCHEMA["$defs"]["country"]["enum"]) == in_spec
+
+
+def test_aliases_are_unique_across_the_registry() -> None:
+    seen: dict[str, str] = {}
+    for code, entry in REGISTRY["courts"].items():
+        for alias in entry.get("aliases", []):
+            assert alias not in seen, f"{alias}: {seen.get(alias)} and {code}"
+            seen[alias] = code
+            assert alias.split(":", 1)[1] not in REGISTRY["courts"], alias
 
 
 def test_spec_names_this_registry_version() -> None:

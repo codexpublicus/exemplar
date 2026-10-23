@@ -1,16 +1,18 @@
 # Court record key
 
-Specification version: **0.3.1** (draft). Status: not yet stable; see section 13.
+Specification version: **0.4.0** (draft). Status: not yet stable; see section 13.
 
-A court record key (CRK) is a deterministic identifier for a US court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation.
+A court record key (CRK) is a deterministic identifier for a court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the jurisdiction and the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation. This version registers the courts of the United States, of five US territories, and the few English and colonial courts American sources hold (section 3).
 
 ```
-us/{court}/{docket}/{decided}[~n][/{role}[.{author}[+{author}...]][~n]][@{revised}]
+{country}/{court}/{docket}/{decided}[~n][/{role}[.{author}[+{author}...]][~n]][@{revised}]
 ```
 
 - `us/ca10/14-9585/2016-08-23` is a decision.
 - `us/ca10/14-9585/2016-08-23/concurrence.gorsuch` is one writing within it.
 - `us/scotus/25-365/2026-06-30@2026-07-01` is a revised version of a decision.
+- `pr/prsupreme/8561/1943-05-18` is a decision of the Supreme Court of Puerto Rico.
+- `us/dakotasup/rpt.3-dakota-1/1882-05` is a decision the source dates only to May 1882.
 
 The research behind this design, including the survey of alternatives and the sources for each docket profile, is codexpublicus/gorsuch-library `docs/research/2026-09-25-case-identifier-recommendation.md` ("the research doc"). This document supersedes it as the normative source. Where the two disagree, this document governs and the disagreement is a bug in one of them.
 
@@ -36,13 +38,15 @@ Terms:
 crk         = country "/" court "/" docket "/" decided [ ord ]
               [ "/" part ] [ "@" revised ]
 
-country     = %s"us"                            ; section 3
+country     = 2*16LC                            ; a jurisdiction code (section 3)
 court       = LC *( LC / DIGIT / "-" )          ; from the court registry (section 4)
 docket      = ( LC / DIGIT ) *( LC / DIGIT / "-" / "_" / "." )
                                                 ; normalized per docket profile (section 5)
-decided     = date                              ; decision date printed on the document
+decided     = date / year-month / year          ; decision date, as precise as known (section 6)
 revised     = date                              ; date of an amended/corrected version
 date        = 4DIGIT "-" 2DIGIT "-" 2DIGIT      ; ISO 8601 calendar date
+year-month  = 4DIGIT "-" 2DIGIT                 ; ISO 8601 reduced precision
+year        = 4DIGIT
 
 part        = role [ "." authors ] [ ord ]
 role        = %s"opinion" / %s"per-curiam" / %s"plurality" / %s"concurrence"
@@ -58,10 +62,10 @@ LC          = %x61-7A                           ; a-z
 
 ### 2.2 Regular expression
 
-The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It is byte-identical to the regex in the research doc, which gorsuch-library tests against.
+The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the country segment and the decision date (0.4.0, section 13).
 
 ```regex
-^us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
+^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
 ```
 
 Implementations MUST match the whole string. In engines where `$` also matches before a final newline (Python's `re`, PCRE without `D`), they MUST use a whole-string match (`re.fullmatch`, `\z`) so that `us/ca10/14-9585/2016-08-23\n` is rejected.
@@ -70,10 +74,11 @@ Implementations MUST match the whole string. In engines where `$` also matches b
 
 A string is a **valid key** when it matches the grammar and all of the following hold:
 
-1. `decided` is a real Gregorian calendar date (`2016-02-30` matches the grammar and is not valid).
-2. `revised`, if present, is a real calendar date and is not earlier than `decided`.
-3. A part whose role is `per-curiam` has no authors.
-4. A docket segment that begins `rpt.` is a reporter fallback (section 5.6) and MUST have the shape `rpt.{volume}-{reporter}-{page}` defined there.
+1. `country` is a jurisdiction code this version defines (section 3).
+2. `decided` is a real Gregorian calendar date (`2016-02-30` matches the grammar and is not valid), or a year and a month `01` to `12`, or a year.
+3. `revised`, if present, is a real calendar date and is not earlier than `decided`; a partial `decided` is compared by the first day of its period (section 6.2).
+4. A part whose role is `per-curiam` has no authors.
+5. A docket segment that begins `rpt.` is a reporter fallback (section 5.6) and MUST have the shape `rpt.{volume}-{reporter}-{page}` defined there.
 
 A validator MUST reject a string that fails the grammar or any of these rules.
 
@@ -90,10 +95,10 @@ A validator that reports why it rejected a string SHOULD use these classes. When
 | Class | Meaning |
 |---|---|
 | `structure` | Not shaped like a key: empty, too few or too many `/`-separated segments, more than one `@` |
-| `country` | Country segment is not one this version defines |
+| `country` | Country segment is not a jurisdiction code this version defines (section 3) |
 | `court` | Court segment fails the `court` rule (uppercase, leading digit, illegal character) |
 | `docket` | Docket segment fails the `docket` rule, or is a malformed `rpt.` segment |
-| `date` | `decided` fails the `date` rule or is not a calendar date |
+| `date` | `decided` fails the `decided` rule, or is not a calendar date, or names a month outside `01` to `12` |
 | `ordinal` | A `~` ordinal is `~0`, `~1`, has a leading zero, or is not a number |
 | `role` | The part's role is not in the role vocabulary |
 | `author` | An author fails the `author` rule, or a `per-curiam` part has authors |
@@ -113,24 +118,53 @@ In RFC 3986 terms a key reference is an absolute URI with scheme `crk` and a roo
 
 The prefix is not part of the key. A key is computed, compared, frozen and listed without it; a format that carries keys says which of its fields hold a key and which hold a key reference.
 
-## 3. Country
+## 3. Jurisdiction
 
-The first segment is the country whose courts issued the decision, as a lowercase [ISO 3166-1](https://www.iso.org/iso-3166-country-codes.html) alpha-2 code. This version defines one country, `us`. Each further country (for example `bz` for Belize) needs its own court registry and docket profiles and is added by a minor version of this spec (section 13). A validator conforming to this version MUST reject any other country code with class `country`.
+The first segment, the country segment, is the jurisdiction code of the sovereign or body whose court issued the decision. The same code is the jurisdiction segment of stare.pub's citation addresses (`/c/{code}/...`) and the Akoma Ntoso `FRBRcountry` of the decision's document (section 15), so a key, an address and a document name one jurisdiction one way.
+
+A jurisdiction code is one of these:
+
+1. **A country's [ISO 3166-1](https://www.iso.org/iso-3166-country-codes.html) alpha-2 code**, lowercased: `us`, `gb`.
+2. **A territory's own ISO 3166-1 alpha-2 code**, for the courts the territory establishes: Puerto Rico `pr`, Guam `gu`, the U.S. Virgin Islands `vi`, American Samoa `as`, the Northern Mariana Islands `mp`. A federal court seated in a territory, such as the District Court for the District of Puerto Rico (`prd`), is a court of the United States and keys under `us`.
+3. **A registered body code** for a regional or supranational court, one that sits for several states or for none, such as the Caribbean Court of Justice, `ccj`. A body code is three to sixteen lowercase letters, never two, so that no code ISO 3166-1 assigns later can collide with it; it is a short form of the body's own name.
+4. **For a court whose sovereign has changed, the issuing sovereign's code**: the jurisdiction that issued the decision on its date, not the one that holds the territory now. That is the sovereign's ISO 3166-1 code, or the code of the state that continues it; where neither exists, a registered code formed as in item 3. A colonial court's decision before 1776-07-04 keys under `gb`, and the same court's decision from that day under `us`.
+
+Courts of tribal nations key under `us` in this version; codexpublicus/exemplar#45 asks whether each nation gets its own code.
+
+The codes this version defines:
+
+| Code | Kind | Jurisdiction | Its registered courts |
+|---|---|---|---|
+| `us` | country | United States | federal and state courts, the courts of territories without an ISO code of their own (Dakota Territory), tribal courts |
+| `pr` | territory | Puerto Rico | `prsupreme`, `prapp` |
+| `gu` | territory | Guam | `guam`, `superctguam` |
+| `vi` | territory | U.S. Virgin Islands | `virginislands`, `visuper`, `vimunict`, `vipolct` |
+| `as` | territory | American Samoa | `amsamoa`, `amsamoatc` |
+| `mp` | territory | Northern Mariana Islands | `nmi`, `cnmisuperct`, `cnmitrialct` |
+| `gb` | country | the United Kingdom, continuing the Kingdoms of England and of Great Britain | `kingsbench`, `houseoflordsuk`, `highctjchuk`, `privycoun`, `nhprivycounnh`, and the American colonies' courts before 1776-07-04 |
+| `ph` | country | the Philippines | `phillipines` |
+| `ccj` | body | the Caribbean Court of Justice | none yet (codexpublicus/exemplar#25) |
+| `hawaii` | historical sovereign | the Hawaiian Kingdom and the governments that followed it, before 1898-08-12 | Hawaii's courts before that day |
+| `texas` | historical sovereign | the Republic of Texas, before 1846-02-19 | Texas's courts before that day |
+| `vermont` | historical sovereign | the Vermont Republic, before 1791-03-04 | Vermont's courts before that day |
+
+The court registry gives each court its code, by date where a court's decisions span a change of sovereign (section 10.1). A producer takes the code from the registry for the decision date and MUST NOT choose one. A code is added by a minor version of this spec (section 13); its courts are added by a registry version. A body code or a historical sovereign's code, once defined, is never reassigned. A validator conforming to this version MUST reject any code the table doesn't list, with class `country`.
 
 ## 4. Courts
 
-The court segment is a code from the court registry (section 10.1). The registry's codes are Free Law Project's courts-db ids, taken from the snapshot the registry names, and codes the registry mints itself for courts courts-db lacks.
+The court segment is a code from the court registry (section 10.1). The registry's codes are Free Law Project's courts-db ids, taken from the snapshot the registry names; CourtListener's court ids, for courts courts-db lacks and CourtListener names; and codes the registry mints itself. A court code is unique across every jurisdiction.
 
 | Court family | Code | Examples |
 |---|---|---|
 | US Supreme Court | `scotus` | `scotus` |
 | Federal courts of appeals, district and bankruptcy courts | the courts-db id, which is the court's `*.uscourts.gov` host label (one exception, below) | `ca10`, `ca6`, `cod`, `meb` |
-| State and territorial courts | the courts-db id | `mass`, `wis`, `wisctapp` |
-| Historical and defunct courts | the courts-db id, or a code the registry mints | `circtdnj`, `cc` |
+| State and territorial courts | the courts-db id | `mass`, `wis`, `wisctapp`, `prsupreme` |
+| Historical and defunct courts | the courts-db id, CourtListener's id, or a code the registry mints | `circtdnj`, `cc`, `kyctapphigh` |
+| Courts outside the United States | the courts-db id | `kingsbench`, `houseoflordsuk` |
 
 The one federal court whose courts-db id is not its host label is the Bankruptcy Court for the District of Nebraska: courts-db gives `neb` to the Nebraska Supreme Court, so the bankruptcy court is `nebraskab`, not `neb`.
 
-A producer MUST take the court code from the registry and MUST NOT construct one. Once minted, a court code MUST NOT be renamed or reused. A court that merges or splits gets a new code, and the old code stays valid for decisions issued under it. Federal codes match what the judiciary assigns; state and historical codes are not court-assigned, and are the one input to the key that the court itself doesn't supply.
+A producer MUST take the court code from the registry and MUST NOT construct one. A source that names a court by its own id is translated through the registry: an id an entry lists as an alias (CourtListener's `txctapp5` is an alias of `texapp`) gives that entry's code, and a CAP court id gives the code `registry/cap-courts.json` assigns it for the decision date (section 10.1). A court the source names by an id neither one lists is `unregistered-court`. Once minted, a court code MUST NOT be renamed or reused. A court that merges or splits gets a new code, and the old code stays valid for decisions issued under it. Federal codes match what the judiciary assigns; state and historical codes are not court-assigned, and are the one input to the key that the court itself doesn't supply.
 
 ## 5. Docket
 
@@ -209,21 +243,47 @@ When a decision takes the fallback, its decision ordinal (section 7) is its posi
 
 A fallback key is **non-canonical**: it is deterministic, but it rests on a citation a publisher assigned after the fact, and the `rpt.` prefix marks that. If a docket number is later recovered, the producer mints the docket key and records the fallback key as `replaced-by` that key (section 11). The fallback key MUST NOT be deleted or reused.
 
-The fallback is never used for a court that has no docket profile for the decision date (section 5): the Supreme Court before 1971-07-01, and the Federal Circuit. A producer MUST refuse those decisions with `no-docket-profile` whether or not the decision has a docket or a reporter citation, because a profile added later would mint a docket key for decisions that already had a fallback key. A producer that needs keys for them, such as stare for the pre-1971 Supreme Court decisions in CAP, is responsible for finding the dockets and dates it needs; this spec doesn't supply them, and they become computable when a later version adds the profile.
+The fallback is never used for a court that has no docket profile for the decision date (section 5): in this version, the Federal Circuit. A producer MUST refuse those decisions with `no-docket-profile` whether or not the decision has a docket or a reporter citation, because a profile added later would mint a docket key for decisions that already had a fallback key. The Supreme Court before 1971-07-01 has the `scotus-numbered` profile (section 5.7), and a decision of that period with no docket, or one the profile rejects, takes the fallback like any other.
+
+### 5.7 Profile `scotus-numbered`: Supreme Court, dockets before 1971-07-01
+
+Before 1971-07-01 the Supreme Court's docket numbers carry no year, and a number identifies a case only within its term and its docket (the appellate docket, the Miscellaneous docket, the Original docket). The key's decision date places the decision in its term, so the segment is the number and the docket it belongs to. The cleaned docket MUST match, ignoring case, one of:
+
+| Kind | Printed | Pattern | Segment |
+|---|---|---|---|
+| Appellate | `No. 36`, `NO. 36` | `^\d{1,5}$` | the number: `36` |
+| Miscellaneous | `No. 94, Misc.` | `^\d{1,5},? Misc\.?$` | the number and `-misc`: `94-misc` |
+| Original | `No. 13, Original`, `No. 4. Original` | `^\d{1,3}[,.]? Orig(inal)?\.?$` | the number and `-orig`: `13-orig` |
+
+Hilton's Administrator v. Jones, 159 U.S. 584, printed `No. 1.` and decided 1895-11-18, is `us/scotus/1/1895-11-18`. A list of dockets is keyed by its first (section 5.1): `No. 365; No. 366; No. 367; No. 368` gives `365`. A docket the profile rejects (a range, `Nos. 202-207`; a lower court's number a reprint prints in its place) or a decision with none takes the reporter fallback, as the decisions in 2 U.S. (2 Dall.) do: Chisholm v. Georgia, which CAP dates only to 1793, is `us/scotus/rpt.2-us-419/1793`.
+
+Two decisions decided the same day can print the same number, by misprint (United States v. Alexander, 148 U.S. 186, and United States v. Truesdell, 148 U.S. 196, both print `No. 552.` and were decided 1893-03-06) or because CAP's metadata reads a case name's `(No. 1)` as a docket. They compute the same key, and the decision ordinal separates them (section 7): for this profile it is counted in the order the United States Reports prints them, volume then page, because the Court's docket entries for those terms are not available to a producer.
 
 ## 6. Decision date
 
 `decided` is the date printed on the decision as the date of decision: "Decided" (Supreme Court), the "FILED" stamp date (courts of appeals), or the entry date of an order. A producer MUST NOT use the date an opinion was posted, published or received by a publisher.
 
-The date MUST be a complete calendar date. When the source gives only a year, or a year and month, a producer MUST refuse with `incomplete-date` and MUST NOT pad the missing parts; a padded date would present an invented fact as the court's.
+### 6.1 Precision
 
-A consumer that generates data in exemplar's formats is responsible for determining the full decision date, by whatever means it has (the court's records, a docket sheet, another edition of the report). This spec doesn't supply the date or infer it, and a decision whose full date the consumer can't determine has no key.
+`decided` is the complete calendar date when the producer can establish it, and otherwise as much of it as the producer can establish: the year and month (`1882-05`) or the year (`1793`). A producer MUST NOT pad a missing month or day, and MUST NOT write a part it can't establish: `1882-05-15` for a decision dated May 1882 presents an invented fact as the court's. A decision whose year can't be established has no key (`no-decision-date`).
+
+A date is established when the decision prints it, or when another source states it for that decision: another printing of the decision, the court's records or docket, a dataset that records the date without marking it approximate. This spec doesn't supply dates; a consumer that generates data in exemplar's formats is responsible for determining them, and SHOULD record where a date it didn't take from the decision came from (provenance, not part of the key).
+
+A date a source marks approximate is established only as far as the source knows it. CourtListener marks such a date `date_filed_is_approximate` and pads a year and month to the 15th and a year to 1 July: a flagged date on 1 July is established to its year, and any other flagged date to its year and month. A date a source doesn't flag but that is a fill value is not established past its month either: in CourtListener's 2026-09-30 export, 14,976 of the 14,993 unflagged clusters for North Carolina Reports cases that CAP dates only to the month fall on the 5th, and every one of the 827 for Rhode Island Reports on the 6th. A producer SHOULD check a second source's dates for fill values before relying on it.
+
+### 6.2 Keys with a partial date
+
+A key whose `decided` is a year and month, or a year, is a **partial-date key**. Like a fallback key (section 5.6) it is deterministic but **non-canonical**: if the full date is established later, the producer mints the full-date key and records the partial-date key `replaced-by` it (section 11.2). The partial-date key MUST NOT be deleted or reused.
+
+A partial date is part of the key as written. Decisions in one court and docket dated `1882-05` and `1882-05-04` have different keys and are not counted against each other for an ordinal; two dated `1882-05` share a `decided` segment, and their decision ordinal (section 7) is counted in the order the reporter prints them (volume, page, then CAP's file ordinal), since no docket entry orders them.
+
+Where a rule compares a partial date with a full date (the date a docket profile or a jurisdiction code applies from, a revision date), it uses the first day of the partial date's period: a decision dated `1971` takes the Supreme Court's `scotus-numbered` profile, and one dated `1776-07` keys under `gb`.
 
 ## 7. Ordinals
 
 The first instance of anything is unmarked. Later instances take `~2`, `~3`, and so on, in decimal with no leading zero. `~0` and `~1` are invalid.
 
-- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Under the reporter fallback, the ordinal is counted as section 5.6 says. Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
+- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Under the reporter fallback, the ordinal is counted as section 5.6 says; for a partial-date key as section 6.2 says, and under the `scotus-numbered` profile as section 5.7 says. Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
 - **Part ordinal.** When the same role and the same author list appear twice in one decision, the second takes `~2`, in the order printed. The same author in two different roles is already unique (Gorsuch wrote both the opinion and a concurrence in Gutierrez-Brizuela v. Lynch).
 
 ## 8. Parts: roles and authors
@@ -266,9 +326,11 @@ A key depends on two registries: a court registry, which this repository publish
 
 ### 10.1 Court registry
 
-The court registry is `registry/courts.json` in codexpublicus/exemplar, validated by `schema/courts-registry.schema.json`. Each entry has a court code (section 4), its country, the court's name, its docket profiles with the date each applies from (for example `scotus`: `scotus-ot1971` from 1971-07-01, nothing before), and the source of its code. An entry MAY list alias codes (other services' ids for the same court) and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
+The court registry is `registry/courts.json` in codexpublicus/exemplar, validated by `schema/courts-registry.schema.json`. Each entry has a court code (section 4), its jurisdiction code (`country`, section 3), the court's name, its docket profiles with the date each applies from (for example `scotus`: `scotus-numbered` from the start, `scotus-ot1971` from 1971-07-01), and the source of its code. A court whose decisions span a change of sovereign also lists its jurisdiction codes with the date each applies from (`countries`; `pa`: `gb`, then `us` from 1776-07-04), and its `country` is the last of them. An entry MAY list aliases, other services' ids for the court or for a part of it, written `{service}:{id}` (`courtlistener:txctapp5`), and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
 
-The registry is built by `registry/build_courts.py` from a copy of courts-db's `courts.json`, vendored at `registry/sources/courts-db/` and pinned by commit and SHA-256 in the registry's `source` block, which also records the license courts-db states for it. Every US court in that snapshot is registered; the registry's `excluded` block lists the ids left out (courts outside the United States, and one id that fails the `court` rule) with the reason for each. The docket profiles are this registry's assignments, not courts-db's: `scotus-ot1971` for the Supreme Court from 1971-07-01; `us-coa` for the twelve regional courts of appeals; `us-district` for federal district and bankruptcy courts; none for the Federal Circuit; `printed` for every other court.
+The registry is built by `registry/build_courts.py` from a copy of courts-db's `courts.json`, vendored at `registry/sources/courts-db/` and pinned by commit and SHA-256 in the registry's `source` block, which also records the license courts-db states for it. Every court in that snapshot is registered; the registry's `excluded` block lists the one id left out, which fails the `court` rule. Four courts courts-db lacks are registered under CourtListener's ids (`kyctapphigh`, `mspb`, `tennsuperct`, `tennworkcompcl`; source `courtlistener`). The jurisdiction codes, docket profiles and aliases are this registry's assignments, not courts-db's: a territory's own courts take its code and the courts of England and the Philippines theirs (section 3); a state court in one of the thirteen colonies or Maine takes `gb` before 1776-07-04, one in Hawaii `hawaii` before 1898-08-12, one in Texas `texas` before 1846-02-19 and one in Vermont `vermont` before 1791-03-04, unless courts-db dates its start after that day; `scotus-numbered` and then `scotus-ot1971` for the Supreme Court; `us-coa` for the twelve regional courts of appeals; `us-district` for federal district and bankruptcy courts; none for the Federal Circuit; `printed` for every other court.
+
+`registry/cap-courts.json`, validated by `schema/cap-courts.schema.json`, gives the registry code for each court the Caselaw Access Project names, by CAP court id, with the date each code applies from where one CAP court is several registry courts over time (CAP's Kentucky Court of Appeals is `kyctapphigh` before 1976-01-01 and `kyctapp` from it). Each entry says how its code was found; the file is engine output for review, and the CAP courts it can't map are listed with the reason. It is versioned and pinned with the court registry.
 
 ### 10.2 Judge registry
 
@@ -280,16 +342,17 @@ An entry MAY list printed forms: the strings in which a source prints the judge'
 
 ### 10.3 Pinning
 
-Each registry is published as numbered, immutable snapshots, each identified by a URI and a version. Registries are append-only: a later snapshot adds entries and never removes one or changes its code or the profile it already assigns for a date. It MAY assign a profile for a date range that had none, once a version of this spec defines that profile. A key computed under an earlier snapshot is therefore still computable under a later one.
+Each registry is published as numbered, immutable snapshots, each identified by a URI and a version. Registries are append-only: a later snapshot adds entries and never removes one or changes its code, the jurisdiction code or the profile it already assigns for a date. It MAY assign a profile for a date range that had none, once a version of this spec defines that profile. A key computed under an earlier snapshot is therefore still computable under a later one.
 
 A producer MUST record, alongside the keys it mints (for example in a release manifest), the URI and version of each registry snapshot it used. The registry version is not part of the key.
 
 | Registry | URI | Version |
 |---|---|---|
-| Courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json` | `2026.10.18` |
+| Courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json` | `2026.10.23` |
+| CAP courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/cap-courts.json` | `2026.10.23` |
 | Judges | supplied by the consumer | the consumer's |
 
-The court registry's URI is the raw file URL of `registry/courts.json` at the release tag of codexpublicus/exemplar the consumer pins, with `{tag}` replaced by that tag, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). The raw URL returns the registry file itself, as tagged; a `github.com/.../blob/{tag}/...` URL returns an HTML page about the file, whose fragments GitHub uses for its own line anchors. A judge registry's URI is an absolute URI that names one snapshot, chosen by whoever publishes it. This version of the spec is published with court registry `2026.10.18`. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
+The court registry's URI is the raw file URL of `registry/courts.json` at the release tag of codexpublicus/exemplar the consumer pins, with `{tag}` replaced by that tag, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). The raw URL returns the registry file itself, as tagged; a `github.com/.../blob/{tag}/...` URL returns an HTML page about the file, whose fragments GitHub uses for its own line anchors. A judge registry's URI is an absolute URI that names one snapshot, chosen by whoever publishes it. This version of the spec is published with court registry `2026.10.23`. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
 
 ## 11. Aliases and relations
 
@@ -333,7 +396,7 @@ Further schemes are added by a minor version.
 
 ## 12. Computing a key (producer refusals)
 
-A producer computes a key from: the country; the court code; the docket as printed (or none) and, for the fallback, a reporter citation; the decision date; the decision ordinal; and, for a part, the role, the author slugs and the part ordinal; and, for a version, the revision date. It MUST refuse rather than guess, and SHOULD report one of these classes:
+A producer computes a key from: the court code, and the jurisdiction code the registry gives it for the decision date; the docket as printed (or none) and, for the fallback, a reporter citation; the decision date; the decision ordinal; and, for a part, the role, the author slugs and the part ordinal; and, for a version, the revision date. It MUST refuse rather than guess, and SHOULD report one of these classes:
 
 | Class | When |
 |---|---|
@@ -341,9 +404,8 @@ A producer computes a key from: the country; the court code; the docket as print
 | `no-docket-profile` | The registry gives the court no docket profile for the decision date; checked before the docket, and the fallback doesn't apply (5.6) |
 | `docket-profile` | The docket doesn't fit the profile, and there is no reporter citation for the fallback |
 | `no-docket` | The decision has no docket, and no reporter citation for the fallback |
-| `no-decision-date` | The decision date is unknown |
-| `incomplete-date` | The decision date lacks a month or day |
-| `date` | The decision date is not a calendar date |
+| `no-decision-date` | Not even the decision's year is known |
+| `date` | The decision date is not a calendar date, or not a year and month, or a year |
 | `unregistered-author` | An author is not in the judge registry for the court |
 | `per-curiam-author` | A `per-curiam` part was given authors |
 | `role` | The role is not in the vocabulary |
@@ -359,12 +421,21 @@ An ordinal of 1 means the first instance and produces no mark. Every key a produ
 **Spec versions.** This spec is versioned with [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html), because consumers pin it:
 
 - **Major:** a change that makes the same facts compute a different key, or that makes a previously valid key invalid. Keys minted under an earlier major version stay valid and resolvable; a major version applies to keys minted after a producer adopts it.
-- **Minor:** a change that only adds: a country, a role, a docket profile for a court or date range that had none, an alias scheme, an error class.
+- **Minor:** a change that only adds: a jurisdiction code, a role, a docket profile for a court or date range that had none, an alias scheme, an error class.
 - **Patch:** editorial changes and new test vectors that don't change any expected result.
 
 While the version is 0.x, a minor version MAY break these rules (SemVer item 4). Consumers pin a release tag of this repository and SHOULD record the spec version they implement.
 
 **0.2.0.** This version changes two things from 0.1.0, under SemVer item 4: a key-shaped alias is written as a key reference, `crk:` followed by the key, and the bare key-shaped string is no longer an alias (sections 2.6 and 11.1); and the court registry's URI is an absolute URL that names the release tag (section 10.3). No key changes: the same facts compute the same key, and every valid key stays valid.
+
+**0.4.0.** This version changes four things from 0.3.1, under SemVer item 4. The first is the owner's ruling D101 (2026-10-23) on codexpublicus/exemplar#38, #39, #42 and #43; the rest settle codexpublicus/exemplar#26, #27, #33 and #37 and the pre-1971 Supreme Court gap of #46, as proposed in the pull request that brought them:
+
+- the country segment is a jurisdiction code (section 3): ISO 3166-1 codes, a territory's own code, registered body codes such as `ccj`, and the issuing sovereign for a court whose sovereign changed. The grammar admits any two to sixteen lowercase letters, and a validity rule admits the codes section 3 lists. **Changes keys**: a decision of a territory's own court moves from `us` to the territory's code (`us/prsupreme/...` is `pr/prsupreme/...`), a colonial court's decision before 1776-07-04 from `us` to `gb`, and decisions of Hawaii's courts before 1898-08-12, Texas's before 1846-02-19 and Vermont's before 1791-03-04 to `hawaii`, `texas` and `vermont`;
+- `decided` is as precise as the producer can establish it, a full date, a year and month, or a year (section 6); a partial-date key is non-canonical, and its ordinal is counted in printed order. The refusal class `incomplete-date` is withdrawn. **Adds keys** for decisions 0.3.1 refused; a fallback decision's ordinal (section 5.6) can change when a neighbour on its page that had a partial date gets a full one;
+- the Supreme Court has the `scotus-numbered` profile before 1971-07-01 (section 5.7), and its decisions of that period take the reporter fallback like any other court's. **Adds keys** for decisions 0.3.1 refused `no-docket-profile`;
+- the court registry registers the courts courts-db lists outside the United States, four courts courts-db lacks under CourtListener's ids, and CourtListener's ids for the districts of the Court of Appeals of Texas and for the Supreme Court of the Northern Mariana Islands as aliases; `registry/cap-courts.json` gives the code for each court CAP names (section 10.1). **Adds keys** for decisions 0.3.1 refused `unregistered-court`, or that a producer refused for want of a mapping.
+
+Registry `2026.10.23` changes the jurisdiction code of thirteen territorial courts, and assigns date-ranged codes to 971 courts, which section 10.3's append-only rule forbids outside a 0.x minor version. A producer that minted a key under 0.3.x that these rules compute differently records the 0.3.x key `replaced-by` the 0.4.0 key (section 11.2). Every key valid under 0.3.1 stays valid.
 
 **0.3.1.** This patch release of 0.3.0 states how section 10.2's exact match treats letter case, as ruled on codexpublicus/exemplar#14 part b (2026-10-23): a byline matches a judge's name or printed form when the two are equal after case folding, and nothing is approximated. A registry that listed a judge's name only as `Hood` gave a byline printed `HOOD` no key under the 0.3.0 text; it now gives `hood`. No other key changes, unless a registry has two entries for one court whose names or forms differ only in letter case, which now makes a byline matching them `unregistered-author`. No vector's expected result changes.
 
@@ -395,14 +466,14 @@ Every vector records its `provenance`:
 
 - `human-curated`: a person checked it against the primary source. Ground truth; where it disagrees with any other vector, it wins.
 - `hand-checked`: taken from a worked example in the research doc.
-- `engine-output`: taken from an implementation's tests or output (currently gorsuch-library); it shows what an implementation does, not what is correct.
+- `engine-output`: taken from an implementation's tests or output (gorsuch-library), or computed from a source's records (CAP's case metadata, CourtListener's export) by the rules here; it shows what the data and an implementation give, not what is correct.
 - `spec-derived`: constructed from this document's rules to exercise an edge case, and not yet checked by a person.
 
 ## 15. Interop mappings (informative)
 
 These are derived from a key, never canonical. For `us/ca10/14-9585/2016-08-23`:
 
-- Akoma Ntoso work IRI: `/akn/us/judgment/ca10/2016-08-23/14-9585`, expression `…/eng@2016-08-23`. A part maps to an inline `<opinion>` with `eId` `opinion_concurrence.gorsuch`.
+- Akoma Ntoso work IRI: `/akn/us/judgment/ca10/2016-08-23/14-9585`, expression `…/eng@2016-08-23`. A part maps to an inline `<opinion>` with `eId` `opinion_concurrence.gorsuch`. The IRI's first segment is the key's country segment: `pr/prsupreme/8561/1943-05-18` is `/akn/pr/judgment/prsupreme/1943-05-18/8561`.
 - URN:LEX ([RFC 9676](https://www.rfc-editor.org/rfc/rfc9676.html)): `urn:lex:us:court.appeals.10.circuit:decision:2016-08-23;14-9585`. The US jurisdiction table is empty, so the authority name is not standardized.
 - ECLI-shaped string: `ECLI:US:CA10:20160823:14.9585`. This is not a real ECLI; the US has no ECLI coordinator.
 
@@ -410,9 +481,10 @@ These are derived from a key, never canonical. For `us/ca10/14-9585/2016-08-23`:
 
 Non-normative. Each is a gap this version leaves for a later one.
 
-- Supreme Court dockets before 1971-07-01 were not year-prefixed; their format needs a profile. Until then, producers refuse with `no-docket-profile` (section 5.6).
 - The Federal Circuit's dockets (`2021-1234`) need a profile.
 - The Eleventh Circuit's letter suffix is dropped, but its meaning is unverified.
-- The court registry registers every US court in courts-db, but no one has checked that each court CAP names maps to one of its codes; CAP publishes no list of its courts, only one per volume.
+- `registry/cap-courts.json` is engine output: its 3,248 mappings need review, and 206 CAP courts (6,134 cases) have no code.
 - The `us-district` profile is assigned to historical district courts, whose dockets predate the PACER form and so fall to `rpt.`; they may want a profile of their own.
-
+- Codes for tribal nations (codexpublicus/exemplar#45), and courts that sit for several states, such as the Privy Council in its modern jurisdiction (codexpublicus/exemplar#42).
+- `gb` stands for the Kingdom of England before 1707 as the state the United Kingdom continues; the colonies' change of sovereign is dated 1776-07-04 for all thirteen, although some broke with the Crown earlier and New York's courts sat under it until 1783.
+- The decision ordinal when a docket doesn't record which of two decisions came first is settled only for partial-date keys (section 6.2) and the `scotus-numbered` profile (section 5.7); codexpublicus/exemplar#29 asks about the rest.
