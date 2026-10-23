@@ -1,6 +1,6 @@
 # Court record key
 
-Specification version: **0.3.0** (draft). Status: not yet stable; see section 13.
+Specification version: **0.3.1** (draft). Status: not yet stable; see section 13.
 
 A court record key (CRK) is a deterministic identifier for a US court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation.
 
@@ -276,7 +276,7 @@ This repository publishes no judge registry. Judge slugs come from a registry th
 
 Whatever its source, a judge registry used with this spec MUST meet these rules. Each entry has a slug, the judge's name, and the court codes the slug is registered for. A slug matches `author` (`^[a-z][a-z-]*$`; no digits, so a second Justice Harlan is `harlan-ii`). A slug identifies one judge within each court it is registered for; a registry MAY make slugs unique across all courts, and SHOULD give a judge who sat on several courts one slug for all of them. Slugs are never renamed, reused or deleted.
 
-An entry MAY list printed forms: the strings in which a source prints the judge's name in a byline, misprints and OCR errors included, each with the source it was seen in. A producer maps a byline to a slug only through an entry's name or printed forms, for the key's court; a byline that matches no entry, or more than one, is `unregistered-author`. A printed form is a fact about a source's text that a person has checked; a producer MUST NOT match a byline to a name by edit distance or any other approximation.
+An entry MAY list printed forms: the strings in which a source prints the judge's name in a byline, misprints and OCR errors included, each with the source it was seen in. A producer maps a byline to a slug only through an entry's name or printed forms, for the key's court. The name the byline prints matches a name or printed form when the two are equal, character for character, after both are case-folded (Unicode full case folding, as Python's `str.casefold()` does it): `HOOD` matches the name `Hood`, and `McDERMOTT` matches `McDermott`. Case folding is the only normalization. A byline that matches no entry, or more than one, is `unregistered-author`. A printed form is a fact about a source's text that a person has checked; a registry needn't list a form that differs from the name, or from another form, only in letter case. A producer MUST NOT match a byline to a name by edit distance, OCR correction or any other approximation.
 
 ### 10.3 Pinning
 
@@ -365,6 +365,8 @@ An ordinal of 1 means the first instance and produces no mark. Every key a produ
 While the version is 0.x, a minor version MAY break these rules (SemVer item 4). Consumers pin a release tag of this repository and SHOULD record the spec version they implement.
 
 **0.2.0.** This version changes two things from 0.1.0, under SemVer item 4: a key-shaped alias is written as a key reference, `crk:` followed by the key, and the bare key-shaped string is no longer an alias (sections 2.6 and 11.1); and the court registry's URI is an absolute URL that names the release tag (section 10.3). No key changes: the same facts compute the same key, and every valid key stays valid.
+
+**0.3.1.** This patch release of 0.3.0 states how section 10.2's exact match treats letter case, as ruled on codexpublicus/exemplar#14 part b (2026-10-23): a byline matches a judge's name or printed form when the two are equal after case folding, and nothing is approximated. A registry that listed a judge's name only as `Hood` gave a byline printed `HOOD` no key under the 0.3.0 text; it now gives `hood`. No other key changes, unless a registry has two entries for one court whose names or forms differ only in letter case, which now makes a byline matching them `unregistered-author`. No vector's expected result changes.
 
 **0.3.0.** This version changes three things from 0.2.0, under SemVer item 4, as ruled on codexpublicus/exemplar#12, #13 and #14 (2026-10-23):
 

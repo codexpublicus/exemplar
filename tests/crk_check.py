@@ -343,14 +343,15 @@ def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str
 
 
 def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:
-    """Section 10.2: the slug whose name or printed forms equal a byline's name, for the court."""
+    """Section 10.2: the slug whose name or printed forms equal a byline's name after case
+    folding, for the court."""
+    name = printed.casefold()
     found = [
         slug
         for slug, entry in sorted(judges.items())
         if court in entry.get("courts", [])
-        and (
-            printed == entry.get("name") or printed in [f["form"] for f in entry.get("printed", [])]
-        )
+        and name
+        in [entry["name"].casefold()] + [f["form"].casefold() for f in entry.get("printed", [])]
     ]
     if len(found) != 1:
         raise Refusal("unregistered-author")
