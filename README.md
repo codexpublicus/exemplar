@@ -36,7 +36,7 @@ Consumers pin a release tag. Releases follow semantic versioning: a change to ho
 
 ## Schematron rules and the viewer sidecar
 
-`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.3.0 text, which takes its option (a), and check nothing it leaves open.
+`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.3.1 text, which takes its option (a), and check nothing it leaves open.
 
 `schema/sidecar.schema.json` is the JSON Schema for the viewer's sidecar, the index the viewer loads beside a document (profile section 16.3): the keys, the parts, each printing's page markers with the eId they sit in, and each scan block's page and bounding box from CAP's `data-blocks`. A sidecar is named after its document (`{stem}.sidecar.json` beside `{stem}.akn.xml`), and everything in it except the bounding boxes must agree with the document.
 

@@ -19,7 +19,7 @@
   absolute (section 5.3): the court registry's is its raw file URL at a release tag.
 
   Open question O7 (decisions without a decision key) is still open. These rules implement the
-  0.3.0 text, which takes its option (a): every document has a decision key.
+  0.3.1 text, which takes its option (a): every document has a decision key.
 -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
