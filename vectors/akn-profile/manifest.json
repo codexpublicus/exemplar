@@ -1,6 +1,6 @@
 {
   "spec": "spec/akoma-ntoso-profile.md",
-  "spec_version": "0.2.0",
+  "spec_version": "0.3.0",
   "schematron": "schema/profile.sch",
   "sidecar_schema": "schema/sidecar.schema.json",
   "namespaces": {
@@ -37,6 +37,25 @@
         "expect": "sorted rule ids",
         "provenance": "see provenance",
         "note": "what the vector tests"
+      }
+    },
+    "cap-mapping.jsonl": {
+      "checks": "A producer reading CAP maps each input to the expected output, as the profile's CAP mappings say. kind role: a CAP opinion type and byline to a CRK role (section 15.4). kind citation: a citation link and the case's cites_to to a ref target, or null for unmarked text (section 15.2). kind scan: a source block's data-blocks scan pages and its page labels to each label's @cx:scan, or null when @cx:scan is absent (section 9.1).",
+      "fields": {
+        "id": "vector name",
+        "kind": "role, citation or scan",
+        "source_type": "role: CAP's article.opinion @data-type",
+        "byline": "role: the byline's text (CAP p.author)",
+        "role": "role: expected CRK role",
+        "link": "citation: the a.citation attributes data-cite and, when present, data-case-paths",
+        "cites_to": "citation: the case's cites_to entries, {cite, category}",
+        "href": "citation: expected ref/@href, or null for unmarked text",
+        "block_scans": "scan: the scan page of each data-blocks entry of the source block, in order",
+        "labels": "scan: the number of page labels in the block",
+        "first_label_before_text": "scan: whether the first label comes before any of the block's text",
+        "scans": "scan: expected @cx:scan of each label in order, or null when the markers carry none",
+        "provenance": "see provenance",
+        "source": "where the vector comes from"
       }
     },
     "no-text.akn.xml": {

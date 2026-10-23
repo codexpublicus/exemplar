@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Test vector for spec/akoma-ntoso-profile.md 0.2.0 section 13.1, a decision with no released text.
+  Test vector for spec/akoma-ntoso-profile.md 0.3.0 section 13.1, a decision with no released text.
   Constructed from examples/minimal by hand: its identifiers and printing are the example's, and
   the printing's text="withheld" is invented for this vector. It describes no real source record.
 -->
@@ -34,16 +34,16 @@
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
         </cx:keys>
-        <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="withheld"/>
+        <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="withheld" cx:provenance="engine-output"/>
       </proprietary>
     </meta>
     <header>

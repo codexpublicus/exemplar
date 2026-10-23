@@ -10,7 +10,7 @@
     "profile": {
       "description": "The profile version the document declares in cx:profile/@version. The sidecar's shape follows the same version.",
       "type": "string",
-      "pattern": "^0\\.2\\.(0|[1-9][0-9]*)$"
+      "pattern": "^0\\.3\\.(0|[1-9][0-9]*)$"
     },
     "document": {
       "description": "The document's manifestation URI (FRBRManifestation/FRBRthis/@value): crk:, the expression key, .akn.xml.",
@@ -87,9 +87,9 @@
         "type": {"enum": ["official", "parallel"]},
         "firstPage": {"description": "cx:printing/@firstPage, as printed.", "type": "string", "minLength": 1},
         "lastPage": {"description": "cx:printing/@lastPage, as printed, when the document gives it.", "type": "string", "minLength": 1},
-        "text": {"enum": ["transcribed", "withheld", "unavailable"]},
+        "text": {"enum": ["transcribed", "released", "withheld", "unavailable"]},
         "pages": {
-          "description": "One per eop marker for this printing, in document order. The first page has no marker and no entry.",
+          "description": "One per eop marker for this printing, in document order. The first page has no marker and no entry. A page number can appear more than once, for instance when a footnote runs onto a page the text also begins; a consumer that needs one position for a page uses the first entry whose eId is neither a note's nor inside one, or, if every entry is inside a note, the first entry (profile section 16.3).",
           "type": "array",
           "items": {"$ref": "#/$defs/page"}
         }

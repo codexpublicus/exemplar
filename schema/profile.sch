@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Schematron rules for spec/akoma-ntoso-profile.md 0.2.x.
+  Schematron rules for spec/akoma-ntoso-profile.md 0.3.x.
 
   These rules check what the Akoma Ntoso 1.0 XML Schema can't: the profile's rules marked
   "Schematron" in section 16.2 of the profile. Run them after XSD validation; a document that
@@ -19,7 +19,7 @@
   absolute (section 5.3): the court registry's is its raw file URL at a release tag.
 
   Open question O7 (decisions without a decision key) is still open. These rules implement the
-  0.2.0 text, which takes its option (a): every document has a decision key.
+  0.3.0 text, which takes its option (a): every document has a decision key.
 -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -27,7 +27,7 @@
         xmlns:f="https://codexpublicus.org/ns/exemplar/functions"
         queryBinding="xslt2">
 
-  <title>Akoma Ntoso judgment profile for US decisions, 0.2.x</title>
+  <title>Akoma Ntoso judgment profile for US decisions, 0.3.x</title>
 
   <ns prefix="a" uri="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"/>
   <ns prefix="cx" uri="https://codexpublicus.org/ns/exemplar"/>
@@ -154,6 +154,13 @@
     <xsl:sequence select="$e/ancestor::*[self::a:hcontainer or self::a:authorialNote or self::a:blockContainer or self::a:note][1]"/>
   </xsl:function>
 
+  <!-- A paragraph that takes a place in its container's numbering (sections 7.2, 8.1, 11): a p or
+       block the producer didn't insert, or a title span in a part's heading. -->
+  <xsl:function name="f:numbered" as="xs:boolean">
+    <xsl:param name="e" as="element()"/>
+    <xsl:sequence select="($e/self::a:p or $e/self::a:block or $e/self::a:span[parent::a:heading[parent::a:hcontainer[@cx:part]]]) and not($e/@cx:origin eq 'producer')"/>
+  </xsl:function>
+
   <!-- The trailing number of an eId ending _{n}, or -1. -->
   <xsl:function name="f:eid-number" as="xs:integer">
     <xsl:param name="eid" as="xs:string?"/>
@@ -161,7 +168,7 @@
     <xsl:sequence select="if (matches($n, '^[1-9][0-9]*$')) then xs:integer($n) else -1"/>
   </xsl:function>
 
-  <let name="profile-line" value="'0.2'"/>
+  <let name="profile-line" value="'0.3'"/>
   <let name="meta" value="/a:akomaNtoso/a:judgment/a:meta"/>
   <let name="work" value="f:key-of-uri($meta/a:identification/a:FRBRWork/a:FRBRthis/@value)"/>
   <let name="expression" value="f:key-of-uri($meta/a:identification/a:FRBRExpression/a:FRBRthis/@value)"/>
@@ -172,6 +179,7 @@
   <let name="courts-uri" value="string(($proprietary/cx:keys/cx:registry[@name = 'courts'])[1]/@uri)"/>
   <let name="judges-uri" value="string(($proprietary/cx:keys/cx:registry[@name = 'judges'])[1]/@uri)"/>
   <let name="decision-roles" value="('order', 'judgment', 'decree')"/>
+  <let name="header-classes" value="('parties', 'docketnumber', 'court', 'decisiondate', 'otherdate', 'attorneys', 'judges', 'syllabus', 'headnotes', 'summary', 'synopsis', 'history', 'disposition', 'posture', 'arguments', 'statement', 'citation', 'headmatter')"/>
 
   <!-- Section 4: document outline. -->
   <pattern id="outline">
@@ -288,7 +296,8 @@
       <assert test="@type = ('official', 'parallel')">[AKN-24] cx:printing/@type is "official" or "parallel", not "<value-of select="@type"/>".</assert>
       <assert test="normalize-space(@reporter) ne '' and normalize-space(@volume) ne '' and normalize-space(@firstPage) ne ''">[AKN-24] cx:printing has @reporter, @volume and @firstPage.</assert>
       <assert test="not(exists($ref)) or $ref/@eId eq concat('printing_', @volume, '-', f:slug(@reporter), '-', @firstPage)">[AKN-22] The printing's eId is "printing_<value-of select="concat(@volume, '-', f:slug(@reporter), '-', @firstPage)"/>", from its volume, reporter and first page.</assert>
-      <assert test="@text = ('transcribed', 'withheld', 'unavailable')">[AKN-24] cx:printing/@text is "transcribed", "withheld" or "unavailable", not "<value-of select="@text"/>".</assert>
+      <assert test="@text = ('transcribed', 'released', 'withheld', 'unavailable')">[AKN-24] cx:printing/@text is "transcribed", "released", "withheld" or "unavailable", not "<value-of select="@text"/>".</assert>
+      <assert test="@text eq 'transcribed' or @cx:provenance eq 'engine-output'">[AKN-24] cx:printing with @text "<value-of select="@text"/>" has @cx:provenance "engine-output": the value is derived from the source's volume records.</assert>
       <assert test="not(@ordinal) or matches(@ordinal, '^[1-9][0-9]*$')">[AKN-24] cx:printing/@ordinal is a positive integer.</assert>
     </rule>
     <rule context="cx:printing/cx:cite">
@@ -316,7 +325,7 @@
       <let name="kind" value="local-name()"/>
       <let name="prev" value="preceding-sibling::*[local-name() eq $kind][1]"/>
       <assert test="self::a:p or self::a:blockContainer">[AKN-26] A header block is a p or a blockContainer, not <value-of select="$kind"/>.</assert>
-      <assert test="@class = ('parties', 'docketnumber', 'court', 'decisiondate', 'otherdate', 'attorneys', 'judges', 'syllabus', 'headnotes', 'summary', 'synopsis', 'history', 'disposition', 'posture', 'arguments', 'statement', 'headmatter')">[AKN-26] Header block @class "<value-of select="@class"/>" is in the vocabulary of section 6.</assert>
+      <assert test="@class = $header-classes">[AKN-26] Header block @class "<value-of select="@class"/>" is in the vocabulary of section 6.</assert>
       <assert test="@cx:origin">[AKN-26] A header block has @cx:origin.</assert>
       <assert test="matches(string(@eId), concat('^header__', $kind, '_[1-9][0-9]*$')) and (not($prev) or f:eid-number($prev/@eId) lt f:eid-number(@eId))">[AKN-26] Header block eId "<value-of select="@eId"/>" is "header__<value-of select="$kind"/>_{n}", numbered in order.</assert>
       <assert test="not(@class = ('syllabus', 'headnotes', 'summary', 'synopsis') and @cx:origin eq 'court')">[AKN-27] A header block of class "<value-of select="@class"/>" doesn't have @cx:origin "court".</assert>
@@ -330,7 +339,7 @@
       <let name="role" value="f:role($key)"/>
       <let name="authors" value="f:authors($key)"/>
       <let name="expected-type" value="if ($role = ('concurrence', 'concurrence-in-judgment', 'concurrence-in-part-and-judgment')) then 'agreeing' else if ($role eq 'dissent') then 'dissenting' else ''"/>
-      <let name="opinion" value="a:heading/a:opinion"/>
+      <let name="opinion" value="if (a:subheading) then a:subheading/a:opinion else a:heading/a:opinion"/>
       <assert test="f:is-key($key) and f:part($key) ne '' and f:decision-key($key) eq $work and (f:revised($key) eq '' or f:revised($key) eq f:revised($expression))">[AKN-31] @cx:part "<value-of select="$key"/>" is a valid part key of the work "<value-of select="$work"/>".</assert>
       <assert test="count(//a:hcontainer[@cx:part eq $key]) eq 1">[AKN-31] Part key "<value-of select="$key"/>" names one part.</assert>
       <assert test="@name eq $role">[AKN-29] The part's @name is its role, "<value-of select="$role"/>".</assert>
@@ -338,21 +347,36 @@
       <assert test="if (exists($authors)) then @cx:authors eq string-join($authors, ' ') else not(@cx:authors)">[AKN-32] @cx:authors lists the part key's authors, "<value-of select="string-join($authors, ' ')"/>", and is absent when it has none.</assert>
       <assert test="every $s in $authors satisfies $references/a:TLCPerson[@eId eq $s]">[AKN-22] Each author of "<value-of select="$key"/>" has a TLCPerson.</assert>
       <assert test="not(@cx:joinedBy) or (matches(@cx:joinedBy, '^[a-z][a-z-]*( [a-z][a-z-]*)*$') and (every $s in tokenize(@cx:joinedBy, ' ') satisfies $references/a:TLCPerson[@eId eq $s]))">[AKN-33] @cx:joinedBy lists judge slugs separated by single spaces, each with a TLCPerson.</assert>
-      <assert test="if (not($opinion) and $role = $decision-roles) then true() else count($opinion) eq 1 and $opinion/@by eq (if (exists($authors)) then concat('#', $authors[1]) else $court-ref)">[AKN-34] The heading holds one opinion whose @by is "<value-of select="if (exists($authors)) then concat('#', $authors[1]) else $court-ref"/>".</assert>
+      <assert test="if (not($opinion) and $role = $decision-roles) then true() else count($opinion) eq 1 and $opinion/@by eq (if (exists($authors)) then concat('#', $authors[1]) else $court-ref)">[AKN-34] The <value-of select="if (a:subheading) then 'subheading' else 'heading'"/> holds one opinion whose @by is "<value-of select="if (exists($authors)) then concat('#', $authors[1]) else $court-ref"/>".</assert>
       <assert test="every $o in $opinion satisfies (if ($expected-type ne '') then $o/@type eq $expected-type else not($o/@type))">[AKN-35] opinion/@type is <value-of select="if ($expected-type ne '') then concat('&quot;', $expected-type, '&quot;') else 'absent'"/> for role "<value-of select="$role"/>".</assert>
       <assert test="if ($role = $decision-roles) then parent::a:decision else parent::a:motivation">[AKN-36] A part with role "<value-of select="$role"/>" goes in <value-of select="if ($role = $decision-roles) then 'decision' else 'motivation'"/>.</assert>
       <assert test="not(@cx:aliases) or matches(@cx:aliases, '^cl-opinion:[1-9][0-9]*( cl-opinion:[1-9][0-9]*)*$')">[7.2] @cx:aliases lists cl-opinion aliases separated by single spaces.</assert>
     </rule>
   </pattern>
 
-  <!-- Sections 8.1 and 11: paragraph eIds. Producer-inserted paragraphs have none (8.3). -->
+  <!-- Section 7.2: paragraphs printed before the byline. -->
+  <pattern id="titles">
+    <rule context="a:hcontainer[@cx:part]/a:heading[../a:subheading or a:span]">
+      <assert test="../a:subheading">[AKN-59] A part heading that holds paragraphs printed before the byline is followed by a subheading holding the byline.</assert>
+      <assert test="a:span and (every $c in * satisfies ($c/self::a:span[@eId] or $c/self::a:br)) and not(text()[normalize-space()])">[AKN-59] A part heading followed by a subheading holds only the paragraphs printed before the byline, each a span with an eId, separated by br.</assert>
+    </rule>
+  </pattern>
+
+  <!-- Sections 7.2, 8.1 and 11: paragraph eIds. Producer-inserted paragraphs have none (8.3). -->
   <pattern id="paragraphs">
-    <rule context="*[self::a:p or self::a:block][not(@cx:origin eq 'producer')][f:container(.)][@eId or not(f:container(.)/self::a:note)]">
+    <rule context="*[f:numbered(.)][f:container(.)][@eId or not(f:container(.)/self::a:note)]">
       <let name="c" value="f:container(.)"/>
       <let name="prefix" value="concat($c/@eId, '__p_')"/>
-      <let name="prev" value="(preceding::*[self::a:p or self::a:block][@eId][not(@cx:origin eq 'producer')][f:container(.) is $c])[last()]"/>
+      <let name="prev" value="(preceding::*[f:numbered(.)][@eId][f:container(.) is $c])[last()]"/>
       <assert test="starts-with(string(@eId), $prefix) and matches(substring(string(@eId), string-length($prefix) + 1), '^[1-9][0-9]*$')">[AKN-40] eId "<value-of select="@eId"/>" is "<value-of select="$prefix"/>{n}".</assert>
       <assert test="not($prev) or f:eid-number($prev/@eId) lt f:eid-number(@eId)">[AKN-40] eId "<value-of select="@eId"/>" follows "<value-of select="$prev/@eId"/>" in increasing order.</assert>
+    </rule>
+  </pattern>
+
+  <!-- Section 8.4: head matter inside a part. -->
+  <pattern id="part-head-matter">
+    <rule context="a:hcontainer[@cx:part]//*[self::a:p or self::a:block or self::a:span[parent::a:heading]][@class]">
+      <assert test="@class = $header-classes and @cx:origin and @cx:origin ne 'court'">[AKN-60] A paragraph of class "<value-of select="@class"/>" inside a part has @class from the vocabulary of section 6 and @cx:origin other than "court", not "<value-of select="@cx:origin"/>".</assert>
     </rule>
   </pattern>
 

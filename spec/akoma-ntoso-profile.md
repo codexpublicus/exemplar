@@ -1,6 +1,6 @@
 # Akoma Ntoso judgment profile for US decisions
 
-Specification version: **0.2.0** (draft). Status: not yet stable; see sections 17 and 18.
+Specification version: **0.3.0** (draft). Status: not yet stable; see sections 17 and 18.
 
 This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, gorsuch-library for its corpus) write documents in this form, and the shared viewer reads them.
 
@@ -14,7 +14,7 @@ Each requirement a machine can check carries a rule id in brackets, `[AKN-n]`. S
 
 Terms:
 
-- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.2.0. A key reference is `crk:` followed by a key (CRK spec section 2.6).
+- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.3.0. A key reference is `crk:` followed by a key (CRK spec section 2.6).
 - **Printing.** One publication of a decision on numbered pages: the official report, a regional reporter's reprint, a nominative reporter. A printing is identified by its citation.
 - **Source.** The digital record a producer took the document's content from: a CAP case (its JSON and HTML), a CourtListener cluster and its opinions.
 - **Producer.** A program that writes documents in this profile. **Consumer.** A program that reads them (the viewer, a validator, an indexer).
@@ -141,7 +141,7 @@ Two producers writing documents for the same expression write the same manifesta
 | Each printing | `TLCReference @name="printing"` | `printing_{volume}-{reporter slug}-{page}` | the printing's `cite:` alias | the citation as printed |
 | Each source | `TLCReference @name="source"` | `source_{name}` | the source record's alias (`cap:...`, `cl-cluster:...`) | a readable label |
 
-The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
+The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
 
 Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `_` that every other eId in this table has; the two kinds can't collide.
 
@@ -155,8 +155,8 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
   - `@ref`: `#` + the printing's `TLCReference` eId.
   - `@type`: `official` or `parallel`, as the source types the citation.
   - `@reporter`, `@volume`, `@firstPage`, `@lastPage`: as printed. `@lastPage` is OPTIONAL when the source doesn't give it.
-  - `@ordinal`: OPTIONAL; when several decisions begin on `@firstPage`, this decision's position among them, in printed order (CAP's file suffix, `-01`, `-02`).
-  - `@text`: `transcribed` when the document's text was taken from this printing; `withheld` when a source holds the printing's pages but did not release their text (CAP's duplicative cases); `unavailable` when no source has text or scans for it.
+  - `@ordinal`: REQUIRED when another decision begins on `@firstPage` of this printing, and absent otherwise; this decision's position among them, in printed order (CAP's file suffix, `-01`, `-02`). The producer MUST determine it from the source's record of the whole volume (CAP: the volume's `CasesMetadata.json` or its case file names), not from the case record alone.
+  - `@text`: `transcribed` when the document's text was taken from this printing; `released` when a source released the printing's text as a record of its own, which this document didn't use (a CAP case in an unredacted volume at this citation); `withheld` when a source holds the printing's pages but released no text for this decision (CAP: `VolumesMetadata.json` lists the volume, and its case list has no case beginning on this page); `unavailable` when no source the producer consulted holds the printing's pages. Every value but `transcribed` is derived from the source's volume-level records, and the `cx:printing` carries `@cx:provenance="engine-output"` [AKN-24].
   - Children: `cx:cite @type @value` for each other citation of the same pages, such as a nominative reporter citation (`9 Wheat. 738` for 22 U.S. 738); `cx:scans @source @volume @first @last` when a source holds scans of the printing, giving the source's volume and the first and last scan sequence numbers (CAP's `first_page_order` and `last_page_order`).
 - `cx:source`: one per source in `references` [AKN-25]. Attributes: `@ref` (the `TLCReference`), `@agent` (the organization that made it), `@record` (its alias), `@method` (`ocr`, `born-digital`, `keyed`, or `unknown`: how the source's text was made, as far as the source says), and whatever identifies the record's state as the source gives it (`@caseId`, `@lastUpdated`, `@sha256` for CAP; `@textField` for CourtListener). An optional `cx:confidence @value @scope @basis` child records a confidence figure the source publishes, such as CAP's `analysis.ocr_confidence`, with `@basis` naming the field it came from.
 
@@ -164,13 +164,13 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
 
 `header` holds the head matter: everything printed before the first part. Each block of head matter is a `p` (one paragraph) or a `blockContainer` (several), in printed order, and each MUST carry [AKN-26]:
 
-- `@class`: the kind of block, from this vocabulary: `parties`, `docketnumber`, `court`, `decisiondate`, `otherdate`, `attorneys`, `judges`, `syllabus`, `headnotes`, `summary`, `synopsis`, `history`, `disposition`, `posture`, `arguments` (arguments of counsel as a reporter printed them), `statement` (a reporter's statement of the case), `headmatter` (anything else).
+- `@class`: the kind of block, from this vocabulary: `parties`, `docketnumber`, `court`, `decisiondate`, `otherdate`, `attorneys`, `judges`, `syllabus`, `headnotes`, `summary`, `synopsis`, `history`, `disposition`, `posture`, `arguments` (arguments of counsel as a reporter printed them), `statement` (a reporter's statement of the case), `citation` (a citation of this decision that the reporter prints in the head matter: a parallel, neutral or other reporter's citation), `headmatter` (anything else).
 - `@cx:origin`: who wrote it, as far as the producer knows (section 12.1).
 - `@eId`: `header__p_{n}` for a `p`, `header__blockContainer_{n}` for a `blockContainer`; paragraphs inside a `blockContainer` are `{its eId}__p_{n}`. `p` and `blockContainer` blocks are numbered separately, each in printed order: each block's `n` MUST be greater than that of the previous header block of the same element, and need not be one greater.
 
 Blocks of class `syllabus`, `headnotes`, `summary` and `synopsis` MUST NOT have `@cx:origin="court"` [AKN-27]. They are added by a reporter or a publisher; the official syllabus of the Supreme Court is itself prepared by the Reporter of Decisions and is not part of the opinion.
 
-Inside head matter blocks, a producer SHOULD mark: the caption with `docTitle`; the docket number with `docketNumber`; the court's name with `courtType @refersTo` (the court's `TLCOrganization`); the decision date with `docDate @date`. It MAY mark other dates with `date @date`, judges with `judge @refersTo` (a `TLCPerson`), parties with `party @refersTo`, and counsel with `lawyer @refersTo`. Markup that the producer derived, rather than copied from the source's own structure, carries `@cx:provenance="engine-output"` (section 12.2). The text inside stays as the source gives it: `Rebearing Denied` in the example is CAP's OCR of "Rehearing Denied", and it stays.
+Inside head matter blocks, a producer SHOULD mark: the caption with `docTitle`; the docket number with `docketNumber`; the court's name with `courtType @refersTo` (the court's `TLCOrganization`); the decision date with `docDate @date`. A producer MUST NOT mark text with `courtType` unless the text names the court; a division, department, panel, county or sitting (`Division One.`, `Suffolk.`, `En Banc.`) is not the court's name. A `courtType` the producer adds after reading the text carries `@cx:provenance="engine-output"`. It MAY mark other dates with `date @date`, judges with `judge @refersTo` (a `TLCPerson`), parties with `party @refersTo`, and counsel with `lawyer @refersTo`. Markup that the producer derived, rather than copied from the source's own structure, carries `@cx:provenance="engine-output"` (section 12.2). The text inside stays as the source gives it: `Rebearing Denied` in the example is CAP's OCR of "Rehearing Denied", and it stays.
 
 ## 7. Parts: opinions and other separately headed writings
 
@@ -221,6 +221,16 @@ For each separately headed writing (CRK spec section 8), in printed order [AKN-2
 
 The heading holds the writing's byline as the source gives it (CAP's `p.author`). Text the source prints after the byline, such as `(dissenting).` or `delivered the opinion of the Court.` in a separate paragraph, stays in `content`; the producer doesn't merge it into the heading.
 
+When the source prints one or more paragraphs between the start of a writing and its byline (CAP: elements of `article.opinion` before `p.author`), they stay before the byline [AKN-59]:
+
+- `heading` holds them in printed order, each as a `span` with `@eId` `{container eId}__p_{n}` and its own `@cx:blocks`, separated by `br`. They count in the part's paragraph numbering (section 8.1): with k such paragraphs, the first paragraph of `content` is `__p_{k+1}`.
+- `subheading` holds the byline wrapped in `opinion`, and carries the byline's `@cx:blocks`. AKN-34 and AKN-35 apply to that `opinion`.
+- Page markers in these paragraphs stay where they fall, inside their `span`.
+
+A part with nothing printed before its byline keeps the byline in `heading`. A writing whose byline is its last element is refused in this version.
+
+Marutani v. Pawelec's per curiam part (`examples/cap/us-pa-59e.d.misc.dkt.1983-1983-04-20.akn.xml`) is `<heading><span eId="opinion_per-curiam__p_1" cx:blocks="BL_561.3"><eop .../>ORDER</span></heading><subheading cx:blocks="BL_561.4"><opinion by="#court_pa">PER CURIAM:</opinion></subheading>`, followed by `content` starting at `__p_2`, the eId `Petition denied.` already had under 0.2.0.
+
 Joint authors appear in printed order in the part key and `@cx:authors`; `opinion/@by` names the first, because AKN's `by` takes one agent.
 
 A document MUST NOT contain a part whose key the producer can't compute (an author missing from the judge registry, CRK refusal `unregistered-author`); the producer refuses the whole document [AKN-37, not machine-checkable]. Open question O6 is whether to allow unkeyed parts instead.
@@ -249,6 +259,10 @@ Every element made from a source block that carries CAP's `data-blocks` MUST hav
 
 An excerpt marks omitted text with `omissis`. A `p` that the producer inserts to hold omissions has `@cx:origin="producer"` and no `@eId` [AKN-44]. Page markers that fall in omitted text stay, in order, between the `omissis` elements.
 
+### 8.4 Head matter inside a part
+
+A paragraph that the source places inside a writing but classes as head matter (CAP: a `p` in `article.opinion` with a class other than `author`) stays where the source prints it and keeps its place in the part's paragraph numbering (section 8.1). It MUST carry `@class`, from the vocabulary of section 6 (`headmatter` for a class not in it), and `@cx:origin`, which MUST NOT be `court` [AKN-60]. A source that doesn't say who wrote it gives `unknown`, as in section 12.1.
+
 ## 9. Pages and printings
 
 ### 9.1 Page breaks
@@ -261,9 +275,9 @@ operating. <eop refersTo="#printing_31-a2d-683" number="684" cx:scan="732"/>a ta
 
 - `@refersTo` MUST reference the printing's `TLCReference` [AKN-46].
 - `@number` MUST be the number of the page that begins at the marker, as printed [AKN-47]. This is the page CAP's star paging labels (`*684`). AKN's name for the element is "end of page"; in this profile the marker sits at the boundary and names the page that follows it.
-- `@cx:scan`, when the source holds scans of the printing, is the scan sequence number of that page in the source's volume.
+- `@cx:scan`, when the source holds scans of the printing, is the scan sequence number of the page that begins at the marker. From CAP it is read from the `data-blocks` of the source block that contains the page label: list the scan pages of that block's entries in order, dropping consecutive repeats; the k-th label in the block takes the (k+1)-th scan page, or the k-th when the label comes before any of the block's text. When the block has too few scan pages for its labels, `@cx:scan` MUST be absent. A producer MUST NOT compute it from `@number` and `cx:scans/@first`. The marker carries `@cx:provenance="engine-output"`.
 - A printing's first page has no marker; its number is `cx:printing/@firstPage`.
-- `@breakAt` and `@breakWith` follow AKN when a page breaks inside a word.
+- `@breakAt` and `@breakWith` MUST be absent unless the source records how the word was broken; CAP doesn't. A marker between two letters without them says only that the page began inside the word.
 
 A page break inside head matter or a footnote is marked the same way, where it falls. Markers from different printings interleave in the one text; when two fall at the same position, they appear in the order the printings are listed in `references`.
 
@@ -303,7 +317,7 @@ Citations to legislation, regulations and other non-decisions MUST NOT use a dec
 
 A footnote in a part is the author's: it is an `authorialNote` placed at the position of its reference mark [AKN-54]:
 
-- `@marker`: the mark as printed (`1`, `*`). Numbering is as printed; when footnote numbers run on across parts, as in the example (the dissent's footnotes are 6 to 9), they stay.
+- `@marker`: the note's mark as the source gives it (CAP: `aside.footnote/@data-label`), OCR errors included. A producer MUST NOT renumber or correct it (section 8.1). When the mark in the text differs from the note's label, `@marker` is the note's label. The note's eId numbers it by position and doesn't depend on `@marker`. When footnote numbers run on across parts, as in the example (the dissent's footnotes are 6 to 9), they stay.
 - `@placement`: `bottom`.
 - `@eId`: `{container eId}__authorialNote_{n}`, `n` its 1-based position in the part; its paragraphs are `{note eId}__p_{n}`.
 - Its paragraphs carry `@cx:blocks` like any other.
@@ -312,7 +326,7 @@ The note's text is not repeated at the position where the source printed it.
 
 ### 11.2 Notes in head matter
 
-A footnote in the head matter is not part of any opinion. It is a `note` in `meta/notes`, with `@eId` `note_{n}`, `@marker` as printed and `@cx:origin`, and a `noteRef @href="#note_{n}"` at its reference mark [AKN-55].
+A footnote in the head matter is not part of any opinion. It is a `note` in `meta/notes`, with `@eId` `note_{n}`, `@marker` and `@cx:origin`, and a `noteRef @href="#note_{n}"` at its reference mark [AKN-55]. Its `@marker` follows the rule of section 11.1.
 
 ## 12. Origin and provenance
 
@@ -330,7 +344,7 @@ Codex Publicus's rule for its data applies here: engine output is never presente
 | `producer` | the producer (an omission mark, the notice of section 13.1) |
 | `unknown` | not known |
 
-Header blocks and head matter notes MUST carry it (sections 6, 11.2). Parts are `court` and don't carry it. A source that doesn't say who wrote a head matter block gives `unknown`; this is CAP's case (open question O10).
+Header blocks, head matter notes and the blocks of section 8.4 MUST carry it. Every other block in a part is `court` and doesn't carry it. A source that doesn't say who wrote a head matter block gives `unknown`; this is CAP's case (open question O10).
 
 ### 12.2 Provenance: where markup and values came from
 
@@ -374,12 +388,13 @@ Facts behind its identifiers:
 - Docket `57`: CAP prints `No. 57.`; cleaning (CRK spec section 5.1) gives `57`, which the `printed` profile keeps.
 - Decision key `us/dc/57/1943-04-06`; parts `opinion.hood` (CAP type `majority`) and `dissent.cayton` (`dissent`). The judge slugs come from `examples/minimal/judges.json`, a fixture standing in for a judge registry.
 - Work and expression URI `crk:us/dc/57/1943-04-06`, the key reference to that key; `@cx:part` holds the part keys themselves.
-- Registry URIs name the release tag `v0.2.0`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
+- Registry URIs name the release tag `v0.3.0`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
+- The court line's `courtType` carries `@cx:provenance="engine-output"`, as section 6 requires of a `courtType` the producer adds after reading the text.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Minimal example for spec/akoma-ntoso-profile.md 0.2.0, quoted in full in section 14 of that spec.
+  Minimal example for spec/akoma-ntoso-profile.md 0.3.0, quoted in full in section 14 of that spec.
   An excerpt of Taylor v. Yellow Cab Co., 31 A.2d 683, built by hand from the Caselaw Access Project
   case a2d/31/0683-01. The text is CAP's, OCR errors included; omitted text is marked with omissis.
 -->
@@ -416,20 +431,20 @@ Facts behind its identifiers:
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/minimal/judges.json#cayton" showAs="Cayton"/>
-        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/minimal/judges.json#hood" showAs="Hood"/>
-        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/minimal/judges.json#richardson" showAs="Richardson"/>
+        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#cayton" showAs="Cayton"/>
+        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#hood" showAs="Hood"/>
+        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#richardson" showAs="Richardson"/>
         <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0683-01" showAs="Caselaw Access Project, a2d/31/0683-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/minimal/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="transcribed">
           <cx:scans source="#source_cap" volume="a2d/31" first="731" last="735"/>
@@ -442,7 +457,7 @@ Facts behind its identifiers:
     <header>
       <p eId="header__p_1" class="parties" cx:origin="unknown" cx:blocks="BL_731.10"><docTitle>TAYLOR v. YELLOW CAB CO. OF DISTRICT OF COLUMBIA.</docTitle></p>
       <p eId="header__p_2" class="docketnumber" cx:origin="unknown" cx:blocks="BL_731.11"><docketNumber>No. 57.</docketNumber></p>
-      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_731.12"><courtType refersTo="#court_dc">Municipal Court of Appeals for District of Columbia.</courtType></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_731.12"><courtType refersTo="#court_dc" cx:provenance="engine-output">Municipal Court of Appeals for District of Columbia.</courtType></p>
       <p eId="header__p_4" class="decisiondate" cx:origin="unknown" cx:blocks="BL_731.13"><docDate date="1943-04-06">April 6, 1943.</docDate></p>
       <p eId="header__p_5" class="otherdate" cx:origin="unknown" cx:blocks="BL_731.14">Rebearing Denied <date date="1943-04-27" cx:provenance="engine-output">April 27, 1943</date>.</p>
       <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_731.28">James J. Laughlin, of Washington, D. C. for appellant.</p>
@@ -502,7 +517,7 @@ These tables say where each profile element comes from in each source. Field and
 | `casebody.opinions[].text` | not used when the HTML is available; the HTML carries the same text with structure |
 | `casebody.head_matter`, `.parties`, `.judges`, `.attorneys` | not used when the HTML is available |
 | `casebody.corrections` | not mapped; the empty string in every case of both sample volumes |
-| `cites_to[]` | not used; each citation is marked where it occurs in the HTML |
+| `cites_to[]` | the category of a citation link that has no `data-case-paths` (section 15.2); each citation is marked where it occurs in the HTML |
 | `analysis.ocr_confidence` | `cx:confidence @value @basis="CAP analysis.ocr_confidence" @scope="case"` |
 | `analysis.sha256` | `cx:source/@sha256`, as given |
 | `analysis` (other fields) | not used |
@@ -517,7 +532,8 @@ These tables say where each profile element comes from in each source. Field and
 | `section.head-matter` children | `header` blocks in order, `@class` as below, `@cx:origin="unknown"` |
 | `h4.parties` | `p @class="parties"` with `docTitle` |
 | `p.docketnumber` | `p @class="docketnumber"` with `docketNumber` |
-| `p.court` | `p @class="court"` with `courtType` |
+| `p.court` | `p @class="court"`, with `courtType` only as section 6 allows |
+| `p.citation` | `p @class="citation"` |
 | `p.decisiondate` | `p @class="decisiondate"` with `docDate` |
 | `p.otherdate` | `p @class="otherdate"`, optionally with `date` (`engine-output`) |
 | `p.attorneys` | `p @class="attorneys"` |
@@ -525,17 +541,26 @@ These tables say where each profile element comes from in each source. Field and
 | head matter `p` with no class | `p @class="headmatter"` |
 | any other head matter class | `p` or `blockContainer` with the class if it is in the vocabulary of section 6, `headmatter` if not |
 | `article.opinion @data-type` | a part `hcontainer`; role per 15.4; `@cx:sourceType` |
-| `p.author` | the part's `heading`, wrapped in `opinion` |
+| `p.author` | the part's `heading`, wrapped in `opinion`; the part's `subheading` when paragraphs precede the byline (section 7.2) |
+| elements of `article.opinion` before `p.author` | `span @eId` in the part's `heading` (section 7.2) |
 | `p` in an opinion | `p @eId` |
+| `p` with a class other than `author` in an opinion | `p @eId @class @cx:origin` (section 8.4) |
 | `blockquote` | `block @name="blockquote"` |
 | `@data-blocks` on any of the above | `@cx:blocks` (block ids only) |
-| `a.page-label @data-label` (`*684`) | `eop @number`, `@refersTo` the printing CAP transcribed; `@cx:scan` the scan page of the block where the label falls, read from `data-blocks` (`engine-output`). `data-citation-index` was `1` on every label in both sample volumes |
+| `a.page-label @data-label` (`*684`) | `eop @number`, `@refersTo` the printing CAP transcribed; `@cx:scan` read from the `data-blocks` of the block where the label falls, as section 9.1 says (`engine-output`). `data-citation-index` was `1` on every label in both sample volumes |
 | `a.footnotemark @href` | the position of an `authorialNote` (in a part) or a `noteRef` (in head matter) |
 | `aside.footnote @data-label` | the note's content and `@marker` |
-| `a.citation @data-cite @data-case-paths @data-case-ids` | `ref`: `@href` per section 10 (`cap:` alias from a single `data-case-paths` value), `@cx:cite` from `data-cite` |
-| `a.citation` that the source classifies as legislation (`cites_to[].category` `laws:...`) | unmarked text (section 10) |
+| `a.citation @data-cite @data-case-paths @data-case-ids` | a `ref` with `@cx:cite` from `data-cite`, or unmarked text, as below |
 | `em` and other inline formatting | `i` and the matching AKN HTML inline elements |
 | element `id` (`b731-32`) | not used |
+
+A CAP citation link (`a.citation`) is classified in this order [AKN-51]:
+
+1. A link with `data-case-paths` cites a decision: a `ref` whose `@href` is the `cap:` alias of its one path, or the `cite:` alias when it has several (section 10).
+2. Otherwise, the producer finds the case's `cites_to[]` entry whose `cite` equals the link's `data-cite` once all whitespace is removed from both. If its `category` begins `reporters:`, the citation is a decision: a `ref` with the `cite:` alias, or the `neutral:` alias for `reporters:neutral`. Any other category (`laws:`, `journals:`) leaves the citation unmarked text (section 10, O9).
+3. A link with neither stays unmarked text.
+
+The `cite:` and `neutral:` aliases are formed from `data-cite`, never from `cites_to[].cite`.
 
 ### 15.3 CourtListener
 
@@ -562,13 +587,15 @@ A CourtListener record is a cluster with its docket, court, citations and opinio
 
 | Source type (CAP `type`; CourtListener through stare-builder) | CRK role |
 |---|---|
-| `majority` | `opinion`; `per-curiam` when the byline is "Per Curiam" (letter case and punctuation ignored) or CourtListener's `per_curiam` is set |
+| `majority` | `opinion`; `per-curiam` when the byline, reduced to its letters and lowercased, is `percuriam`, `bythecourt` or `thecourt`, or CourtListener's `per_curiam` is set |
 | `unanimous` | `opinion` |
 | `plurality` | `plurality` |
 | `concurrence` | `concurrence`. A producer MAY refine it to `concurrence-in-judgment` or `concurrence-in-part-and-judgment` from the printed heading (`(concurring in result)`); the refinement is `engine-output` |
 | `concurring-in-part-and-dissenting-in-part` | `partial` |
 | `dissent` | `dissent` |
 | `rehearing`, `addendum`, `remittitur`, `on-the-merits`, `on-motion-to-strike-cost-bill` | none in this version (open question O8); the producer refuses the document |
+
+OCR'd forms of `By the Court` (`By the Coubt.`) stay unmatched by the `majority` row; they are refused as `unregistered-author` until a person corrects the source or a later version lists such forms.
 
 ## 16. Validation
 
@@ -583,7 +610,8 @@ The reference validator, `validator/validate.py` (`mise run validate [PATH ...]`
 - for `examples/minimal`, that the keys are the ones the CRK rules compute from the printed facts, and that the copy in section 14 is identical to the file;
 - that the Schematron's key regex is the CRK spec's, byte for byte, and that its key, key reference and alias functions agree with the CRK test vectors;
 - that the Schematron checks every rule section 16.2 assigns to it, except AKN-28, AKN-45 and AKN-53 (below), and that a vector exercises every rule it checks;
-- every vector in `vectors/akn-profile/`: the validator reports exactly the rule ids the vector expects.
+- every document and sidecar vector in `vectors/akn-profile/`: the validator reports exactly the rule ids the vector expects;
+- every vector in `vectors/akn-profile/cap-mapping.jsonl`, against a reading of the CAP mappings for roles (section 15.4), citation links (section 15.2) and `@cx:scan` (section 9.1).
 
 `mise run check` runs ruff, the validator and pytest, as CI does.
 
@@ -609,11 +637,11 @@ The Schematron rules are in `schema/profile.sch` (codexpublicus/exemplar#3). Thi
 | AKN-18, AKN-20 | manifestation URI and format | Schematron |
 | AKN-22 | reference eIds and hrefs follow the table in 5.2 | Schematron |
 | AKN-23 | `cx:keys` lists a courts registry, and a judges registry when some part key has authors; registry URIs are absolute, the court registry's its raw file URL at a release tag | Schematron (the URL's shape; not whether the tag is a tag) |
-| AKN-24, AKN-25 | each printing and source has its `cx:` record, and the reverse | Schematron |
+| AKN-24, AKN-25 | each printing and source has its `cx:` record, and the reverse; a printing's `@text` is from the vocabulary, and a printing whose `@text` isn't `transcribed` is `engine-output` | Schematron (not whether `@ordinal` is present when another decision begins on the page, which needs the source's volume records) |
 | AKN-26, AKN-27 | header blocks have `@class` from the vocabulary, `@cx:origin`, `@eId`; syllabus and headnotes are not `court` | Schematron |
-| AKN-28 to AKN-36 | part `hcontainer` name, eId, `cx:part`, authors, joiners, `opinion/@by`, `opinion/@type`, block placement | Schematron (key grammar via the CRK regex) |
+| AKN-28 to AKN-36 | part `hcontainer` name, eId, `cx:part`, authors, joiners, `opinion/@by` and `opinion/@type` of the byline in `heading` or `subheading`, block placement | Schematron (key grammar via the CRK regex) |
 | AKN-38, AKN-39 | no `background`, `arguments`, `remedies`; only parts in `motivation` and `decision` | Schematron |
-| AKN-40 | paragraph eIds follow the pattern and increase within their container | Schematron |
+| AKN-40 | paragraph eIds, title `span`s in a part's `heading` included, follow the pattern and increase within their container | Schematron |
 | AKN-41, AKN-42 | eIds not shown as court numbering; text unaltered | not machine-checkable |
 | AKN-43 | `@cx:blocks` syntax | Schematron; presence where the source had `data-blocks` is checked against the source by #4's example builder |
 | AKN-44 | omission paragraphs are `producer` and have no eId | Schematron |
@@ -624,10 +652,14 @@ The Schematron rules are in `schema/profile.sch` (codexpublicus/exemplar#3). Thi
 | AKN-56 | `cx:keys/@provenance` present, and `engine-output` or `human-curated` | Schematron |
 | AKN-57 | consumer presentation | not machine-checkable |
 | AKN-58 | the no-text form | Schematron |
+| AKN-59 | paragraphs printed before a byline are `span`s in `heading`, and the byline is in `subheading` | Schematron |
+| AKN-60 | a classed paragraph inside a part has `@class` from the vocabulary and `@cx:origin` other than `court` | Schematron |
 
 ### 16.3 The viewer's sidecar
 
 The JSON sidecar (#3, `schema/sidecar.schema.json`) is an index derived from the document; it adds no facts the document lacks except the bounding boxes. This profile expects it to carry: the profile version; the work, expression and manifestation URIs, as the document gives them (key references, and the manifestation URI); the parts (eId, part key with no prefix, role, authors); for each printing, each page number with the eId of the element its `eop` sits in; and for each `cx:blocks` id, its scan page and bounding box from CAP's `data-blocks`, which the viewer needs to highlight a paragraph on the archival PDF (codexpublicus/stare#51).
+
+A printing's `pages` has one entry per `eop`, in document order, so a page number can appear more than once, for instance when a footnote runs onto a page that the text also begins. A consumer that needs one position for a page MUST use the first entry for that number whose `eId` is neither a note's nor inside one (an eId that begins `note_` or contains `__authorialNote_`), or, if every entry is inside a note, the first entry.
 
 The sidecar has no version of its own. It is versioned with this profile: its `profile` field MUST equal the `cx:profile/@version` of the document it indexes, and its shape is the one this profile version defines.
 
@@ -664,14 +696,25 @@ This profile is versioned with [Semantic Versioning 2.0.0](https://semver.org/sp
 - **Minor:** a change that only adds: an optional element or attribute, a header class, an origin or provenance value, a source mapping.
 - **Patch:** editorial changes and new examples that don't change any rule.
 
-While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.2.0, follows CRK spec 0.2.0 and court registry `2026.10.18`. It is a minor version that breaks: no document valid under 0.1.x is valid under it. It settles open question O2 by option (d), as ruled on codexpublicus/exemplar#4 (2026-10-18):
+While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.3.0, follows CRK spec 0.3.0 and court registry `2026.10.18`. It is a minor version that breaks: a document records its profile version, and the Schematron rules check profile 0.3.x documents only. It writes in the owner's rulings of 2026-10-23 on the gaps listed in codexpublicus/exemplar#10:
+
+- paragraphs printed before a byline are `span`s in the part's `heading`, and the byline moves to `subheading`; paragraph numbering doesn't change (section 7.2, AKN-59; codexpublicus/exemplar#15);
+- a paragraph the source classes as head matter inside a writing keeps its place and carries `@class` and an origin other than `court` (sections 8.4, 12.1, AKN-60; codexpublicus/exemplar#16);
+- `By the Court.` and `THE COURT.` bylines map to `per-curiam` (section 15.4; codexpublicus/exemplar#14);
+- a head matter class `citation`, and `courtType` only on text that names the court (sections 6, 15.2; codexpublicus/exemplar#17);
+- how `@cx:scan` is derived, break attributes only from source data, and which of several markers for a page a consumer uses (sections 9.1, 16.3; codexpublicus/exemplar#18, proposed as 0.2.1 and folded into this version);
+- `@ordinal` is required when another decision begins on the page, and `@text` comes from the source's volume records, with a new value `released` (section 5.3; codexpublicus/exemplar#19);
+- the order in which a CAP citation link is classified (section 15.2; codexpublicus/exemplar#20);
+- a footnote's `@marker` is the note's label as the source gives it (sections 11.1, 11.2; codexpublicus/exemplar#21, proposed as 0.2.1 and folded into this version).
+
+No key and no eId changes for a document whose parts have no `By the Court.` or `THE COURT.` byline. The previous version, 0.2.0, settled open question O2 by option (d), as ruled on codexpublicus/exemplar#4 (2026-10-18):
 
 - the work, expression and manifestation URIs, a `ref/@href` that names a key, and the value of a key-shaped alias are key references, `crk:` followed by the key (sections 5.1, 10); a bare key there is invalid;
 - a key-shaped alias is named `crk` (section 5.1.1);
 - registry URIs are absolute, and the court registry's is its raw file URL at a release tag, so the court's and judges' hrefs are absolute (sections 5.2, 5.3);
 - the sidecar's `profile` is a 0.2.x version and its URIs are key references (section 16.3).
 
-`@cx:part` still holds the part key with no prefix. The Schematron rules check profile 0.2.x documents only. The previous version, 0.1.1, was a patch release of 0.1.0 that stated how to read six points the 0.1.0 text left ambiguous. A document records the profile version it follows (section 2); consumers SHOULD reject a document whose major version they don't implement, and, while the major version is 0, one whose minor version they don't implement.
+`@cx:part` still holds the part key with no prefix. The version before it, 0.1.1, was a patch release of 0.1.0 that stated how to read six points the 0.1.0 text left ambiguous. A document records the profile version it follows (section 2); consumers SHOULD reject a document whose major version they don't implement, and, while the major version is 0, one whose minor version they don't implement.
 
 ## 19. Open questions
 

@@ -2,7 +2,7 @@
   "registry": "courts",
   "version": "2026.10.18",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.2.0",
+  "spec_version": "0.3.0",
   "description": "Court registry for the court record key (spec section 10.1). Every court code is a courts-db id from the snapshot named in source; the docket profiles are this registry's assignments (registry/build_courts.py).",
   "source": {
     "name": "courts-db",

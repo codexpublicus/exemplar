@@ -176,7 +176,7 @@ def _functions() -> Any:
     )
     stylesheet = f"""<xsl:stylesheet version="2.0" xmlns:xsl="{XSL}"
         xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:f="{FUNCTIONS}"
-        xmlns:a="{validate.AKN}" exclude-result-prefixes="#all">
+        xmlns:a="{validate.AKN}" xmlns:cx="{validate.CX}" exclude-result-prefixes="#all">
       <xsl:output method="text"/>
       {functions}
       <xsl:template match="/">

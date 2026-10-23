@@ -31,39 +31,39 @@
         <FRBRManifestation>
           <FRBRthis value="crk:us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml"/>
           <FRBRuri value="crk:us/pa/59e.d.misc.dkt.1983/1983-04-20.akn.xml"/>
-          <FRBRdate date="2026-10-18" name="generated"/>
+          <FRBRdate date="2026-10-23" name="generated"/>
           <FRBRauthor href="#org_exemplar"/>
           <FRBRformat value="application/akn+xml"/>
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
+        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
+        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
         <TLCReference eId="printing_500-pa-510" name="printing" href="cite:500-pa-510" showAs="500 Pa. 510"/>
         <TLCReference eId="printing_458-a2d-928" name="printing" href="cite:458-a2d-928" showAs="458 A.2d 928"/>
         <TLCReference eId="source_cap" name="source" href="cap:pa/500/0510-01" showAs="Caselaw Access Project, pa/500/0510-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.2.0"/>
+        <cx:profile version="0.3.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.2.0/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_500-pa-510" type="official" reporter="Pa." volume="500" firstPage="510" lastPage="511" text="transcribed">
           <cx:scans source="#source_cap" volume="pa/500" first="560" last="561"/>
         </cx:printing>
-        <cx:printing ref="#printing_458-a2d-928" type="parallel" reporter="A.2d" volume="458" firstPage="928" text="withheld"/>
+        <cx:printing ref="#printing_458-a2d-928" type="parallel" reporter="A.2d" volume="458" firstPage="928" text="withheld" cx:provenance="engine-output"/>
         <cx:source ref="#source_cap" agent="#org_cap" record="cap:pa/500/0510-01" caseId="1781027" lastUpdated="2023-07-14T22:41:55.536104+00:00" sha256="466a22650a859322f2231ecc9eb519284b39e5a2c7548f271c1ab43900093f22" method="ocr">
           <cx:confidence value="0.725" scope="case" basis="CAP analysis.ocr_confidence"/>
         </cx:source>
       </proprietary>
     </meta>
     <header>
-      <p eId="header__p_1" class="headmatter" cx:origin="unknown" cx:blocks="BL_560.7">458 A.2d 928</p>
+      <p eId="header__p_1" class="citation" cx:origin="unknown" cx:blocks="BL_560.7">458 A.2d 928</p>
       <p eId="header__p_2" class="parties" cx:origin="unknown" cx:blocks="BL_560.8 BL_560.9"><docTitle>William M. MARUTANI, Joseph R. Glancey, Vincent A. Cirillo, Paul Ribner, Phyllis W. Beck, Lawrence Prattis, Frank J. Montemuro, Jr., James G. Colins and John J. Chiovero, Petitioners, v. Edmund S. PAWELEC, Charles L. Durham and James D. McCrudden, Acting Members of County Board of Elections of Philadelphia, Joseph E. Coleman et al., Intervenors, Philip Raible, Intervenor.</docTitle></p>
-      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_560.10"><courtType refersTo="#court_pa">Supreme Court of Pennsylvania.</courtType></p>
+      <p eId="header__p_3" class="court" cx:origin="unknown" cx:blocks="BL_560.10"><courtType refersTo="#court_pa" cx:provenance="engine-output">Supreme Court of Pennsylvania.</courtType></p>
       <p eId="header__p_4" class="otherdate" cx:origin="unknown" cx:blocks="BL_560.11">Argued April 18, 1983.</p>
       <p eId="header__p_5" class="decisiondate" cx:origin="unknown" cx:blocks="BL_560.12"><docDate date="1983-04-20">Decided April 20, 1983.</docDate></p>
       <p eId="header__p_6" class="attorneys" cx:origin="unknown" cx:blocks="BL_560.14">Joseph A. Prim, Jr., Henry W. Sawyer, III, Robert J. Hoelscher, Philadelphia, for petitioners.</p>
@@ -73,11 +73,11 @@
     <judgmentBody>
       <motivation>
         <hcontainer name="per-curiam" eId="opinion_per-curiam" cx:part="us/pa/59e.d.misc.dkt.1983/1983-04-20/per-curiam" cx:sourceType="majority">
-          <heading cx:blocks="BL_561.4"><eop refersTo="#printing_500-pa-510" number="511" cx:scan="561" cx:provenance="engine-output"/><opinion by="#court_pa">PER CURIAM:</opinion></heading>
+          <heading><span eId="opinion_per-curiam__p_1" cx:blocks="BL_561.3"><eop refersTo="#printing_500-pa-510" number="511" cx:scan="561" cx:provenance="engine-output"/>ORDER</span></heading>
+          <subheading cx:blocks="BL_561.4"><opinion by="#court_pa">PER CURIAM:</opinion></subheading>
           <content>
-            <p eId="opinion_per-curiam__p_1" cx:blocks="BL_561.3">ORDER</p>
             <p eId="opinion_per-curiam__p_2" cx:blocks="BL_561.5">Petition denied.</p>
-            <p eId="opinion_per-curiam__p_3" class="judges" cx:blocks="BL_561.6">ROBERTS, C.J., files a dissenting statement in which McDERMOTT and HUTCHINSON, JJ., join.</p>
+            <p eId="opinion_per-curiam__p_3" class="judges" cx:origin="unknown" cx:blocks="BL_561.6">ROBERTS, C.J., files a dissenting statement in which McDERMOTT and HUTCHINSON, JJ., join.</p>
           </content>
         </hcontainer>
         <hcontainer name="dissent" eId="opinion_dissent.roberts" cx:part="us/pa/59e.d.misc.dkt.1983/1983-04-20/dissent.roberts" cx:authors="roberts" cx:sourceType="dissent">
@@ -86,7 +86,7 @@
             <p eId="opinion_dissent.roberts__p_1" cx:blocks="BL_561.8">dissenting.</p>
             <p eId="opinion_dissent.roberts__p_2" cx:blocks="BL_561.9">This record is clear that the City Commissioners, who are candidates for office in the May 1983 Primary Election, acted without authority in establishing the listing of offices, including their own, on ballots in Philadelphia for that election. See 25 P.S. § 2641(c). Because of the Commissioners’ conflict of interest, which resulted in the self-serving placement of their offices in second position, at the top of the ballot, the offices of City Commissioner should be placed after all other City offices.</p>
             <p eId="opinion_dissent.roberts__p_3" cx:blocks="BL_561.10">In accordance with the uniform practice in the rest of the Commonwealth, both in this election and in the past, statewide offices should appear at the top of the ballot.</p>
-            <p eId="opinion_dissent.roberts__p_4" class="judges" cx:blocks="BL_561.11">McDERMOTT and HUTCHINSON, JJ., join in this dissenting statement.</p>
+            <p eId="opinion_dissent.roberts__p_4" class="judges" cx:origin="unknown" cx:blocks="BL_561.11">McDERMOTT and HUTCHINSON, JJ., join in this dissenting statement.</p>
           </content>
         </hcontainer>
       </motivation>
