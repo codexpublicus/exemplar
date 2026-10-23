@@ -1,6 +1,6 @@
 # Akoma Ntoso judgment profile for US decisions
 
-Specification version: **0.3.0** (draft). Status: not yet stable; see sections 17 and 18.
+Specification version: **0.3.1** (draft). Status: not yet stable; see sections 17 and 18.
 
 This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, gorsuch-library for its corpus) write documents in this form, and the shared viewer reads them.
 
@@ -14,7 +14,7 @@ Each requirement a machine can check carries a rule id in brackets, `[AKN-n]`. S
 
 Terms:
 
-- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.3.0. A key reference is `crk:` followed by a key (CRK spec section 2.6).
+- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.3.1. A key reference is `crk:` followed by a key (CRK spec section 2.6).
 - **Printing.** One publication of a decision on numbered pages: the official report, a regional reporter's reprint, a nominative reporter. A printing is identified by its citation.
 - **Source.** The digital record a producer took the document's content from: a CAP case (its JSON and HTML), a CourtListener cluster and its opinions.
 - **Producer.** A program that writes documents in this profile. **Consumer.** A program that reads them (the viewer, a validator, an indexer).
@@ -141,7 +141,7 @@ Two producers writing documents for the same expression write the same manifesta
 | Each printing | `TLCReference @name="printing"` | `printing_{volume}-{reporter slug}-{page}` | the printing's `cite:` alias | the citation as printed |
 | Each source | `TLCReference @name="source"` | `source_{name}` | the source record's alias (`cap:...`, `cl-cluster:...`) | a readable label |
 
-The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
+The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
 
 Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `_` that every other eId in this table has; the two kinds can't collide.
 
@@ -155,8 +155,8 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
   - `@ref`: `#` + the printing's `TLCReference` eId.
   - `@type`: `official` or `parallel`, as the source types the citation.
   - `@reporter`, `@volume`, `@firstPage`, `@lastPage`: as printed. `@lastPage` is OPTIONAL when the source doesn't give it.
-  - `@ordinal`: REQUIRED when another decision begins on `@firstPage` of this printing, and absent otherwise; this decision's position among them, in printed order (CAP's file suffix, `-01`, `-02`). The producer MUST determine it from the source's record of the whole volume (CAP: the volume's `CasesMetadata.json` or its case file names), not from the case record alone.
-  - `@text`: `transcribed` when the document's text was taken from this printing; `released` when a source released the printing's text as a record of its own, which this document didn't use (a CAP case in an unredacted volume at this citation); `withheld` when a source holds the printing's pages but released no text for this decision (CAP: `VolumesMetadata.json` lists the volume, and its case list has no case beginning on this page); `unavailable` when no source the producer consulted holds the printing's pages. Every value but `transcribed` is derived from the source's volume-level records, and the `cx:printing` carries `@cx:provenance="engine-output"` [AKN-24].
+  - `@ordinal`: REQUIRED when another decision begins on `@firstPage` of this printing, and absent otherwise; this decision's position among them, in printed order (CAP's file suffix, `-01`, `-02`). The producer MUST determine it from the source's record of the whole volume (CAP: the volume's `CasesMetadata.json`, also found at `metadata/CasesMetadata.json` in its volume zip, or its case file names), not from the case record alone.
+  - `@text`: `transcribed` when the document's text was taken from this printing; `released` when a source released the printing's text as a record of its own, which this document didn't use (a CAP case in an unredacted volume at this citation); `withheld` when a source holds the printing's pages but released no text for this decision (CAP: the volume has a record, its entry in `VolumesMetadata.json` or the `metadata/VolumeMetadata.json` in its volume zip, and the volume's case list has no case beginning on this page); `unavailable` when no source the producer consulted holds the printing's pages. Every value but `transcribed` is derived from the source's volume-level records, and the `cx:printing` carries `@cx:provenance="engine-output"` [AKN-24].
   - Children: `cx:cite @type @value` for each other citation of the same pages, such as a nominative reporter citation (`9 Wheat. 738` for 22 U.S. 738); `cx:scans @source @volume @first @last` when a source holds scans of the printing, giving the source's volume and the first and last scan sequence numbers (CAP's `first_page_order` and `last_page_order`).
 - `cx:source`: one per source in `references` [AKN-25]. Attributes: `@ref` (the `TLCReference`), `@agent` (the organization that made it), `@record` (its alias), `@method` (`ocr`, `born-digital`, `keyed`, or `unknown`: how the source's text was made, as far as the source says), and whatever identifies the record's state as the source gives it (`@caseId`, `@lastUpdated`, `@sha256` for CAP; `@textField` for CourtListener). An optional `cx:confidence @value @scope @basis` child records a confidence figure the source publishes, such as CAP's `analysis.ocr_confidence`, with `@basis` naming the field it came from.
 
@@ -388,13 +388,13 @@ Facts behind its identifiers:
 - Docket `57`: CAP prints `No. 57.`; cleaning (CRK spec section 5.1) gives `57`, which the `printed` profile keeps.
 - Decision key `us/dc/57/1943-04-06`; parts `opinion.hood` (CAP type `majority`) and `dissent.cayton` (`dissent`). The judge slugs come from `examples/minimal/judges.json`, a fixture standing in for a judge registry.
 - Work and expression URI `crk:us/dc/57/1943-04-06`, the key reference to that key; `@cx:part` holds the part keys themselves.
-- Registry URIs name the release tag `v0.3.0`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
+- Registry URIs name the release tag `v0.3.1`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
 - The court line's `courtType` carries `@cx:provenance="engine-output"`, as section 6 requires of a `courtType` the producer adds after reading the text.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Minimal example for spec/akoma-ntoso-profile.md 0.3.0, quoted in full in section 14 of that spec.
+  Minimal example for spec/akoma-ntoso-profile.md 0.3.1, quoted in full in section 14 of that spec.
   An excerpt of Taylor v. Yellow Cab Co., 31 A.2d 683, built by hand from the Caselaw Access Project
   case a2d/31/0683-01. The text is CAP's, OCR errors included; omitted text is marked with omissis.
 -->
@@ -431,20 +431,20 @@ Facts behind its identifiers:
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#cayton" showAs="Cayton"/>
-        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#hood" showAs="Hood"/>
-        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json#richardson" showAs="Richardson"/>
+        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#cayton" showAs="Cayton"/>
+        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#hood" showAs="Hood"/>
+        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#richardson" showAs="Richardson"/>
         <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0683-01" showAs="Caselaw Access Project, a2d/31/0683-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.3.0"/>
+        <cx:profile version="0.3.1"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.0/examples/minimal/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json" version="2026.10.18"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="transcribed">
           <cx:scans source="#source_cap" volume="a2d/31" first="731" last="735"/>
@@ -696,7 +696,9 @@ This profile is versioned with [Semantic Versioning 2.0.0](https://semver.org/sp
 - **Minor:** a change that only adds: an optional element or attribute, a header class, an origin or provenance value, a source mapping.
 - **Patch:** editorial changes and new examples that don't change any rule.
 
-While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.3.0, follows CRK spec 0.3.0 and court registry `2026.10.18`. It is a minor version that breaks: a document records its profile version, and the Schematron rules check profile 0.3.x documents only. It writes in the owner's rulings of 2026-10-23 on the gaps listed in codexpublicus/exemplar#10:
+While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.3.1, follows CRK spec 0.3.1 and court registry `2026.10.18`. It is a patch release of 0.3.0 and changes no rule: section 5.3 names the copies of CAP's volume records inside each volume zip (`metadata/VolumeMetadata.json`, `metadata/CasesMetadata.json`), which is where the CAP examples now read every printing's `@ordinal` and `@text`. The examples' keys and eIds don't change.
+
+The version before it, 0.3.0, follows CRK spec 0.3.0. It is a minor version that breaks: a document records its profile version, and the Schematron rules check profile 0.3.x documents only. It writes in the owner's rulings of 2026-10-23 on the gaps listed in codexpublicus/exemplar#10:
 
 - paragraphs printed before a byline are `span`s in the part's `heading`, and the byline moves to `subheading`; paragraph numbering doesn't change (section 7.2, AKN-59; codexpublicus/exemplar#15);
 - a paragraph the source classes as head matter inside a writing keeps its place and carries `@class` and an origin other than `court` (sections 8.4, 12.1, AKN-60; codexpublicus/exemplar#16);

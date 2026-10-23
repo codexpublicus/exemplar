@@ -2,6 +2,26 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.3.1 (unreleased)
+
+CRK 0.3.1, profile 0.3.1, court registry `2026.10.18` (unchanged). Both are patch releases, as the owner ruled on 2026-10-23 (D94): one clarification of the CRK and a change to how the CAP examples are built. No key changes; no existing vector's expected result changes; none of the seven CAP example keys and none of their eIds changes.
+
+### Court record key 0.3.1
+
+- **Letter case in judge names** ([exemplar#14](https://github.com/codexpublicus/exemplar/issues/14) part b). Section 10.2: a byline's name matches a judge's name or printed form when the two are equal after case folding (Unicode full case folding, Python's `str.casefold()`), so `HOOD` matches `Hood` and `McDERMOTT` matches `McDermott`. Case folding is the only normalization: still no edit distance, OCR correction or other approximation. Under the 0.3.0 text such a byline needed its upper-case form listed as a printed form.
+
+### Akoma Ntoso profile 0.3.1
+
+- Section 5.3 names the copies of CAP's volume records inside each volume zip (`metadata/VolumeMetadata.json`, `metadata/CasesMetadata.json`) as sources for a printing's `@ordinal` and `@text`. No rule changes.
+
+### Vectors and examples
+
+- `vectors/court-record-key/byline.jsonl`: six vectors for letter case, among them `HOOD` for `Hood`, `McDERMOTT` for `McDermott`, the printed form `Deyens` printed `DEYENS`, and an upper-case misprint the fixture doesn't list, which still matches nothing. The judges fixture gains `hood` and `mcdermott`.
+- `examples/cap/build.py` takes each printing's `@ordinal` and `@text`, and a reporter fallback key's decision ordinal, from CAP's `VolumeMetadata.json` and `CasesMetadata.json`, read with HTTP range requests from the volume zips on `data.stare.pub` (the official volume and each parallel printing's volume). `examples/cap/volumes.lock.json` pins each zip by ETag and size and each member read by SHA-256, and the build refuses one that doesn't match; members are cached in `.cache/stare/`. `examples/cap/manifest.json` no longer states `pageShared` or the withheld printings, and the build no longer refuses a fallback decision that isn't first on its page: Glover, 500 Pa. 524, now builds to `us/pa/rpt.500-pa-524/1983-04-27~2` from the volume's case list, which a new test checks. The values the records give equal the ones the manifest stated.
+- `examples/cap/judges.json` drops its printed forms, each of which differed from the judge's name only in letter case.
+- The examples, the minimal example and the no-text vector name profile 0.3.1 and the release tag `v0.3.1`; nothing else in them changes.
+- `vectors/akn-profile/sidecars.jsonl`: `profile-mismatch` now sets the sidecar's `profile` to `0.3.0`, since its base document declares 0.3.1; it expects the same result.
+
 ## v0.3.0 (unreleased)
 
 CRK 0.3.0, profile 0.3.0, court registry `2026.10.18` (unchanged). The owner ruled on the ten gaps of [exemplar#10](https://github.com/codexpublicus/exemplar/issues/10) on 2026-10-23, approving every proposal as written; this version writes each ruling into the spec text.

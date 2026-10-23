@@ -161,6 +161,14 @@ class TestByline:
             for form in entry.get("printed", []):
                 assert form["form"].strip() and form["source"].strip(), slug
 
+    def test_printed_forms_differ_beyond_letter_case(self) -> None:
+        # Section 10.2 matches after case folding, so a form that differs from the name or from
+        # another form only in letter case adds nothing.
+        for slug, entry in JUDGES.items():
+            names = [entry["name"]] + [f["form"] for f in entry.get("printed", [])]
+            folded = [n.casefold() for n in names]
+            assert len(set(folded)) == len(folded), slug
+
 
 class TestAlias:
     """alias.jsonl: printed forms normalize, aliases parse, targets are keys."""
