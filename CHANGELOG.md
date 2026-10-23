@@ -2,6 +2,42 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.4.0 (unreleased)
+
+CRK 0.4.0, profile 0.4.0, court registry `2026.10.23`, and a new CAP court table, `registry/cap-courts.json` (`2026.10.23`). Minor versions that break, under SemVer item 4. The jurisdiction code space is the owner's ruling D101 (2026-10-23); the rest are proposals made in the pull request that brings them, from the gaps of [exemplar#46](https://github.com/codexpublicus/exemplar/issues/46).
+
+### Court record key 0.4.0
+
+- **Jurisdiction codes** ([exemplar#38](https://github.com/codexpublicus/exemplar/issues/38), [#39](https://github.com/codexpublicus/exemplar/issues/39), [#42](https://github.com/codexpublicus/exemplar/issues/42), [#43](https://github.com/codexpublicus/exemplar/issues/43); D101). Section 3 is rewritten: the country segment is a jurisdiction code, an ISO 3166-1 alpha-2 code, a territory's own code (`pr`, `gu`, `vi`, `as`, `mp`), a registered body code of three to sixteen letters (`ccj`), or the issuing sovereign's code for a court whose sovereign changed. This version defines `us`, `pr`, `gu`, `vi`, `as`, `mp`, `gb`, `ph`, `ccj`, `hawaii`, `texas` and `vermont`. The ABNF's `country` is `2*16LC`, and a validity rule admits the listed codes. Tribal courts stay under `us` ([exemplar#45](https://github.com/codexpublicus/exemplar/issues/45)). **Changes keys**: in CAP, 44,295 Puerto Rico, 2,135 American Samoa, 1,708 Virgin Islands, 158 Guam and 110 Northern Mariana Islands keys move from `us` to the territory's code; 733 colonial keys move to `gb` and 1,168 Hawaiian Kingdom keys to `hawaii`.
+- **Partial dates** ([exemplar#37](https://github.com/codexpublicus/exemplar/issues/37), [#33](https://github.com/codexpublicus/exemplar/issues/33)). Section 6 is rewritten: `decided` is a full date, a year and month, or a year, as far as the producer can establish it, never padded; a partial-date key is non-canonical and is `replaced-by` the full-date key when the date is found; its decision ordinal is counted in printed order. CourtListener's approximate dates are established to the year when they fall on 1 July and to the month otherwise. The refusal class `incomplete-date` is withdrawn. **Adds keys**.
+- **Supreme Court before 1971-07-01**. New section 5.7, profile `scotus-numbered`: the appellate number, `-misc` for the Miscellaneous docket and `-orig` for the Original docket (`us/scotus/13-orig/1904-12-12`), with the decision ordinal in printed order; other decisions of the period take the reporter fallback. **Adds keys**.
+- **Courts** ([exemplar#26](https://github.com/codexpublicus/exemplar/issues/26), [#27](https://github.com/codexpublicus/exemplar/issues/27)). Sections 4 and 10.1: a source's court id is translated through registry aliases (`courtlistener:txctapp5` is `texapp`) or the CAP court table. Section 16 drops the pre-1971 Supreme Court and adds the questions this version leaves open.
+
+### Court registry 2026.10.23
+
+- The six courts courts-db lists outside the United States are registered: `kingsbench`, `highctjchuk`, `houseoflordsuk`, `privycoun` and `nhprivycounnh` under `gb`, `phillipines` under `ph`. Only `mtjdctFergus`, whose id fails the court rule, stays excluded.
+- Four courts courts-db lacks are registered under CourtListener's ids, source `courtlistener`: `kyctapphigh`, `mspb`, `tennsuperct`, `tennworkcompcl`.
+- `texapp` lists `courtlistener:txctapp1` to `courtlistener:txctapp15` as aliases, and `nmi` lists `courtlistener:nmariana`, so CourtListener's records in those courts key without new codes.
+- Thirteen territorial courts take their territory's code; the federal courts seated in territories stay under `us`. 971 state courts take a date-ranged `countries` list: `gb` before 1776-07-04 in the thirteen colonies and Maine, `hawaii` before 1898-08-12, `texas` before 1846-02-19, `vermont` before 1791-03-04.
+- `scotus` takes `scotus-numbered` from the start and `scotus-ot1971` from 1971-07-01.
+- The schema adds `countries`, the jurisdiction code enum, the `courtlistener` source, the `{service}:{id}` alias form and the `scotus-numbered` profile.
+
+### CAP court table 2026.10.23
+
+- New `registry/cap-courts.json` and `schema/cap-courts.schema.json`: the registry code for each of CAP's 3,454 court ids, by date, with the basis for each. 3,248 courts, 6,914,464 of 6,920,598 cases (99.91%), are mapped: the 2,954 of stare-builder's table, and 294 more by name, by the crosswalk once CourtListener's generic courts are set aside or at 75%, and by hand for six (CAP's Kentucky Court of Appeals is `kyctapphigh` before 1976-01-01 and `kyctapp` from it; its Texas Courts of Appeals are `texapp`). 206 courts (6,134 cases) are listed as unmapped, with the reason. Engine output, for review.
+
+### Akoma Ntoso profile 0.4.0
+
+- `FRBRcountry` is the key's country segment, and the `akn-nc` IRI starts with it (AKN-10, AKN-13).
+- A partial-date key's `FRBRdate` is the first day of its period, named `decided-year-month` or `decided-year`; a partial date is never a `docDate` (AKN-11, AKN-16).
+- CAP's and CourtListener's date mappings (sections 15.1, 15.3) follow CRK 0.4.0 section 6. Open question O7 narrows to what still has no key.
+
+### Vectors, schemas and examples
+
+- `vectors/court-record-key/`: **changed expected results**: `incomplete-date-month`, `incomplete-date-year` and `incomplete-date-with-docket` are renamed `partial-date-*` and expect `us/mass/rpt.1-mass-1/1804-03`, `us/mass/rpt.1-mass-1/1804` and `us/ca10/14-9585/2016-08`; the three `pre-1971-scotus` vectors are renamed and expect `us/scotus/123/1960-01-04` (twice) and `us/scotus/rpt.999-us-1/1960-01-04`; `other-country` (`bz/...`) is rejected by the validity rule, not the grammar. New: 20 compute vectors, most from CAP's metadata (Puerto Rico's `pr/prsupreme/8561/1943-05-18`, the Rhode Island Vice-Admiralty Court's `gb/riviceadmct/rpt.1-rec-va-ct-ri-143/1740-07-12~2`, `hawaii/haw/rpt.1-haw-11/1847-04~2`, Chisholm v. Georgia's `us/scotus/rpt.2-us-419/1793`, United States v. Truesdell's `us/scotus/552/1893-03-06~2`); 7 parse, 10 reject and 11 docket vectors. A docket vector MAY give `decided`, for a court whose profile depends on the date.
+- `tests/crk_check.py` reads 0.4.0: jurisdiction codes, partial dates, the country from the registry by date, and `scotus-numbered`. New `tests/test_cap_courts.py`; `tests/test_courts_registry.py` checks `countries`, aliases and that section 3's table, the oracle and the schema list the same codes.
+- `schema/profile.sch` checks profile 0.4.x: the 0.4.0 regex, the jurisdiction codes, partial dates and AKN-13's country; `schema/sidecar.schema.json` takes a 0.4.x `profile`. The examples, the minimal example and the no-text vector name profile 0.4.0, release tag `v0.4.0` and court registry `2026.10.23`; none of their keys, eIds or content changes. `vectors/akn-profile/sidecars.jsonl`: `profile-mismatch` uses `0.4.1`, and a new `profile-0.3` vector rejects a 0.3.x sidecar.
+
 ## v0.3.1 (unreleased)
 
 CRK 0.3.1, profile 0.3.1, court registry `2026.10.18` (unchanged). Both are patch releases, as the owner ruled on 2026-10-23 (D94): one clarification of the CRK and a change to how the CAP examples are built. No key changes; no existing vector's expected result changes; none of the seven CAP example keys and none of their eIds changes.
