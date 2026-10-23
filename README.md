@@ -61,12 +61,15 @@ It checks each `*.akn.xml` against the Akoma Ntoso schema and then the Schematro
 | `us-pa-rpt.500-pa-109-1982-12-31` | `pa/500/0109-01`, Commonwealth v. Barry | no docket in CAP: the reporter fallback key; two dissents |
 | `us-mass-rpt.150-mass-66-1889-11-11` | `mass/150/0066-01`, Commonwealth v. Freelove | an 1889 Massachusetts Reports case under the reporter fallback, with headnotes |
 
-`examples/cap/manifest.json` lists each case's two source files, the case JSON and HTML from <https://static.case.law>, with the URL each was downloaded from and its SHA-256, and the CAP volume zip each is a member of, with that zip's SHA-256. The files are kept at `examples/cap/source/` under the same paths, so the build runs offline. CAP's data is CC0. The judge slugs come from `examples/cap/judges.json`, a fixture standing in for a judge registry like `examples/minimal/judges.json`.
+`examples/cap/manifest.json` lists each case's two source files, the case JSON and HTML from <https://static.case.law>, with the URL each was downloaded from and its SHA-256, and the CAP volume zip each is a member of, with that zip's SHA-256. The files are kept at `examples/cap/source/` under the same paths. CAP's data is CC0. The judge slugs come from `examples/cap/judges.json`, a fixture standing in for a judge registry like `examples/minimal/judges.json`.
+
+A printing's `@ordinal` and `@text`, and a reporter fallback key's decision ordinal, come from CAP's volume records rather than from the manifest: `metadata/VolumeMetadata.json` and `metadata/CasesMetadata.json` in each volume zip on <https://data.stare.pub/cap/>, the volume the case is in and the volume of each parallel printing. The build reads those two members with HTTP range requests, so it never downloads a whole zip, and sends a User-Agent naming this repository. `examples/cap/volumes.lock.json` pins each zip by the ETag and size data.stare.pub served (every range response must match both) and each member by its SHA-256, and records which CAP slug each cited reporter abbreviation maps to, from <https://stare.pub/reporters.json>. A zip or member that doesn't match is an error, not a rebuild. The members are cached in `.cache/stare/` at the repository root, so once the cache is warm the build makes no requests; the first build after a clone, and every CI run, needs network access to data.stare.pub. Nothing from the volume records is committed here.
 
 ```
 uv run python examples/cap/build.py           # rebuild the examples
 uv run python examples/cap/build.py --check   # fail if a rebuild differs from the committed files
 uv run python examples/cap/build.py --fetch   # download the source files again, check their pins, rebuild
+uv run python examples/cap/build.py --lock    # pin the volume records again as data.stare.pub serves them, rebuild
 ```
 
 The build is deterministic, and the checks run `--check`. It refuses a case rather than guess at anything the profile or the court record key spec leaves open, and says which. Invalid counterparts of these documents are in `vectors/akn-profile/documents.jsonl` (ids starting `cap-`).

@@ -4,10 +4,20 @@ Usage:
     uv run python examples/cap/build.py          # rebuild every example from examples/cap/source/
     uv run python examples/cap/build.py --fetch  # download the source files, then rebuild
     uv run python examples/cap/build.py --check  # rebuild in memory; fail if a file differs
+    uv run python examples/cap/build.py --lock   # pin the CAP volume records again, then rebuild
 
 The examples and their sources are listed in examples/cap/manifest.json. Each source file is checked
-against the SHA-256 recorded there before it is read. The build is deterministic: the same sources,
-manifest, judge fixture and court registry give byte-identical output.
+against the SHA-256 recorded there before it is read.
+
+A printing's @ordinal and @text, and a reporter fallback key's decision ordinal, come from CAP's
+volume records: metadata/VolumeMetadata.json and metadata/CasesMetadata.json in each volume zip on
+data.stare.pub, read with HTTP range requests so no whole zip is downloaded. examples/cap/
+volumes.lock.json pins each zip by its ETag and size and each member read by its SHA-256; a build
+refuses a zip or member that doesn't match. Members are cached in .cache/stare/ at the repository
+root, so a build with a warm cache makes no requests. Nothing from the volume records is vendored.
+
+The build is deterministic: the same sources, volume records, manifest, judge fixture and court
+registry give byte-identical output.
 
 This is a producer of spec/akoma-ntoso-profile.md written for these examples, not a general CAP
 converter. It refuses, rather than guesses, whenever a case needs something the profile or the court
@@ -18,10 +28,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
+import zipfile
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
@@ -34,6 +48,14 @@ ROOT = HERE.parent.parent
 MANIFEST = HERE / "manifest.json"
 SOURCE = HERE / "source"
 COURTS = ROOT / "registry" / "courts.json"
+LOCK = HERE / "volumes.lock.json"
+CACHE = ROOT / ".cache" / "stare"
+
+CAP_ZIP = "https://data.stare.pub/cap/{slug}/{volume}.zip"
+REPORTERS = "https://stare.pub/reporters.json"
+INDEX_MANIFEST = "https://idx.stare.pub/manifest.json"
+USER_AGENT = "exemplar-cap-examples (+https://github.com/codexpublicus/exemplar)"
+VOLUME_RECORDS = ("metadata/VolumeMetadata.json", "metadata/CasesMetadata.json")
 
 AKN = "http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
 CX = "https://codexpublicus.org/ns/exemplar"
@@ -90,6 +112,10 @@ WS = re.compile(r"[ \t\r\n]+")
 
 class Refusal(Exception):
     """The producer refuses the case; args[0] says why."""
+
+
+class PinError(Exception):
+    """A file the build reads doesn't match its pin; args[0] says which."""
 
 
 def q(name: str) -> str:
@@ -222,9 +248,14 @@ class DecisionKey:
     decided: str
     fallback: bool
     others: list[str] = field(default_factory=list)  # docket segments of a consolidated case
+    ordinal: int = 1  # the decision ordinal (CRK section 7)
 
 
-def decision_key(case: dict[str, Any], court_code: str, courts: dict[str, Any]) -> DecisionKey:
+def decision_key(
+    case: dict[str, Any], court_code: str, courts: dict[str, Any], page: list[dict[str, Any]]
+) -> DecisionKey:
+    """The decision key. page is every case CAP's volume records list as beginning on the case's
+    first page, in printed order (CAP's file ordinal)."""
     if court_code not in courts:
         raise Refusal(f"unregistered-court: {court_code}")
     decided = case["decision_date"]
@@ -246,36 +277,37 @@ def decision_key(case: dict[str, Any], court_code: str, courts: dict[str, Any]) 
     segment = printed_profile(dockets[0]) if dockets else None
     fallback = segment is None
     others = [] if fallback else [s for s in map(printed_profile, dockets[1:]) if s]
+    ordinal = 1
     if fallback:
         official = [c["cite"] for c in case["citations"] if c["type"] == "official"]
         if not official:
             raise Refusal("no-docket" if not dockets else "docket-profile")
-        volume, reporter, page = cite_parts(official[0])
-        segment = f"rpt.{volume}-{slug(reporter)}-{page}"
-        if not case["file_name"].endswith("-01"):
-            # CRK 5.6: the ordinal counts every decision that begins on the page and shares the
-            # date, which needs the volume's case list; this builder reads only the case record.
-            raise Refusal("reporter fallback for a decision that isn't first on its page")
-    key = f"us/{court_code}/{segment}/{decided}"
+        volume, reporter, first = cite_parts(official[0])
+        segment = f"rpt.{volume}-{slug(reporter)}-{first}"
+        # CRK 5.6: the decision ordinal is the position among every decision that begins on the
+        # page and shares the date, whether or not it takes the fallback.
+        same_day = [c["file_name"] for c in page if c["decision_date"] == decided]
+        ordinal = same_day.index(case["file_name"]) + 1
+    key = f"us/{court_code}/{segment}/{decided}" + (f"~{ordinal}" if ordinal > 1 else "")
     if not KEY.fullmatch(key):
         raise Refusal(f"computed key {key!r} is not valid")
-    return DecisionKey(key, court_code, segment, decided, fallback, others)
+    return DecisionKey(key, court_code, segment, decided, fallback, others, ordinal)
 
 
 def author_slugs(byline: str, court: str, judges: dict[str, Any]) -> list[str]:
     """Judge slugs for a byline (CRK section 10.2); [] for a per curiam byline.
 
-    The name is the byline's text before its first comma. It must equal an entry's name or one
-    of its printed forms exactly, for the court.
+    The name is the byline's text before its first comma. After case folding it must equal an
+    entry's name or one of its printed forms exactly, for the court; nothing is approximated.
     """
     if per_curiam(byline):
         return []
-    name = byline.split(",")[0].strip()
+    name = byline.split(",")[0].strip().casefold()
     found = [
         s
         for s, j in sorted(judges.items())
         if court in j["courts"]
-        and (name == j["name"] or name in [f["form"] for f in j.get("printed", [])])
+        and name in [j["name"].casefold()] + [f["form"].casefold() for f in j.get("printed", [])]
     ]
     if len(found) != 1:
         raise Refusal(f"unregistered-author: byline {byline!r} matches {found or 'no judge'}")
@@ -657,21 +689,27 @@ class Printing:
     nominative: list[str]
 
 
-def printings(case: dict[str, Any], cap_volume: str, entry: dict[str, Any]) -> list[Printing]:
+def printings(
+    case: dict[str, Any], cap_volume: str, page: list[dict[str, Any]], volumes: Volumes
+) -> list[Printing]:
+    """The decision's printings, with @ordinal and @text from CAP's volume records (section 5.3)."""
     result = []
     nominative = [c["cite"] for c in case["citations"] if c["type"] == "nominative"]
+    official = next((c["cite"] for c in case["citations"] if c["type"] == "official"), None)
     for c in case["citations"]:
         if c["type"] not in ("official", "parallel"):
             continue
-        volume, reporter, page = cite_parts(c["cite"])
-        eid = f"printing_{volume}-{slug(reporter)}-{page}"
-        transcribed = c["type"] == "official"
-        if transcribed:
-            if page != case["first_page"]:
+        volume, reporter, first = cite_parts(c["cite"])
+        eid = f"printing_{volume}-{slug(reporter)}-{first}"
+        if c["type"] == "official":
+            if first != case["first_page"]:
                 raise Refusal(f"official citation {c['cite']} doesn't start at CAP's first_page")
-            # @ordinal only when several decisions begin on the page (profile section 5.3).
-            n = int(case["file_name"].split("-")[1])
-            ordinal = str(n) if n > 1 or entry.get("pageShared") else None
+            # @ordinal only when several decisions begin on the page, counted from the volume's
+            # case list; CAP's file ordinal must agree with it.
+            files = [p["file_name"] for p in page]
+            n = files.index(case["file_name"]) + 1
+            if case["file_name"] != f"{int(first):04d}-{n:02d}":
+                raise Refusal(f"{case['file_name']} is decision {n} on its page in CasesMetadata")
             result.append(
                 Printing(
                     eid,
@@ -679,31 +717,19 @@ def printings(case: dict[str, Any], cap_volume: str, entry: dict[str, Any]) -> l
                     "official",
                     reporter,
                     volume,
-                    page,
+                    first,
                     case["last_page"],
                     "transcribed",
-                    ordinal,
+                    str(n) if len(page) > 1 else None,
                     (cap_volume, case["first_page_order"], case["last_page_order"]),
                     nominative,
                 )
             )
         else:
-            status = entry.get("printings", {}).get(c["cite"])
-            if status is None:
-                raise Refusal(f"the manifest doesn't say whether {c['cite']} is held by a source")
+            text = parallel_text(c["cite"], official, volumes)
             result.append(
                 Printing(
-                    eid,
-                    c["cite"],
-                    "parallel",
-                    reporter,
-                    volume,
-                    page,
-                    None,
-                    status["text"],
-                    None,
-                    None,
-                    [],
+                    eid, c["cite"], "parallel", reporter, volume, first, None, text, None, None, []
                 )
             )
     if not result or result[0].type != "official":
@@ -711,11 +737,33 @@ def printings(case: dict[str, Any], cap_volume: str, entry: dict[str, Any]) -> l
     return result
 
 
+def parallel_text(cite: str, official: str | None, volumes: Volumes) -> str:
+    """@text of a parallel printing, from the volume records of the volume it is printed in."""
+    volume, reporter, first = cite_parts(cite)
+    records = volumes.get(reporter, volume)
+    if records is None:
+        return "unavailable"
+    on_page = records.page(first)
+    if any(cite in cites(p) and official in cites(p) for p in on_page):
+        return "released"
+    if not on_page:
+        return "withheld"
+    raise Refusal(
+        f"{cite}: CAP's volume has a case beginning on page {first} that isn't recorded as this "
+        "decision, so whether this decision's text was released can't be told"
+    )
+
+
+def cites(case: dict[str, Any]) -> list[str]:
+    return [c["cite"] for c in case.get("citations", [])]
+
+
 def build(
     entry: dict[str, Any],
     manifest: dict[str, Any],
     courts: dict[str, Any],
     judges_doc: dict[str, Any],
+    volumes: Volumes,
 ) -> tuple[bytes, bytes, str]:
     cap = entry["cap"]
     reporter, volume, file_name = cap.split("/")
@@ -728,9 +776,10 @@ def build(
     court_code = manifest["courts"].get(case["court"]["name"])
     if court_code is None:
         raise Refusal(f"no court registry code for CAP court {case['court']['name']!r}")
-    key = decision_key(case, court_code, courts["courts"])
+    page = volumes.case_page(reporter, volume, case)
+    key = decision_key(case, court_code, courts["courts"], page)
     judges = judges_doc["judges"]
-    prints = printings(case, f"{reporter}/{volume}", entry)
+    prints = printings(case, f"{reporter}/{volume}", page, volumes)
     categories = {re.sub(r"\s", "", c["cite"]): c["category"] for c in case.get("cites_to", [])}
     footnotes = {a.get("id"): a for a in source.iter("aside") if a.get("id")}
     ctx = Context(case, source, key, prints[0].eid, categories, footnotes)
@@ -750,12 +799,14 @@ def build(
     work = el(ident, "FRBRWork")
     el(work, "FRBRthis", value=f"crk:{key.key}")
     el(work, "FRBRuri", value=f"crk:{key.key}")
-    el(
-        work,
-        "FRBRalias",
-        name="akn-nc",
-        value=f"/akn/us/judgment/{key.court}/{key.decided}/{key.docket}",
-    )
+    if key.ordinal == 1:
+        # Profile section 5.1.1: no akn-nc value is fixed for a key with a decision ordinal.
+        el(
+            work,
+            "FRBRalias",
+            name="akn-nc",
+            value=f"/akn/us/judgment/{key.court}/{key.decided}/{key.docket}",
+        )
     for p in prints:
         el(work, "FRBRalias", name="cite", value=cite_alias(p.cite), showAs=p.cite)
     for c in case["citations"]:
@@ -1016,7 +1067,7 @@ def read_source(entry: dict[str, Any], kind: str) -> bytes:
     data = path.read_bytes()
     want = entry["source"][kind]["sha256"]
     if sha256(data) != want:
-        raise Refusal(f"{path.relative_to(ROOT)}: SHA-256 {sha256(data)}, manifest says {want}")
+        raise PinError(f"{path.relative_to(ROOT)}: SHA-256 {sha256(data)}, manifest says {want}")
     return data
 
 
@@ -1025,13 +1076,215 @@ def fetch(entry: dict[str, Any]) -> None:
         path = source_path(entry, kind)
         url = entry["source"][kind]["url"]
         # static.case.law answers urllib's default User-Agent with 403 Forbidden.
-        request = urllib.request.Request(url, headers={"User-Agent": "exemplar-cap-examples"})
-        with urllib.request.urlopen(request, timeout=60) as r:
+        with http_get(url) as r:
             data = r.read()
         if sha256(data) != entry["source"][kind]["sha256"]:
-            raise Refusal(f"{url}: SHA-256 {sha256(data)} differs from the manifest")
+            raise PinError(f"{url}: SHA-256 {sha256(data)} differs from the manifest")
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
+
+
+# Volume records: CAP's VolumeMetadata.json and CasesMetadata.json, read from data.stare.pub.
+
+
+def http_get(url: str, headers: dict[str, str] | None = None, method: str = "GET"):
+    """Open url, retrying a few times on a server error or a dropped connection."""
+    request = urllib.request.Request(
+        url, headers={"User-Agent": USER_AGENT, **(headers or {})}, method=method
+    )
+    for attempt in range(4):
+        try:
+            return urllib.request.urlopen(request, timeout=60)
+        except urllib.error.HTTPError as e:
+            if (e.code < 500 and e.code != 429) or attempt == 3:
+                raise
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == 3:
+                raise
+        time.sleep(2**attempt)
+    raise AssertionError("unreachable")
+
+
+class RangeFile(io.RawIOBase):
+    """A remote zip read with HTTP range requests, each response checked against the pinned
+    ETag and size, so the reads can't mix two versions of the file."""
+
+    def __init__(self, url: str, etag: str, size: int) -> None:
+        self.url, self.etag, self.size, self.pos = url, etag, size, 0
+
+    def readable(self) -> bool:
+        return True
+
+    def seekable(self) -> bool:
+        return True
+
+    def tell(self) -> int:
+        return self.pos
+
+    def seek(self, offset: int, whence: int = io.SEEK_SET) -> int:
+        self.pos = {io.SEEK_SET: 0, io.SEEK_CUR: self.pos, io.SEEK_END: self.size}[whence] + offset
+        return self.pos
+
+    def readinto(self, buf: Any) -> int:
+        if self.pos >= self.size or not len(buf):
+            return 0
+        end = min(self.pos + len(buf), self.size) - 1
+        with http_get(self.url, {"Range": f"bytes={self.pos}-{end}"}) as r:
+            etag, total = r.headers.get("ETag"), (r.headers.get("Content-Range") or "")
+            data = r.read()
+        if r.status != 206 or etag != self.etag or not total.endswith(f"/{self.size}"):
+            raise PinError(
+                f"{self.url}: served ETag {etag} and range {total!r} (status {r.status}); "
+                f"volumes.lock.json pins ETag {self.etag}, {self.size} bytes"
+            )
+        if len(data) != end - self.pos + 1:
+            raise PinError(f"{self.url}: short range response")
+        buf[: len(data)] = data
+        self.pos += len(data)
+        return len(data)
+
+
+@dataclass
+class VolumeRecords:
+    """One CAP volume's records: VolumeMetadata.json and CasesMetadata.json."""
+
+    name: str  # slug/volume
+    volume: dict[str, Any]
+    cases: list[dict[str, Any]]
+
+    def page(self, first: str) -> list[dict[str, Any]]:
+        """Every case that begins on the page, in printed order (CAP's file ordinal)."""
+        return sorted(
+            (c for c in self.cases if c["first_page"] == first), key=lambda c: c["file_name"]
+        )
+
+
+class Volumes:
+    """CAP volume records pinned by volumes.lock.json, cached under .cache/stare/."""
+
+    def __init__(self, lock: dict[str, Any], cache: Path = CACHE) -> None:
+        self.lock, self.cache = lock, cache
+        self.loaded: dict[str, VolumeRecords | None] = {}
+
+    def get(self, reporter: str, volume: str) -> VolumeRecords | None:
+        """The records of the volume a citation's reporter abbreviation names; None when CAP
+        holds no such volume."""
+        slugs = self.lock["reporters"].get(reporter)
+        if slugs is None:
+            raise PinError(f"reporter {reporter!r} isn't in volumes.lock.json; run --lock")
+        return self.records(slugs, volume)
+
+    def records(self, slug_: str, volume: str) -> VolumeRecords | None:
+        name = f"{slug_}/{volume}"
+        if name not in self.loaded:
+            if name not in self.lock["volumes"]:
+                raise PinError(f"volume {name} isn't in volumes.lock.json; run --lock")
+            pin = self.lock["volumes"][name]
+            if pin is None:
+                self.loaded[name] = None
+            else:
+                data = self.members(name, pin)
+                record = json.loads(data["metadata/VolumeMetadata.json"])
+                if record["volume_number"] != volume:
+                    raise Refusal(
+                        f"{name}: VolumeMetadata.json is volume {record['volume_number']}"
+                    )
+                cases = json.loads(data["metadata/CasesMetadata.json"])
+                self.loaded[name] = VolumeRecords(name, record, cases)
+        return self.loaded[name]
+
+    def case_page(self, slug_: str, volume: str, case: dict[str, Any]) -> list[dict[str, Any]]:
+        """The cases that begin on a case's first page, from the records of the volume CAP
+        published it in; the case itself must be among them."""
+        records = self.records(slug_, volume)
+        if records is None:
+            raise PinError(f"volumes.lock.json says CAP holds no volume {slug_}/{volume}")
+        page = records.page(case["first_page"])
+        if not any(c["file_name"] == case["file_name"] and c["id"] == case["id"] for c in page):
+            raise Refusal(f"{records.name}: CasesMetadata.json doesn't list {case['file_name']}")
+        return page
+
+    def members(self, name: str, pin: dict[str, Any]) -> dict[str, bytes]:
+        """The volume's record files, from the cache or by range requests, checked against the
+        lock."""
+        result, archive = {}, None
+        for member in VOLUME_RECORDS:
+            path = self.cache / "cap" / name / member
+            want = pin["members"][member]
+            if path.exists() and sha256(path.read_bytes()) == want:
+                result[member] = path.read_bytes()
+                continue
+            if archive is None:
+                remote = RangeFile(pin["url"], pin["etag"], pin["size"])
+                archive = zipfile.ZipFile(io.BufferedReader(remote, 1 << 16))
+            data = archive.read(member)
+            if sha256(data) != want:
+                raise PinError(
+                    f"{pin['url']}: {member} has SHA-256 {sha256(data)}, lock pins {want}"
+                )
+            path.parent.mkdir(parents=True, exist_ok=True)
+            partial = path.with_name(path.name + ".part")
+            partial.write_bytes(data)
+            partial.replace(path)
+            result[member] = data
+        return result
+
+
+def make_lock(manifest: dict[str, Any]) -> dict[str, Any]:
+    """Pin the volume records every example needs, as data.stare.pub serves them now."""
+    with http_get(REPORTERS) as r:
+        reporters_map = json.load(r)
+    with http_get(INDEX_MANIFEST) as r:
+        index = json.load(r)
+    reporters: dict[str, str] = {}
+    wanted: list[tuple[str, str]] = []
+    for entry in manifest["examples"]:
+        cap_slug, cap_volume, _ = entry["cap"].split("/")
+        case = json.loads(read_source(entry, "json"))
+        wanted.append((cap_slug, cap_volume))
+        for c in case["citations"]:
+            if c["type"] not in ("official", "parallel"):
+                continue
+            volume, reporter, _ = cite_parts(c["cite"])
+            slugs = reporters_map["abbreviations"].get(reporter, [])
+            if len(slugs) != 1:
+                raise Refusal(f"reporters.json maps {reporter!r} to {slugs}, not one slug")
+            if c["type"] == "official" and (slugs[0], volume) != (cap_slug, cap_volume):
+                raise Refusal(f"{entry['cap']}: official citation {c['cite']} is in {slugs[0]}")
+            reporters[reporter] = slugs[0]
+            wanted.append((slugs[0], volume))
+    volumes: dict[str, Any] = {}
+    for slug_, volume in sorted(set(wanted)):
+        name = f"{slug_}/{volume}"
+        if volume in index["parts"].get(slug_, {}):
+            raise Refusal(f"{name} is split over several folders; this builder reads one zip")
+        url = CAP_ZIP.format(slug=slug_, volume=volume)
+        try:
+            with http_get(url, method="HEAD") as r:
+                etag, size = r.headers["ETag"], int(r.headers["Content-Length"])
+        except urllib.error.HTTPError as e:
+            if e.code != 404:
+                raise
+            volumes[name] = None
+            continue
+        archive = zipfile.ZipFile(io.BufferedReader(RangeFile(url, etag, size), 1 << 16))
+        members = {m: sha256(archive.read(m)) for m in VOLUME_RECORDS}
+        volumes[name] = {"url": url, "etag": etag, "size": size, "members": members}
+    return {
+        "description": (
+            "Pins the CAP volume records examples/cap/build.py reads: for each volume, the zip on "
+            "data.stare.pub (its URL, the ETag and size the server gave, which every range "
+            "response must match) and the SHA-256 of each member read. null: data.stare.pub has "
+            "no zip for that volume, so CAP holds none. reporters maps each reporter abbreviation "
+            "the examples cite to its CAP slug, from reporters.json. Written by build.py --lock."
+        ),
+        "reporters": dict(sorted(reporters.items())),
+        "reportersFrom": {
+            "url": REPORTERS,
+            "indexBuild": reporters_map["generated_from"]["index_build"]["version"],
+        },
+        "volumes": volumes,
+    }
 
 
 def stem(key: str) -> str:
@@ -1042,6 +1295,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--fetch", action="store_true", help="download the source files first")
     parser.add_argument("--check", action="store_true", help="fail if a committed file differs")
+    parser.add_argument(
+        "--lock", action="store_true", help="pin the CAP volume records again first"
+    )
     args = parser.parse_args(argv)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     courts = json.loads(COURTS.read_text(encoding="utf-8"))
@@ -1053,14 +1309,23 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 1
+    if args.fetch:
+        for entry in manifest["examples"]:
+            fetch(entry)
+    if args.lock:
+        lock = make_lock(manifest)
+        LOCK.write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
+    volumes = Volumes(json.loads(LOCK.read_text(encoding="utf-8")))
     failed = 0
     for entry in manifest["examples"]:
         try:
-            if args.fetch:
-                fetch(entry)
-            xml, sidecar, key = build(entry, manifest, courts, judges)
+            xml, sidecar, key = build(entry, manifest, courts, judges, volumes)
         except Refusal as e:
             print(f"{entry['cap']}: refused: {e}", file=sys.stderr)
+            failed += 1
+            continue
+        except PinError as e:
+            print(f"{entry['cap']}: {e}", file=sys.stderr)
             failed += 1
             continue
         if entry.get("key") != key:

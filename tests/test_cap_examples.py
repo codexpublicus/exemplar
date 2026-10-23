@@ -58,6 +58,28 @@ def test_build_reproduces_the_examples() -> None:
     assert build.main(["--check"]) == 0
 
 
+def test_cap_judges_list_no_letter_case_variants() -> None:
+    for slug, entry in JUDGES.items():
+        names = [entry["name"]] + [f["form"] for f in entry.get("printed", [])]
+        assert len({n.casefold() for n in names}) == len(names), slug
+
+
+def test_fallback_ordinal_from_volume_records() -> None:
+    """CRK 5.6 from CAP's case list: Glover, printed second on 500 Pa. 524 after the docketed
+    Kibler and decided the same day, takes ~2 (the compute vector rpt-fallback-mixed-page)."""
+    from examples.cap import build
+
+    volumes = build.Volumes(json.loads(build.LOCK.read_text(encoding="utf-8")))
+    page = volumes.records("pa", "500").page("524")
+    keys = [build.decision_key(c, "pa", COURTS, page).key for c in page]
+    vector = next(
+        json.loads(line)
+        for line in (ROOT / "vectors" / "court-record-key" / "compute.jsonl").open()
+        if '"rpt-fallback-mixed-page"' in line
+    )
+    assert keys == ["us/pa/petitionno.216w.d.alloc.dkt.1982/1983-04-27", vector["key"]]
+
+
 def test_every_cap_document_is_in_the_manifest() -> None:
     built = sorted(CAP.glob("*.akn.xml"))
     assert built == sorted(document(e) for e in ENTRIES)

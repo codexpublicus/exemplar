@@ -1,16 +1,16 @@
 {
-  "description": "Test fixture standing in for a judge registry (spec/court-record-key.md section 10.2) for the examples in examples/cap only. It is not a judge registry. It holds the judges who author a part of an example, each registered for the court code that example uses. printed lists printed forms of a judge's name (spec section 10.2): the name as CAP prints it in an opinion's byline, the text before the byline's first comma, with the CAP case it was seen in. examples/cap/build.py links a byline to a slug only when that text equals an entry's name or one of its printed forms exactly.",
+  "description": "Test fixture standing in for a judge registry (spec/court-record-key.md section 10.2) for the examples in examples/cap only. It is not a judge registry. It holds the judges who author a part of an example, each registered for the court code that example uses. examples/cap/build.py links a byline to a slug only when the text before the byline's first comma equals an entry's name after case folding (CAP prints HOOD and McDERMOTT, which match Hood and McDermott); no entry needs a printed form.",
   "version": "fixture",
   "judges": {
     "cayton": {"name": "Cayton", "courts": ["dc"]},
-    "flaherty": {"name": "Flaherty", "courts": ["pa"], "printed": [{"form": "FLAHERTY", "source": "cap:pa/500/0256-01"}]},
+    "flaherty": {"name": "Flaherty", "courts": ["pa"]},
     "holmes": {"name": "Holmes", "courts": ["mass"]},
-    "hood": {"name": "Hood", "courts": ["dc"], "printed": [{"form": "HOOD", "source": "cap:a2d/31/0647-01"}]},
-    "hutchinson": {"name": "Hutchinson", "courts": ["pa"], "printed": [{"form": "HUTCHINSON", "source": "cap:pa/500/0109-01"}]},
-    "larsen": {"name": "Larsen", "courts": ["pa"], "printed": [{"form": "LARSEN", "source": "cap:pa/500/0256-01"}]},
-    "mcdermott": {"name": "McDermott", "courts": ["pa"], "printed": [{"form": "McDERMOTT", "source": "cap:pa/500/0109-01"}]},
-    "nix": {"name": "Nix", "courts": ["pa"], "printed": [{"form": "NIX", "source": "cap:pa/500/0256-01"}]},
-    "richardson": {"name": "Richardson", "courts": ["dc"], "printed": [{"form": "RICHARDSON", "source": "cap:a2d/31/0657-02"}]},
-    "roberts": {"name": "Roberts", "courts": ["pa"], "printed": [{"form": "ROBERTS", "source": "cap:pa/500/0109-01"}]}
+    "hood": {"name": "Hood", "courts": ["dc"]},
+    "hutchinson": {"name": "Hutchinson", "courts": ["pa"]},
+    "larsen": {"name": "Larsen", "courts": ["pa"]},
+    "mcdermott": {"name": "McDermott", "courts": ["pa"]},
+    "nix": {"name": "Nix", "courts": ["pa"]},
+    "richardson": {"name": "Richardson", "courts": ["dc"]},
+    "roberts": {"name": "Roberts", "courts": ["pa"]}
   }
 }

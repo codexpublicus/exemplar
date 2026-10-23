@@ -1,0 +1,68 @@
+{
+  "description": "Pins the CAP volume records examples/cap/build.py reads: for each volume, the zip on data.stare.pub (its URL, the ETag and size the server gave, which every range response must match) and the SHA-256 of each member read. null: data.stare.pub has no zip for that volume, so CAP holds none. reporters maps each reporter abbreviation the examples cite to its CAP slug, from reporters.json. Written by build.py --lock.",
+  "reporters": {
+    "A.2d": "a2d",
+    "Mass.": "mass",
+    "Pa.": "pa"
+  },
+  "reportersFrom": {
+    "url": "https://stare.pub/reporters.json",
+    "indexBuild": "v2026.10.22"
+  },
+  "volumes": {
+    "a2d/31": {
+      "url": "https://data.stare.pub/cap/a2d/31.zip",
+      "etag": "\"b4894af85617122a6235c16fdd8c87c2\"",
+      "size": 422856,
+      "members": {
+        "metadata/VolumeMetadata.json": "0c73323562d2dc14b85e5d2d489c1a41e5a686c19ffbe684847a6f755502e616",
+        "metadata/CasesMetadata.json": "da6e95b71e6cceade12b669eeae31b162e37e5e3f5cfe81796a9d2403b470fe5"
+      }
+    },
+    "a2d/454": {
+      "url": "https://data.stare.pub/cap/a2d/454.zip",
+      "etag": "\"95b4756a3cdfb951349f621afcb2c66d\"",
+      "size": 1053649,
+      "members": {
+        "metadata/VolumeMetadata.json": "cfe178e6663c619b696a5feb72f35410692b59d83c03b8d9391dc2b6b6c4d94f",
+        "metadata/CasesMetadata.json": "ce83d58b87718565e7ffb1ce0bb1e9f983115f7be628557d9f226b0a31f32b07"
+      }
+    },
+    "a2d/455": {
+      "url": "https://data.stare.pub/cap/a2d/455.zip",
+      "etag": "\"7ea58c9390663dd4e42c586f59c7086d\"",
+      "size": 1029497,
+      "members": {
+        "metadata/VolumeMetadata.json": "fac4442c4ef10a736fa8caf1a4756f2d28b522d52caed7ff7b618d99e0bf6e84",
+        "metadata/CasesMetadata.json": "3076b060a395ac04cee5efc1e78ae56ea62c8e633be7083d304cddc9ca0e9ccf"
+      }
+    },
+    "a2d/458": {
+      "url": "https://data.stare.pub/cap/a2d/458.zip",
+      "etag": "\"0b01d3233d337239bab799b8b3759dfb\"",
+      "size": 845546,
+      "members": {
+        "metadata/VolumeMetadata.json": "dac8c755dd71aedc189f6771a348f4704e6a9b9aea59c3b1bc74e8722623b05f",
+        "metadata/CasesMetadata.json": "0ef7974300696fc55c36ae113ed836f4055597914667dfb8d9b7816030a5e28a"
+      }
+    },
+    "mass/150": {
+      "url": "https://data.stare.pub/cap/mass/150.zip",
+      "etag": "\"723b4e2fcb5b2ab21594a8871972b621\"",
+      "size": 1380336,
+      "members": {
+        "metadata/VolumeMetadata.json": "e2f4b71123d01cae685687bcaf4b9858383752bbd28261a933e0b80599ebc1a1",
+        "metadata/CasesMetadata.json": "84ad03975767002731436867a92b6e9949bedf7de961ff41243cdb124327732a"
+      }
+    },
+    "pa/500": {
+      "url": "https://data.stare.pub/cap/pa/500.zip",
+      "etag": "\"d025ef442af720cfd494d6ab3360741d\"",
+      "size": 1246882,
+      "members": {
+        "metadata/VolumeMetadata.json": "828c2130b8d587ff8e2850abbc734bdafc1ef0a0aa8024fbcd5835d3e89f8f85",
+        "metadata/CasesMetadata.json": "b2807e8586002ec1a81fabcba8849c0110fff7e35033868948ca6ec62219b8d7"
+      }
+    }
+  }
+}
