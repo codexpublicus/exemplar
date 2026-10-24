@@ -93,48 +93,66 @@ TERRITORIAL = {
     "cnmitrialct": "mp",
 }
 
-# Courts outside the United States in courts-db (systems "international" and "colonial").
+# The first day of the Kingdom of Great Britain (the Acts of Union 1707). An English court's
+# decision before it, a colonial court's included, is the Kingdom of England's.
+UNION = "1707-05-01"
+ENGLAND = [("england", None), ("gb", UNION)]
+
+# Courts outside the United States in courts-db (systems "international" and "colonial"). Each
+# takes the code of the country it sits in (spec section 3): the Privy Council's committees
+# sat in London.
 FOREIGN = {
-    "kingsbench": "gb",
-    "highctjchuk": "gb",
-    "houseoflordsuk": "gb",
-    "privycoun": "gb",
-    "nhprivycounnh": "gb",
-    "phillipines": "ph",
+    "kingsbench": ENGLAND,
+    "highctjchuk": ENGLAND,
+    "houseoflordsuk": ENGLAND,
+    "privycoun": ENGLAND,
+    "nhprivycounnh": ENGLAND,
+    "phillipines": [("ph", None)],
 }
 
-# A sovereign that issued some of a US court's decisions before the United States did, with
-# the first day the United States did. A state court located there takes the earlier code for
-# a decision before that day, when courts-db doesn't date the court's start after it.
+# The sovereigns that issued a US state court's decisions, by the court's location, each with
+# the first day it did. A court courts-db dates as starting on or after the last step's day
+# takes only that step; any other takes them all, since courts-db's start dates for colonial
+# courts are not reliable (it starts ctchansc in 1721; CAP has its decisions from 1700).
 COLONIES = (
     "Connecticut", "Delaware", "Georgia", "Maine", "Maryland", "Massachusetts",
     "New Hampshire", "New Jersey", "New York", "North Carolina", "Pennsylvania",
     "Rhode Island", "South Carolina", "Virginia",
 )  # fmt: skip
 EARLIER = {
-    **{location: ("gb", "1776-07-04") for location in COLONIES},
-    "Hawaii": ("hawaii", "1898-08-12"),
-    "Texas": ("texas", "1846-02-19"),
-    "Vermont": ("vermont", "1791-03-04"),
+    **{location: [*ENGLAND, ("us", "1776-07-04")] for location in COLONIES},
+    "Hawaii": [("hawaii", None), ("us", "1898-08-12")],
+    "Texas": [("texas", None), ("us", "1846-02-19")],
+    "Vermont": [("vermont", None), ("us", "1791-03-04")],
 }
 
 
+def steps(court: dict[str, Any]) -> list[tuple[str, str | None]]:
+    """The court's jurisdiction codes in date order, from the first that covers its start."""
+    if court["id"] in FOREIGN:
+        chain = FOREIGN[court["id"]]
+    elif court["id"] in TERRITORIAL:
+        chain = [(TERRITORIAL[court["id"]], None)]
+    elif court.get("system") == "state" and (court.get("location") or "") in EARLIER:
+        chain = EARLIER[court["location"]]
+    else:
+        chain = [("us", None)]
+    starts = [d.get("start") for d in court.get("dates") or []]
+    if starts and None not in starts and min(starts) >= (chain[-1][1] or ""):
+        return [(chain[-1][0], None)]
+    return chain
+
+
 def jurisdiction(court: dict[str, Any]) -> str:
-    return FOREIGN.get(court["id"]) or TERRITORIAL.get(court["id"]) or "us"
+    return steps(court)[-1][0]
 
 
 def jurisdictions(court: dict[str, Any]) -> list[dict[str, str | None]] | None:
     """Date-ranged codes for a court whose decisions span a change of sovereign."""
-    if court["id"] in FOREIGN or court.get("system") != "state":
+    dated = steps(court)
+    if len(dated) == 1:
         return None
-    earlier = EARLIER.get(court.get("location") or "")
-    if earlier is None:
-        return None
-    code, until = earlier
-    starts = [d.get("start") for d in court.get("dates") or []]
-    if starts and None not in starts and min(starts) >= until:
-        return None
-    return [{"from": None, "jurisdiction": code}, {"from": until, "jurisdiction": "us"}]
+    return [{"from": start, "jurisdiction": code} for code, start in dated]
 
 
 # Courts courts-db lacks, as CourtListener names them (codexpublicus/exemplar#27). Each code is

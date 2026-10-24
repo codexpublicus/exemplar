@@ -41,7 +41,7 @@
 
   <!-- The jurisdiction codes CRK spec section 3 defines. -->
   <xsl:function name="f:jurisdictions" as="xs:string+">
-    <xsl:sequence select="('us', 'pr', 'gu', 'vi', 'as', 'mp', 'gb', 'ph', 'ccj', 'hawaii', 'texas', 'vermont')"/>
+    <xsl:sequence select="('us', 'pr', 'gu', 'vi', 'as', 'mp', 'gb', 'ph', 'ccj', 'england', 'hawaii', 'texas', 'vermont')"/>
   </xsl:function>
 
   <!-- Alias schemes, CRK spec section 11.1: scheme name and the regex for the whole alias. -->

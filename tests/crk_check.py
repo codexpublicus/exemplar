@@ -29,7 +29,7 @@ ROLES = frozenset(
 
 # Section 3: the jurisdiction codes this version defines.
 JURISDICTIONS = frozenset(
-    {"us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "hawaii", "texas", "vermont"}
+    {"us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "england", "hawaii", "texas", "vermont"}
 )
 JURISDICTION = re.compile(r"[a-z]{2,16}")
 COURT = re.compile(r"[a-z][a-z0-9-]*")
