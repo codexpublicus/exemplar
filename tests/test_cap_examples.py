@@ -91,7 +91,7 @@ def test_keys_follow_from_cap_fields(entry: dict[str, Any]) -> None:
     official = next(c["cite"] for c in case["citations"] if c["type"] == "official")
     volume, reporter, page = official.split(" ", 1)[0], *official.split(" ", 1)[1].rsplit(" ", 1)
     facts = {
-        "country": "us",
+        "jurisdiction": "us",
         "court": MANIFEST["courts"][case["court"]["name"]],
         "docket": case["docket_number"] or None,
         "decided": case["decision_date"],

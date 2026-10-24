@@ -4,7 +4,7 @@ In manuscript culture, the exemplar was the authoritative copy scribes worked fr
 
 It defines, independently of any one implementation:
 
-- **The court record key**: a deterministic, docket-anchored identifier for every court decision and for each separate opinion within it (`{country}/{court}/{docket}/{decided}[~n][/{role}[.{author}]][@{revised}]`, where `{country}` is a jurisdiction code: `us`, a territory's `pr`, a historical sovereign's `gb`), specified in [`spec/court-record-key.md`](spec/court-record-key.md), following the FRBR work/expression split used by ECLI, URN:LEX and Akoma Ntoso.
+- **The court record key**: a deterministic, docket-anchored identifier for every court decision and for each separate opinion within it (`{jurisdiction}/{court}/{docket}/{decided}[~n][/{role}[.{author}]][@{revised}]`, where `{jurisdiction}` is a jurisdiction code: `us`, a territory's `pr`, a historical sovereign's `gb`), specified in [`spec/court-record-key.md`](spec/court-record-key.md), following the FRBR work/expression split used by ECLI, URN:LEX and Akoma Ntoso.
 - **An Akoma Ntoso judgment profile**: how a US decision is represented in OASIS LegalDocML (Akoma Ntoso), including separate opinions, parallel printings of the same decision, page anchors into scanned volumes, and decisions whose text was not released, specified in [`spec/akoma-ntoso-profile.md`](spec/akoma-ntoso-profile.md).
 - **Machine-checkable schemas** for the profile and for the viewer's JSON sidecar.
 - **The court registry**: the court codes the key uses, with each court's jurisdiction code and docket profile, built from a pinned snapshot of Free Law Project's courts-db; and the registry code for each court the Caselaw Access Project names.

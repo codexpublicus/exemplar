@@ -40,7 +40,7 @@
   </xsl:function>
 
   <!-- The jurisdiction codes CRK spec section 3 defines. -->
-  <xsl:function name="f:countries" as="xs:string+">
+  <xsl:function name="f:jurisdictions" as="xs:string+">
     <xsl:sequence select="('us', 'pr', 'gu', 'vi', 'as', 'mp', 'gb', 'ph', 'ccj', 'hawaii', 'texas', 'vermont')"/>
   </xsl:function>
 
@@ -112,7 +112,7 @@
     <xsl:param name="n" as="xs:integer"/>
     <xsl:sequence select="string(tokenize(f:body($key), '/')[$n])"/>
   </xsl:function>
-  <xsl:function name="f:country" as="xs:string">
+  <xsl:function name="f:jurisdiction" as="xs:string">
     <xsl:param name="key" as="xs:string?"/>
     <xsl:sequence select="f:segment($key, 1)"/>
   </xsl:function>
@@ -156,7 +156,7 @@
     <xsl:param name="key" as="xs:string?"/>
     <xsl:variable name="s" select="string($key)"/>
     <xsl:sequence select="matches($s, f:crk-regex())
-        and f:country($s) = f:countries()
+        and f:jurisdiction($s) = f:jurisdictions()
         and f:is-decided(f:decided($s))
         and (f:revised($s) eq '' or (f:is-date(f:revised($s)) and f:revised($s) ge f:period-start(f:decided($s))))
         and (not(starts-with(f:docket($s), 'rpt.')) or matches(f:docket($s), '^rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+$'))
@@ -239,12 +239,12 @@
       <assert test="every $u in a:FRBRuri satisfies string($u/@value) eq string(a:FRBRthis/@value)">[AKN-9] FRBRWork/FRBRuri equals FRBRthis.</assert>
       <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq f:decided-name(f:decided($this)) and string($d/@date) eq f:period-start(f:decided($this))))">[AKN-11] FRBRWork/FRBRdate is dated <value-of select="f:period-start(f:decided($this))"/> and named "<value-of select="f:decided-name(f:decided($this))"/>", from the key's decided segment <value-of select="f:decided($this)"/>.</assert>
       <assert test="every $a in a:FRBRauthor satisfies $a/@href eq $court-ref">[AKN-12] FRBRWork/FRBRauthor/@href is "<value-of select="$court-ref"/>".</assert>
-      <assert test="not(f:is-key($this)) or a:FRBRcountry/@value eq f:country($this)">[AKN-13] FRBRcountry/@value is the key's country segment, "<value-of select="f:country($this)"/>".</assert>
+      <assert test="not(f:is-key($this)) or a:FRBRcountry/@value eq f:jurisdiction($this)">[AKN-13] FRBRcountry/@value is the key's jurisdiction segment, "<value-of select="f:jurisdiction($this)"/>".</assert>
       <assert test="every $n in a:FRBRnumber satisfies $n/@value eq f:docket($this)">[5.1.1] FRBRnumber/@value is the key's docket segment, "<value-of select="f:docket($this)"/>".</assert>
     </rule>
     <rule context="a:identification/a:FRBRWork/a:FRBRalias">
       <let name="key" value="f:key-of-uri(../a:FRBRthis/@value)"/>
-      <let name="akn-nc" value="concat('/akn/', f:country($key), '/judgment/', f:court($key), '/', f:decided($key), '/', f:docket($key))"/>
+      <let name="akn-nc" value="concat('/akn/', f:jurisdiction($key), '/judgment/', f:court($key), '/', f:decided($key), '/', f:docket($key))"/>
       <assert test="if (@name eq 'akn-nc') then (f:decision-ordinal($key) ne '' or @value eq $akn-nc)
                     else if (@name eq 'vendor') then normalize-space(@value) ne ''
                     else if (@name = f:alias-schemes()) then (@name ne 'cl-opinion' and f:alias-scheme(@value) eq @name)

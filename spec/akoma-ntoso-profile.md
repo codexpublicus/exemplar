@@ -86,13 +86,13 @@ The root MUST be `akomaNtoso` with exactly one `judgment` child and no `componen
 | `FRBRalias` | one per alias of the decision: `name` is the CRK alias scheme (`cite`, `neutral`, `cap`, `cl-cluster`, ...) and `value` the alias string (CRK spec section 11.1); `name="akn-nc"` holds the AKN Naming Convention IRI derived from the key (CRK spec section 15); `name="vendor"` holds a vendor citation verbatim (`1954 U.S. LEXIS 2094`), which has no alias scheme; a key-shaped alias is described below the table | [AKN-10] |
 | `FRBRdate` | the key's `decided` segment: a full date as `@date` with `@name="decided"`; for a partial-date key (CRK spec section 6.2), `@date` the first day of its period and `@name` `decided-year-month` or `decided-year`, so that no consumer reads that day as the court's | [AKN-11] |
 | `FRBRauthor/@href` | `#` + the court's `TLCOrganization` eId | [AKN-12] |
-| `FRBRcountry/@value` | the key's country segment, a jurisdiction code (CRK spec section 3): `us`, `pr` | [AKN-13] |
+| `FRBRcountry/@value` | the key's jurisdiction segment, a jurisdiction code (CRK spec section 3): `us`, `pr` | [AKN-13] |
 | `FRBRnumber` | OPTIONAL: `@value` the key's docket segment, `@showAs` the docket as printed | |
 | `FRBRname` | OPTIONAL: `@value` the decision's short name as the source gives it | |
 
 An alias that is itself a decision key, such as the key under another docket of a consolidated case, is a key-shaped alias (CRK spec section 11.1). Its `@name` MUST be `crk` and its `@value` a key reference to a valid decision key, with no part and no `@{revised}`: `crk:us/scotus/17-1623/2020-06-15` [AKN-10]. An alias whose `@name` is a CRK alias scheme MUST be valid under that scheme; `cl-opinion` names a part, not a decision, and is not used in `FRBRWork`. `@name` MUST be a CRK alias scheme, `akn-nc` or `vendor` [AKN-10].
 
-The `akn-nc` IRI of a decision key without a decision ordinal is `/akn/{country}/judgment/{court}/{decided}/{docket}` [AKN-10], with `{decided}` as the key writes it, partial or not. CRK section 15 gives no mapping for a key with a decision ordinal (`~2`); for such a key this version doesn't fix the value of an `akn-nc` alias, and AKN-10 doesn't check it.
+The `akn-nc` IRI of a decision key without a decision ordinal is `/akn/{jurisdiction}/judgment/{court}/{decided}/{docket}` [AKN-10], with `{decided}` as the key writes it, partial or not. CRK section 15 gives no mapping for a key with a decision ordinal (`~2`); for such a key this version doesn't fix the value of an `akn-nc` alias, and AKN-10 doesn't check it.
 
 A document MUST NOT be written for a decision whose key the producer can't compute [AKN-14, not machine-checkable]; the CRK spec's refusals apply unchanged. Open question O7 covers decisions that still have no key, such as Federal Circuit decisions.
 
@@ -631,7 +631,7 @@ The Schematron rules are in `schema/profile.sch` (codexpublicus/exemplar#3). Thi
 | AKN-9, AKN-15 | work and expression URIs are key references to valid keys and agree with each other and with `@contains` | Schematron (regex from the CRK spec; calendar dates through `xs:date`) |
 | AKN-10 | aliases well formed per CRK section 11.1; a key-shaped alias is named `crk` and is a key reference | Schematron |
 | AKN-11, AKN-16 | `FRBRdate` names and values match the key's dates | Schematron |
-| AKN-12, AKN-13 | work author is the court; country is the key's country segment | Schematron |
+| AKN-12, AKN-13 | work author is the court; FRBRcountry is the key's jurisdiction segment | Schematron |
 | AKN-14, AKN-37 | no document without keys | not machine-checkable |
 | AKN-17 | `FRBRauthoritative` is `false` | Schematron |
 | AKN-18, AKN-20 | manifestation URI and format | Schematron |
@@ -698,7 +698,7 @@ This profile is versioned with [Semantic Versioning 2.0.0](https://semver.org/sp
 
 While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.4.0, follows CRK spec 0.4.0 and court registry `2026.10.23`. It is a minor version that breaks, and the Schematron rules check profile 0.4.x documents only:
 
-- `FRBRcountry` is the key's country segment, which CRK 0.4.0 makes a jurisdiction code (`pr`, `gb`, ...), and the `akn-nc` IRI starts with it (sections 5.1.1, AKN-10, AKN-13; codexpublicus/exemplar#38, #39);
+- `FRBRcountry` is the key's jurisdiction segment, which CRK 0.4.0 makes a jurisdiction code (`pr`, `gb`, ...), and the `akn-nc` IRI starts with it (sections 5.1.1, AKN-10, AKN-13; codexpublicus/exemplar#38, #39);
 - a partial-date key's `FRBRdate` is the first day of its period, named `decided-year-month` or `decided-year`, and a partial date is never a `docDate` (sections 5.1.1, 5.1.2, 6, AKN-11, AKN-16; codexpublicus/exemplar#37);
 - CourtListener's approximate dates map as CRK 0.4.0 section 6.1 says (section 15.3; codexpublicus/exemplar#33).
 

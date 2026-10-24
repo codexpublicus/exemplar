@@ -28,10 +28,10 @@ ROLES = frozenset(
 )
 
 # Section 3: the jurisdiction codes this version defines.
-COUNTRIES = frozenset(
+JURISDICTIONS = frozenset(
     {"us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "hawaii", "texas", "vermont"}
 )
-COUNTRY = re.compile(r"[a-z]{2,16}")
+JURISDICTION = re.compile(r"[a-z]{2,16}")
 COURT = re.compile(r"[a-z][a-z0-9-]*")
 DOCKET = re.compile(r"[a-z0-9][a-z0-9_.-]*")
 RPT = re.compile(r"rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+")
@@ -77,9 +77,9 @@ def classify(key: str) -> str | None:
     segments = body.split("/")
     if len(segments) not in (4, 5):
         return "structure"
-    country, court, docket, decided = segments[:4]
-    if not COUNTRY.fullmatch(country) or country not in COUNTRIES:
-        return "country"
+    jurisdiction, court, docket, decided = segments[:4]
+    if not JURISDICTION.fullmatch(jurisdiction) or jurisdiction not in JURISDICTIONS:
+        return "jurisdiction"
     if not COURT.fullmatch(court):
         return "court"
     if not DOCKET.fullmatch(docket) or (docket.startswith("rpt.") and not RPT.fullmatch(docket)):
@@ -110,10 +110,10 @@ def parse(key: str) -> dict[str, Any]:
     assert classify(key) is None, key
     body, _, revised = key.partition("@")
     segments = body.split("/")
-    country, court, docket, decided = segments[:4]
+    jurisdiction, court, docket, decided = segments[:4]
     day, _, ordinal = decided.partition("~")
     parts: dict[str, Any] = {
-        "country": country,
+        "jurisdiction": jurisdiction,
         "court": court,
         "docket": docket,
         "decided": day,
@@ -134,7 +134,7 @@ def parse(key: str) -> dict[str, Any]:
 
 
 def decision_key(parts: dict[str, Any]) -> str:
-    key = f"{parts['country']}/{parts['court']}/{parts['docket']}/{parts['decided']}"
+    key = f"{parts['jurisdiction']}/{parts['court']}/{parts['docket']}/{parts['decided']}"
     if parts["decision_ordinal"] > 1:
         key += f"~{parts['decision_ordinal']}"
     return key
@@ -273,11 +273,11 @@ def profile_for(court: dict[str, Any], decided: str | None) -> str | None:
     return _dated(court["profiles"], "profile", decided)
 
 
-def country_for(court: dict[str, Any], decided: str | None) -> str:
+def jurisdiction_for(court: dict[str, Any], decided: str | None) -> str:
     """Section 3: the issuing sovereign's code for the decision date."""
-    if "countries" in court:
-        return _dated(court["countries"], "country", decided)
-    return court["country"]
+    if "jurisdictions" in court:
+        return _dated(court["jurisdictions"], "jurisdiction", decided)
+    return court["jurisdiction"]
 
 
 def docket_segment(
@@ -328,7 +328,7 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
         raise Refusal("no-decision-date")
     if not is_decided(decided):
         raise Refusal("date")
-    country = country_for(courts[court], decided)  # section 3: the registry's, never the facts'
+    jurisdiction = jurisdiction_for(courts[court], decided)  # section 3: the registry's, never the facts'
     if profile_for(courts[court], decided) is None:
         raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
     citation = facts.get("reporter_citation")
@@ -349,7 +349,7 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
     if ordinal < 1:
         raise Refusal("ordinal")
     parts: dict[str, Any] = {
-        "country": country,
+        "jurisdiction": jurisdiction,
         "court": court,
         "docket": docket,
         "decided": decided,

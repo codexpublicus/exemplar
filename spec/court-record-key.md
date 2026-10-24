@@ -5,7 +5,7 @@ Specification version: **0.4.0** (draft). Status: not yet stable; see section 13
 A court record key (CRK) is a deterministic identifier for a court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the jurisdiction and the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation. This version registers the courts of the United States, of five US territories, and the few English and colonial courts American sources hold (section 3).
 
 ```
-{country}/{court}/{docket}/{decided}[~n][/{role}[.{author}[+{author}...]][~n]][@{revised}]
+{jurisdiction}/{court}/{docket}/{decided}[~n][/{role}[.{author}[+{author}...]][~n]][@{revised}]
 ```
 
 - `us/ca10/14-9585/2016-08-23` is a decision.
@@ -35,10 +35,10 @@ Terms:
 ### 2.1 ABNF
 
 ```abnf
-crk         = country "/" court "/" docket "/" decided [ ord ]
+crk         = jurisdiction "/" court "/" docket "/" decided [ ord ]
               [ "/" part ] [ "@" revised ]
 
-country     = 2*16LC                            ; a jurisdiction code (section 3)
+jurisdiction = 2*16LC                           ; a jurisdiction code (section 3)
 court       = LC *( LC / DIGIT / "-" )          ; from the court registry (section 4)
 docket      = ( LC / DIGIT ) *( LC / DIGIT / "-" / "_" / "." )
                                                 ; normalized per docket profile (section 5)
@@ -62,7 +62,7 @@ LC          = %x61-7A                           ; a-z
 
 ### 2.2 Regular expression
 
-The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the country segment and the decision date (0.4.0, section 13).
+The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the jurisdiction segment and the decision date (0.4.0, section 13).
 
 ```regex
 ^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
@@ -74,7 +74,7 @@ Implementations MUST match the whole string. In engines where `$` also matches b
 
 A string is a **valid key** when it matches the grammar and all of the following hold:
 
-1. `country` is a jurisdiction code this version defines (section 3).
+1. `jurisdiction` is a jurisdiction code this version defines (section 3).
 2. `decided` is a real Gregorian calendar date (`2016-02-30` matches the grammar and is not valid), or a year and a month `01` to `12`, or a year.
 3. `revised`, if present, is a real calendar date and is not earlier than `decided`; a partial `decided` is compared by the first day of its period (section 6.2).
 4. A part whose role is `per-curiam` has no authors.
@@ -95,7 +95,7 @@ A validator that reports why it rejected a string SHOULD use these classes. When
 | Class | Meaning |
 |---|---|
 | `structure` | Not shaped like a key: empty, too few or too many `/`-separated segments, more than one `@` |
-| `country` | Country segment is not a jurisdiction code this version defines (section 3) |
+| `jurisdiction` | Jurisdiction segment is not a jurisdiction code this version defines (section 3) |
 | `court` | Court segment fails the `court` rule (uppercase, leading digit, illegal character) |
 | `docket` | Docket segment fails the `docket` rule, or is a malformed `rpt.` segment |
 | `date` | `decided` fails the `decided` rule, or is not a calendar date, or names a month outside `01` to `12` |
@@ -120,7 +120,7 @@ The prefix is not part of the key. A key is computed, compared, frozen and liste
 
 ## 3. Jurisdiction
 
-The first segment, the country segment, is the jurisdiction code of the sovereign or body whose court issued the decision. The same code is the jurisdiction segment of stare.pub's citation addresses (`/c/{code}/...`) and the Akoma Ntoso `FRBRcountry` of the decision's document (section 15), so a key, an address and a document name one jurisdiction one way.
+The first segment, the jurisdiction segment, is the jurisdiction code of the sovereign or body whose court issued the decision. The same code is the jurisdiction segment of stare.pub's citation addresses (`/c/{code}/...`) and the Akoma Ntoso `FRBRcountry` of the decision's document (section 15), so a key, an address and a document name one jurisdiction one way.
 
 A jurisdiction code is one of these:
 
@@ -148,7 +148,7 @@ The codes this version defines:
 | `texas` | historical sovereign | the Republic of Texas, before 1846-02-19 | Texas's courts before that day |
 | `vermont` | historical sovereign | the Vermont Republic, before 1791-03-04 | Vermont's courts before that day |
 
-The court registry gives each court its code, by date where a court's decisions span a change of sovereign (section 10.1). A producer takes the code from the registry for the decision date and MUST NOT choose one. A code is added by a minor version of this spec (section 13); its courts are added by a registry version. A body code or a historical sovereign's code, once defined, is never reassigned. A validator conforming to this version MUST reject any code the table doesn't list, with class `country`.
+The court registry gives each court its code, by date where a court's decisions span a change of sovereign (section 10.1). A producer takes the code from the registry for the decision date and MUST NOT choose one. A code is added by a minor version of this spec (section 13); its courts are added by a registry version. A body code or a historical sovereign's code, once defined, is never reassigned. A validator conforming to this version MUST reject any code the table doesn't list, with class `jurisdiction`.
 
 ## 4. Courts
 
@@ -326,7 +326,7 @@ A key depends on two registries: a court registry, which this repository publish
 
 ### 10.1 Court registry
 
-The court registry is `registry/courts.json` in codexpublicus/exemplar, validated by `schema/courts-registry.schema.json`. Each entry has a court code (section 4), its jurisdiction code (`country`, section 3), the court's name, its docket profiles with the date each applies from (for example `scotus`: `scotus-numbered` from the start, `scotus-ot1971` from 1971-07-01), and the source of its code. A court whose decisions span a change of sovereign also lists its jurisdiction codes with the date each applies from (`countries`; `pa`: `gb`, then `us` from 1776-07-04), and its `country` is the last of them. An entry MAY list aliases, other services' ids for the court or for a part of it, written `{service}:{id}` (`courtlistener:txctapp5`), and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
+The court registry is `registry/courts.json` in codexpublicus/exemplar, validated by `schema/courts-registry.schema.json`. Each entry has a court code (section 4), its jurisdiction code (`jurisdiction`, section 3), the court's name, its docket profiles with the date each applies from (for example `scotus`: `scotus-numbered` from the start, `scotus-ot1971` from 1971-07-01), and the source of its code. A court whose decisions span a change of sovereign also lists its jurisdiction codes with the date each applies from (`jurisdictions`; `pa`: `gb`, then `us` from 1776-07-04), and its `jurisdiction` is the last of them. An entry MAY list aliases, other services' ids for the court or for a part of it, written `{service}:{id}` (`courtlistener:txctapp5`), and a `replaced-by` code for a court that merged or split. Codes are never renamed, reused or deleted.
 
 The registry is built by `registry/build_courts.py` from a copy of courts-db's `courts.json`, vendored at `registry/sources/courts-db/` and pinned by commit and SHA-256 in the registry's `source` block, which also records the license courts-db states for it. Every court in that snapshot is registered; the registry's `excluded` block lists the one id left out, which fails the `court` rule. Four courts courts-db lacks are registered under CourtListener's ids (`kyctapphigh`, `mspb`, `tennsuperct`, `tennworkcompcl`; source `courtlistener`). The jurisdiction codes, docket profiles and aliases are this registry's assignments, not courts-db's: a territory's own courts take its code and the courts of England and the Philippines theirs (section 3); a state court in one of the thirteen colonies or Maine takes `gb` before 1776-07-04, one in Hawaii `hawaii` before 1898-08-12, one in Texas `texas` before 1846-02-19 and one in Vermont `vermont` before 1791-03-04, unless courts-db dates its start after that day; `scotus-numbered` and then `scotus-ot1971` for the Supreme Court; `us-coa` for the twelve regional courts of appeals; `us-district` for federal district and bankruptcy courts; none for the Federal Circuit; `printed` for every other court.
 
@@ -430,10 +430,12 @@ While the version is 0.x, a minor version MAY break these rules (SemVer item 4).
 
 **0.4.0.** This version changes four things from 0.3.1, under SemVer item 4. The first is the owner's ruling D101 (2026-10-23) on codexpublicus/exemplar#38, #39, #42 and #43; the rest settle codexpublicus/exemplar#26, #27, #33 and #37 and the pre-1971 Supreme Court gap of #46, as proposed in the pull request that brought them:
 
-- the country segment is a jurisdiction code (section 3): ISO 3166-1 codes, a territory's own code, registered body codes such as `ccj`, and the issuing sovereign for a court whose sovereign changed. The grammar admits any two to sixteen lowercase letters, and a validity rule admits the codes section 3 lists. **Changes keys**: a decision of a territory's own court moves from `us` to the territory's code (`us/prsupreme/...` is `pr/prsupreme/...`), a colonial court's decision before 1776-07-04 from `us` to `gb`, and decisions of Hawaii's courts before 1898-08-12, Texas's before 1846-02-19 and Vermont's before 1791-03-04 to `hawaii`, `texas` and `vermont`;
+- the first segment is a jurisdiction code (section 3): ISO 3166-1 codes, a territory's own code, registered body codes such as `ccj`, and the issuing sovereign for a court whose sovereign changed. The grammar admits any two to sixteen lowercase letters, and a validity rule admits the codes section 3 lists. **Changes keys**: a decision of a territory's own court moves from `us` to the territory's code (`us/prsupreme/...` is `pr/prsupreme/...`), a colonial court's decision before 1776-07-04 from `us` to `gb`, and decisions of Hawaii's courts before 1898-08-12, Texas's before 1846-02-19 and Vermont's before 1791-03-04 to `hawaii`, `texas` and `vermont`;
 - `decided` is as precise as the producer can establish it, a full date, a year and month, or a year (section 6); a partial-date key is non-canonical, and its ordinal is counted in printed order. The refusal class `incomplete-date` is withdrawn. **Adds keys** for decisions 0.3.1 refused; a fallback decision's ordinal (section 5.6) can change when a neighbour on its page that had a partial date gets a full one;
 - the Supreme Court has the `scotus-numbered` profile before 1971-07-01 (section 5.7), and its decisions of that period take the reporter fallback like any other court's. **Adds keys** for decisions 0.3.1 refused `no-docket-profile`;
 - the court registry registers the courts courts-db lists outside the United States, four courts courts-db lacks under CourtListener's ids, and CourtListener's ids for the districts of the Court of Appeals of Texas and for the Supreme Court of the Northern Mariana Islands as aliases; `registry/cap-courts.json` gives the code for each court CAP names (section 10.1). **Adds keys** for decisions 0.3.1 refused `unregistered-court`, or that a producer refused for want of a mapping.
+
+The key's first segment is named the jurisdiction segment, the word stare.pub's citation addresses use, as the owner ruled in D104(f) (2026-10-24): the ABNF rule is `jurisdiction`, the error class `jurisdiction` (0.3.1's `country`), a parsed key's part `jurisdiction`, and the court registry's fields `jurisdiction` and `jurisdictions`. No key changes for it.
 
 Registry `2026.10.23` changes the jurisdiction code of thirteen territorial courts, and assigns date-ranged codes to 971 courts, which section 10.3's append-only rule forbids outside a 0.x minor version. A producer that minted a key under 0.3.x that these rules compute differently records the 0.3.x key `replaced-by` the 0.4.0 key (section 11.2). Every key valid under 0.3.1 stays valid.
 
@@ -473,7 +475,7 @@ Every vector records its `provenance`:
 
 These are derived from a key, never canonical. For `us/ca10/14-9585/2016-08-23`:
 
-- Akoma Ntoso work IRI: `/akn/us/judgment/ca10/2016-08-23/14-9585`, expression `…/eng@2016-08-23`. A part maps to an inline `<opinion>` with `eId` `opinion_concurrence.gorsuch`. The IRI's first segment is the key's country segment: `pr/prsupreme/8561/1943-05-18` is `/akn/pr/judgment/prsupreme/1943-05-18/8561`.
+- Akoma Ntoso work IRI: `/akn/us/judgment/ca10/2016-08-23/14-9585`, expression `…/eng@2016-08-23`. A part maps to an inline `<opinion>` with `eId` `opinion_concurrence.gorsuch`. The IRI's first segment is the key's jurisdiction segment: `pr/prsupreme/8561/1943-05-18` is `/akn/pr/judgment/prsupreme/1943-05-18/8561`.
 - URN:LEX ([RFC 9676](https://www.rfc-editor.org/rfc/rfc9676.html)): `urn:lex:us:court.appeals.10.circuit:decision:2016-08-23;14-9585`. The US jurisdiction table is empty, so the authority name is not standardized.
 - ECLI-shaped string: `ECLI:US:CA10:20160823:14.9585`. This is not a real ECLI; the US has no ECLI coordinator.
 

@@ -65,24 +65,24 @@ def test_every_source_court_is_registered_or_excluded() -> None:
     assert not minted & ids, "a code courts-db has is taken from courts-db"
 
 
-def test_countries_are_in_date_order_and_end_at_country() -> None:
+def test_jurisdictions_are_in_date_order_and_end_at_jurisdiction() -> None:
     for code, entry in REGISTRY["courts"].items():
-        steps = entry.get("countries")
+        steps = entry.get("jurisdictions")
         if steps is None:
             continue
         assert steps[0]["from"] is None, code
         starts = [s["from"] for s in steps[1:]]
         assert starts == sorted(set(starts)), code
-        assert steps[-1]["country"] == entry["country"], code
-        assert len({s["country"] for s in steps}) == len(steps), code
+        assert steps[-1]["jurisdiction"] == entry["jurisdiction"], code
+        assert len({s["jurisdiction"] for s in steps}) == len(steps), code
 
 
 def test_jurisdiction_codes_are_the_specs() -> None:
     table = re.search(r"^## 3\. .*?^## 4\.", SPEC, re.M | re.S)
     assert table
     in_spec = set(re.findall(r"^\| `([a-z]+)` \|", table.group(0), re.M))
-    assert in_spec == set(crk_check.COUNTRIES)
-    assert set(SCHEMA["$defs"]["country"]["enum"]) == in_spec
+    assert in_spec == set(crk_check.JURISDICTIONS)
+    assert set(SCHEMA["$defs"]["jurisdiction"]["enum"]) == in_spec
 
 
 def test_aliases_are_unique_across_the_registry() -> None:

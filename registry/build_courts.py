@@ -119,11 +119,11 @@ EARLIER = {
 }
 
 
-def country(court: dict[str, Any]) -> str:
+def jurisdiction(court: dict[str, Any]) -> str:
     return FOREIGN.get(court["id"]) or TERRITORIAL.get(court["id"]) or "us"
 
 
-def countries(court: dict[str, Any]) -> list[dict[str, str | None]] | None:
+def jurisdictions(court: dict[str, Any]) -> list[dict[str, str | None]] | None:
     """Date-ranged codes for a court whose decisions span a change of sovereign."""
     if court["id"] in FOREIGN or court.get("system") != "state":
         return None
@@ -134,7 +134,7 @@ def countries(court: dict[str, Any]) -> list[dict[str, str | None]] | None:
     starts = [d.get("start") for d in court.get("dates") or []]
     if starts and None not in starts and min(starts) >= until:
         return None
-    return [{"from": None, "country": code}, {"from": until, "country": "us"}]
+    return [{"from": None, "jurisdiction": code}, {"from": until, "jurisdiction": "us"}]
 
 
 # Courts courts-db lacks, as CourtListener names them (codexpublicus/exemplar#27). Each code is
@@ -164,9 +164,9 @@ def build() -> dict[str, Any]:
         if reason := exclusion(court):
             excluded[court["id"]] = reason
             continue
-        entry: dict[str, Any] = {"country": country(court)}
-        if dated := countries(court):
-            entry["countries"] = dated
+        entry: dict[str, Any] = {"jurisdiction": jurisdiction(court)}
+        if dated := jurisdictions(court):
+            entry["jurisdictions"] = dated
         entry["name"] = " ".join(court["name"].split())
         entry["profiles"] = profiles(court)
         if court["id"] in ALIASES:
@@ -176,7 +176,7 @@ def build() -> dict[str, Any]:
     for code, name in MINTED.items():
         assert code not in courts, code
         courts[code] = {
-            "country": "us",
+            "jurisdiction": "us",
             "name": name,
             "profiles": [{"from": None, "profile": "printed"}],
             "source": "courtlistener",

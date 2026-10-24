@@ -50,30 +50,30 @@
   },
   "$defs": {
     "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
-    "country": {
+    "jurisdiction": {
       "description": "A jurisdiction code (spec section 3)",
       "enum": ["us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "hawaii", "texas", "vermont"]
     },
     "court": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["country", "name", "profiles", "source"],
+      "required": ["jurisdiction", "name", "profiles", "source"],
       "properties": {
-        "country": {
-          "description": "The jurisdiction code of the court's decisions; with countries, the code of its last step",
-          "$ref": "#/$defs/country"
+        "jurisdiction": {
+          "description": "The jurisdiction code of the court's decisions; with jurisdictions, the code of its last step",
+          "$ref": "#/$defs/jurisdiction"
         },
-        "countries": {
+        "jurisdictions": {
           "description": "Jurisdiction codes in date order, for a court whose decisions span a change of sovereign (spec section 3); each applies from its date (null: from the start) until the next",
           "type": "array",
           "minItems": 2,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["from", "country"],
+            "required": ["from", "jurisdiction"],
             "properties": {
               "from": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/date"}]},
-              "country": {"$ref": "#/$defs/country"}
+              "jurisdiction": {"$ref": "#/$defs/jurisdiction"}
             }
           }
         },
