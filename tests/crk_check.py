@@ -348,7 +348,8 @@ def compute(
         raise Refusal("no-decision-date")
     if not is_decided(decided):
         raise Refusal("date")
-    jurisdiction = jurisdiction_for(courts[court], decided)  # section 3: the registry's, never the facts'
+    # Section 3: the registry's jurisdiction code, never the facts'.
+    jurisdiction = jurisdiction_for(courts[court], decided)
     if profile_for(courts[court], decided) is None:
         raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
     citation = facts.get("reporter_citation")
