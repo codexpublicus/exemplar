@@ -54,6 +54,7 @@ def load(name: str) -> list[dict[str, Any]]:
 
 COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-8"))["courts"]
 JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
+CAP_COURTS = json.loads((ROOT / "registry" / "cap-courts.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
 
 
@@ -112,7 +113,7 @@ class TestCompute:
     @pytest.mark.parametrize("v", load("compute.jsonl"), ids=ids("compute.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "key" in v:
-            key = crk_check.compute(v["facts"], COURTS, JUDGES)
+            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
             assert key == v["key"]
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
@@ -124,7 +125,7 @@ class TestCompute:
                     assert abnf_accepts("crk-ref", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.compute(v["facts"], COURTS, JUDGES)
+                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
             assert refusal.value.args[0] == v["error"]
 
 
@@ -224,7 +225,7 @@ def _vector_courts() -> list[tuple[str, str]]:
     """(vector id, court code) for every court code a vector resolves or names in a valid key."""
     found = []
     for v in load("compute.jsonl"):
-        if v.get("error") != "unregistered-court":
+        if v.get("error") != "unregistered-court" and "court" in v["facts"]:
             found.append((v["id"], v["facts"]["court"]))
         if "key" in v:
             found.append((v["id"], crk_check.parse(v["key"])["court"]))
@@ -248,8 +249,12 @@ class TestVectorCourts:
 
     def test_unregistered_court_vectors_are_unregistered(self) -> None:
         for v in load("compute.jsonl"):
-            if v.get("error") == "unregistered-court":
+            if v.get("error") == "unregistered-court" and "court" in v["facts"]:
                 assert v["facts"]["court"] not in COURTS, v["id"]
+            if v.get("error") == "unregistered-court" and "cap_court" in v["facts"]:
+                assert v["facts"]["cap_court"] not in CAP_COURTS["courts"], v["id"]
+            if v.get("error") == "court-under-review":
+                assert CAP_COURTS["courts"][v["facts"]["cap_court"]]["review"], v["id"]
 
 
 class TestGrammarAgreement:

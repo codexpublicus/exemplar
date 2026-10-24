@@ -46,8 +46,14 @@
             }
           },
           "basis": {"type": "string"},
-          "note": {"type": "string", "minLength": 1}
-        }
+          "note": {"type": "string", "minLength": 1},
+          "review": {
+            "description": "The code must be reviewed before any key is minted with it; a producer refuses the court's decisions court-under-review (spec section 12)",
+            "const": true
+          },
+          "review_reason": {"type": "string", "minLength": 1}
+        },
+        "dependentRequired": {"review": ["review_reason"], "review_reason": ["review"]}
       }
     },
     "unmapped": {

@@ -34,5 +34,14 @@ def test_every_code_is_registered_and_in_date_order() -> None:
         assert entry["basis"] in TABLE["bases"], cap_id
 
 
+def test_generic_federal_codes_are_marked_for_review() -> None:
+    """D105: CourtListener's generic usdistct and uscirct are never minted on unreviewed."""
+    for cap_id, entry in TABLE["courts"].items():
+        generic = {s["code"] for s in entry["codes"]} & {"usdistct", "uscirct"}
+        if generic:
+            assert entry.get("review") is True, cap_id
+            assert entry["review_reason"], cap_id
+
+
 def test_a_court_is_mapped_or_unmapped_never_both() -> None:
     assert not set(TABLE["courts"]) & set(TABLE["unmapped"])

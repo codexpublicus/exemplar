@@ -314,13 +314,33 @@ def rpt_segment(citation: dict[str, str]) -> str:
     return f"rpt.{citation['volume']}-{slug(citation['reporter'])}-{citation['page']}"
 
 
-def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any]) -> str:
+def court_for_cap(cap_courts: dict[str, Any], cap_id: str, decided: str | None) -> str:
+    """Section 4: the registry code registry/cap-courts.json gives a CAP court id, or Refusal."""
+    entry = cap_courts["courts"].get(cap_id)
+    if entry is None:
+        raise Refusal("unregistered-court")
+    if entry.get("review"):
+        raise Refusal("court-under-review")
+    return _dated(entry["codes"], "code", decided)
+
+
+def compute(
+    facts: dict[str, Any],
+    courts: dict[str, Any],
+    judges: dict[str, Any],
+    cap_courts: dict[str, Any] | None = None,
+) -> str:
     """Spec section 12: a key from facts, or Refusal.
 
     courts is the court registry's "courts" map; judges is a judge registry's
-    "judges" map (spec section 10.2; the vectors use a fixture).
+    "judges" map (spec section 10.2; the vectors use a fixture); cap_courts is
+    registry/cap-courts.json, for facts that name the court by its CAP id.
     """
-    court = facts["court"]
+    if "court" in facts:
+        court = facts["court"]
+    else:
+        assert cap_courts is not None
+        court = court_for_cap(cap_courts, facts["cap_court"], facts.get("decided"))
     if court not in courts:
         raise Refusal("unregistered-court")
     decided = facts.get("decided")
