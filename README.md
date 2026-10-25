@@ -16,7 +16,7 @@ It defines, independently of any one implementation:
 |---|---|
 | `spec/` | Normative specifications (MUST/SHOULD language): the court record key, the Akoma Ntoso profile |
 | `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from; CAP's courts mapped to registry codes (`cap-courts.json`) |
-| `schema/` | JSON Schema for the court registry and the CAP court table; the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
+| `schema/` | JSON Schema for the court registry, the CAP court table and a key publisher's errata list (`crk-errata.schema.json`, CRK section 13.4); the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents and sidecars |
 | `examples/` | Sample documents built from Caselaw Access Project data, each with its viewer sidecar: `minimal/`, the hand-built excerpt the profile quotes, and `cap/`, complete documents generated from CAP cases |
 | `validator/` | The reference validator, which runs the XSD, the Schematron rules and the sidecar schema, and the vendored SchXslt2 transpiler it uses |

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/codexpublicus/exemplar/schema/crk-errata.schema.json",
+  "title": "Court record key: a publisher's errata list",
+  "description": "spec/court-record-key.md section 13.4. Append-only: each published version holds every entry of the one before, unchanged and in the same order, and seq numbers the entries 1, 2, ... with no gaps, which this schema can't check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["publisher", "entries"],
+  "properties": {
+    "publisher": {
+      "description": "An absolute URI naming the publisher",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9+.-]*:[^\\s]+$"
+    },
+    "entries": {
+      "description": "The corrections, in the order they were made",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["seq", "date", "key", "error", "reason"],
+        "properties": {
+          "seq": {"description": "Position in the list, from 1", "type": "integer", "minimum": 1},
+          "date": {
+            "description": "The date of the correction",
+            "type": "string",
+            "format": "date",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "key": {"description": "The decision key corrected", "$ref": "#/$defs/decision-key"},
+          "error": {
+            "description": "wrong-decision: minted for the wrong decision; wrong-facts: computed from facts that were wrong",
+            "enum": ["wrong-decision", "wrong-facts"]
+          },
+          "reason": {"description": "What was wrong, in words", "type": "string", "minLength": 1},
+          "replaced_by": {
+            "description": "The key that replaces it, which the corrected key redirects to",
+            "$ref": "#/$defs/decision-key"
+          },
+          "target": {
+            "description": "An alias (spec section 11.1) of the decision the key resolves to from then on",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*:[^\\s]+$"
+          }
+        },
+        "oneOf": [
+          {"required": ["replaced_by"], "not": {"required": ["target"]}},
+          {"required": ["target"], "not": {"required": ["replaced_by"]}}
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "decision-key": {
+      "description": "A decision key: spec section 2.2's regex without a part or a revision; the validity rules of section 2.3 still apply",
+      "type": "string",
+      "pattern": "^[a-z]{2,16}/[a-z][a-z0-9-]*/[a-z0-9][a-z0-9_.-]*/[0-9]{4}-[0-9]{2}-[0-9]{2}(~([2-9]|[1-9][0-9]+))?$"
+    }
+  }
+}

@@ -498,6 +498,21 @@ def resolve(ledger: list[dict[str, Any]], key: str) -> dict[str, Any]:
     }
 
 
+def errata_problem(errata: dict[str, Any], previous: dict[str, Any] | None = None) -> str | None:
+    """Section 13.4, past what schema/crk-errata.schema.json checks: seq, keys, append-only."""
+    entries = errata["entries"]
+    if [e["seq"] for e in entries] != list(range(1, len(entries) + 1)):
+        return "seq"
+    for e in entries:
+        if classify(e["key"]) is not None or (
+            "replaced_by" in e and classify(e["replaced_by"]) is not None
+        ):
+            return "key"
+    if previous is not None and entries[: len(previous["entries"])] != previous["entries"]:
+        return "append-only"
+    return None
+
+
 def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:
     """Section 10.2: the slug whose name or printed forms equal a byline's name after case
     folding, for the court."""

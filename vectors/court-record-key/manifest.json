@@ -77,6 +77,15 @@
         "replaces": "mint vectors: the decision's active key that the new key supersedes, or null",
         "provisional": "resolve vectors: whether the current key is marked provisional"
       }
+    },
+    "errata.jsonl": {
+      "checks": "errata is a valid errata list (schema/crk-errata.schema.json, spec section 13.4) whose seq numbers 1, 2, ... with no gaps, whose keys are valid keys (section 2.3), and which, given previous, holds every entry of previous unchanged and in order; or it is not, for the stated problem.",
+      "fields": {
+        "errata": "an errata list",
+        "previous": "the version published before it, when the vector checks the append-only rule",
+        "valid": "true when errata meets every rule",
+        "problem": "when invalid: schema, seq, key or append-only"
+      }
     }
   }
 }

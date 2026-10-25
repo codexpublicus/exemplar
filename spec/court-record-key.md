@@ -545,6 +545,7 @@ A producer that minted a key under 0.2.0 that these rules compute differently re
 | `byline.jsonl` | the name a byline prints to a judge slug, through the judge registry's names and printed forms |
 | `alias.jsonl` | printed identifier to alias string, and alias to key |
 | `ledger.jsonl` | a candidate key and a minted-key ledger to the key minted, and a key to the current key it resolves to (sections 13.1 to 13.4) |
+| `errata.jsonl` | errata lists to valid or invalid, against `schema/crk-errata.schema.json` and the append-only rule (section 13.4) |
 
 Every vector records its `provenance`:
 

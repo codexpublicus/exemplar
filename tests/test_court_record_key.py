@@ -10,6 +10,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 import pytest
 from abnf.parser import ParseError, Rule
 
@@ -56,6 +57,7 @@ COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-
 JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
 CAP_COURTS = json.loads((ROOT / "registry" / "cap-courts.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
+ERRATA_SCHEMA = json.loads((ROOT / "schema" / "crk-errata.schema.json").read_text("utf-8"))
 
 
 def ids(name: str) -> list[str]:
@@ -171,6 +173,33 @@ class TestLedger:
                 "decision": v["decision"],
                 "provisional": v["provisional"],
             }
+
+
+class TestErrata:
+    """errata.jsonl and the spec's example: errata lists against the schema and section 13.4."""
+
+    @staticmethod
+    def problem(errata: dict[str, Any], previous: dict[str, Any] | None = None) -> str | None:
+        validator = jsonschema.Draft202012Validator(
+            ERRATA_SCHEMA, format_checker=jsonschema.Draft202012Validator.FORMAT_CHECKER
+        )
+        if any(validator.iter_errors(errata)):
+            return "schema"
+        return crk_check.errata_problem(errata, previous)
+
+    def test_schema_is_valid(self) -> None:
+        jsonschema.Draft202012Validator.check_schema(ERRATA_SCHEMA)
+
+    @pytest.mark.parametrize("v", load("errata.jsonl"), ids=ids("errata.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        if "previous" in v:
+            assert self.problem(v["previous"]) is None
+        assert self.problem(v["errata"], v.get("previous")) == v.get("problem")
+        assert v["valid"] is ("problem" not in v)
+
+    def test_spec_example(self) -> None:
+        (example,) = _blocks("json")
+        assert self.problem(json.loads(example)) is None
 
 
 class TestDocket:
