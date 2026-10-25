@@ -275,7 +275,7 @@ The date is the best one at minting, and the key keeps it (section 13.1). A date
 
 ### 6.2 Zeroed dates
 
-When the producer can establish the year and month of a decision but not the day, `decided` is the year and month with the day `00`: `1882-05-00`. When it can establish only the year, the month and day are `00`: `1793-00-00`. A zeroed date is as canonical as a full one; it is the decision's key until a later date replaces it (section 6.1).
+When the producer can establish the year and month of a decision but not the day, `decided` is the year and month with the day `00`: `1882-05-00`. When it can establish only the year, the month and day are `00`: `1793-00-00`. A key with a zeroed date is as canonical as one with a full date, and stays the decision's key until a date established later replaces it (section 6.1).
 
 A zeroed date keeps the key's date segment ten characters wide, and sorts before every full date in its period. It is not an ISO 8601 date: ISO 8601 writes the same reduced precision `1882-05` and `1793`, and a producer reading dates in that form (CAP's `decision_date`) zeroes them. Where a rule or a format needs a calendar date, a zeroed date stands for the first day of its period, `1882-05-01` and `1793-01-01`: comparing it with the date a docket profile or a jurisdiction code applies from, or with a revision date, and the Akoma Ntoso `FRBRdate`, which the profile names `decided-year-month` or `decided-year` so that no consumer reads that day as the court's. So a decision dated `1971-00-00` takes the Supreme Court's `scotus-numbered` profile, and one dated `1776-07-00` keys under `gb`.
 
