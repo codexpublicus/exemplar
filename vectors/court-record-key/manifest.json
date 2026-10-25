@@ -29,11 +29,12 @@
     "compute.jsonl": {
       "checks": "A producer given facts, the court registry (registry/courts.json), the CAP court table (registry/cap-courts.json) and the judges fixture emits key, or refuses with error.",
       "fields": {
-        "facts": "{jurisdiction (informational: the key's jurisdiction is the registry's for the court and date, spec section 3), court, or cap_court in its place (a CAP court id, translated through registry/cap-courts.json for the decision date, spec section 4), docket (as printed, or null), decided (ISO date, or year and month, or year, as far as established, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}, page_decisions? (every decision that begins on the reporter page, in printed order, this one included: {docket (as printed, or null), decided}), page_position? (this decision's 1-based position in page_decisions)}. Under the reporter fallback, page_decisions and page_position give the decision ordinal (spec section 5.6)",
+        "facts": "{jurisdiction (informational: the key's jurisdiction is the registry's for the court and date, spec section 3), court, or cap_court in its place (a CAP court id, translated through registry/cap-courts.json for the decision date, spec section 4), docket (as printed, or null), decided (as far as established: an ISO 8601 date, or reduced precision, a year and month or a year, which the key zeroes, spec section 6.2; or null), printed_decided? (the date as the printing prints it, for the printed-date alias, spec section 6.3; decided when absent), printed_ordinal? (the decision's position in printed order for the printed-date alias; 1 when absent), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}, page_decisions? (every decision that begins on the reporter page, in printed order, this one included: {docket (as printed, or null), decided, printed_decided?}), page_position? (this decision's 1-based position in page_decisions)}. Under the reporter fallback, page_decisions and page_position give the decision ordinal (spec section 5.6)",
         "key": "expected key, when the producer succeeds",
         "fallback": "true when key uses the rpt. fallback",
         "error": "refusal class, spec section 12, when it refuses",
-        "aliases": "key-shaped aliases (key references) for the other dockets of a consolidated case, when the vector checks them (spec sections 5.1, 11.1)"
+        "aliases": "key-shaped aliases (key references) for the other dockets of a consolidated case, when the vector checks them (spec sections 5.1, 11.1)",
+        "printed_alias": "the expected printed-date alias, when the vector checks it (spec section 6.3)"
       }
     },
     "docket.jsonl": {
@@ -58,7 +59,7 @@
     "alias.jsonl": {
       "checks": "printed normalizes to alias under scheme; alias matches the alias grammar; resolves_to lists the keys a resolver returns.",
       "fields": {
-        "scheme": "alias scheme, spec section 11.1 (crk for a key-shaped alias, written as a key reference, section 2.6)",
+        "scheme": "alias scheme, spec section 11.1 (crk for a key-shaped alias, written as a key reference, section 2.6; crk-printed for a printed-date alias, section 6.3)",
         "printed": "identifier as printed, when the vector tests normalization",
         "alias": "alias string",
         "resolves_to": "keys, when known"

@@ -46,7 +46,7 @@
 
   <!-- Alias schemes, CRK spec section 11.1: scheme name and the regex for the whole alias. -->
   <xsl:function name="f:alias-schemes" as="xs:string+">
-    <xsl:sequence select="('cite', 'neutral', 'scotus-r', 'ca6', 'cmecf', 'govinfo', 'cap', 'cl-cluster', 'cl-opinion')"/>
+    <xsl:sequence select="('cite', 'neutral', 'scotus-r', 'ca6', 'cmecf', 'govinfo', 'cap', 'cl-cluster', 'cl-opinion', 'crk-printed')"/>
   </xsl:function>
   <xsl:function name="f:alias-regexes" as="xs:string+">
     <xsl:sequence select="(
@@ -58,7 +58,8 @@
       '^govinfo:[A-Za-z0-9_-]+$',
       '^cap:[a-z0-9][a-z0-9-]*/[0-9]+/[0-9]+-[0-9]{2}$',
       '^cl-cluster:[1-9][0-9]*$',
-      '^cl-opinion:[1-9][0-9]*$')"/>
+      '^cl-opinion:[1-9][0-9]*$',
+      '^crk-printed:[a-z]{2,16}/[a-z][a-z0-9-]*/[a-z0-9][a-z0-9_.-]*/[0-9]{4}-[0-9]{2}-[0-9]{2}(~([2-9]|[1-9][0-9]+))?$')"/>
   </xsl:function>
 
   <!-- The key a key reference names: the string after "crk:" (CRK spec section 2.6), or '' when

@@ -123,6 +123,10 @@ class TestCompute:
                 assert aliases == v["aliases"]
                 for alias in aliases:
                     assert abnf_accepts("crk-ref", alias)
+            if "printed_alias" in v:
+                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                assert alias == v["printed_alias"]
+                assert abnf_accepts("printed-alias", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
                 crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
@@ -183,6 +187,12 @@ class TestAlias:
         if v["scheme"] == "crk":
             assert abnf_accepts("crk-ref", alias)
             assert regex_accepts(alias.removeprefix("crk:"))
+        if v["scheme"] == "crk-printed":
+            # Section 6.3: a decision key after the prefix, never a key reference.
+            value = alias.removeprefix("crk-printed:")
+            assert crk_check.classify(value) is None
+            assert crk_check.parse(value)["role"] is None and "@" not in value
+            assert not abnf_accepts("crk-ref", alias)
         if "printed" in v:
             assert crk_check.normalize_alias(v["scheme"], v["printed"]) == alias
         for key in v.get("resolves_to", []):

@@ -419,6 +419,33 @@ def compute(
     return key
 
 
+def printed_alias(
+    facts: dict[str, Any],
+    courts: dict[str, Any],
+    judges: dict[str, Any],
+    cap_courts: dict[str, Any] | None = None,
+) -> str:
+    """Section 6.3: the printed-date alias, the decision key computed from the printing alone.
+
+    facts' printed_decided is the date the printing prints (decided when absent), page_decisions'
+    likewise, and printed_ordinal the decision's position in printed order among decisions
+    whose aliases are otherwise the same (1 when absent).
+    """
+    printed = {
+        k: v
+        for k, v in facts.items()
+        if k not in ("role", "authors", "part_ordinal", "revised", "decision_ordinal")
+    }
+    printed["decided"] = facts.get("printed_decided", facts.get("decided"))
+    printed["decision_ordinal"] = facts.get("printed_ordinal", 1)
+    if "page_decisions" in facts:
+        printed["page_decisions"] = [
+            {**d, "decided": d.get("printed_decided", d["decided"])}
+            for d in facts["page_decisions"]
+        ]
+    return "crk-printed:" + compute(printed, courts, judges, cap_courts)
+
+
 def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str) -> list[str]:
     """Key-shaped aliases for the other dockets of a consolidated case (section 11.1)."""
     printed = facts.get("docket")

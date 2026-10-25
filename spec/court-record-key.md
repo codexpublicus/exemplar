@@ -280,6 +280,19 @@ A zeroed date keeps the key's date segment ten characters wide, and sorts before
 
 A zeroed date is part of the key as written. Decisions in one court and docket dated `1882-05-00` and `1882-05-04` have different keys and are not counted against each other for an ordinal; two dated `1882-05-00` share a `decided` segment, and their initial decision ordinals (section 7) are counted in the order the reporter prints them (volume, page, then CAP's file ordinal), since no docket entry orders them.
 
+### 6.3 The printed-date alias
+
+Each decision also has a **printed-date alias**, which anyone holding the volume can compute: `crk-printed:` followed by the decision key computed from the decision's printing in its official reporter alone, or, when it has no official reporter citation, from its printing in the reporter of the volume it was taken from (the printing section 5.6 cites). No other source is consulted:
+
+- the jurisdiction and the court are those the registry gives for the printed date;
+- the docket is the docket that printing prints, under the court's docket profile, or the reporter fallback for that printing's citation (section 5.6);
+- `decided` is the date of decision as that printing prints it, zeroed as section 6.2 says;
+- the decision ordinal counts, in the order the reporter prints them (volume, page, then position on the page), the decisions whose printed-date aliases are otherwise the same.
+
+Hilton's Administrator v. Jones (159 U.S. 584) has the printed-date alias `crk-printed:us/scotus/1/1895-11-18`. The decision at 3 Dakota 1, which CAP dates only to May 1882, has `crk-printed:us/dakotasup/rpt.3-dakota-1/1882-05-00`; were a second source to establish the 4th, its key would be `us/dakotasup/rpt.3-dakota-1/1882-05-04` and the alias would stay as it is.
+
+The alias is never minted and never a key. A resolver maps it to the decision's key, following `replaced-by` to the current one (section 13.1). After the prefix it is the same string as the key whenever the key was computed from the printed record and its ordinal didn't advance at minting (section 13.2); it differs when a second source established a better date, the key is a docket key whose ordinal the court's docket set, or the ledger advanced the ordinal.
+
 ## 7. Ordinals
 
 The first instance of anything is unmarked. Later instances take `~2`, `~3`, and so on, in decimal with no leading zero. `~0` and `~1` are invalid.
@@ -375,10 +388,11 @@ Aliases are written `{scheme}:{value}`. A non-lead docket of a consolidated case
 | `cap` | CAP static file `{reporter}/{volume}/cases/{file}.json`, as `{reporter}/{volume}/{file}` | `cap:us/410/0113-01` | a decision key |
 | `cl-cluster` | CourtListener cluster id | `cl-cluster:{id}` | a decision key |
 | `cl-opinion` | CourtListener opinion id | `cl-opinion:{id}` | a part key |
+| `crk-printed` | the decision key computed from the printed record alone (section 6.3) | `crk-printed:us/dakotasup/rpt.3-dakota-1/1882-05-00` | the decision's current key |
 
 ```abnf
 alias          = crk-ref / cite-alias / neutral-alias / scotus-r-alias / ca6-alias
-               / cmecf-alias / govinfo-alias / cap-alias / cl-alias
+               / cmecf-alias / govinfo-alias / cap-alias / cl-alias / printed-alias
 cite-alias     = %s"cite:" 1*DIGIT "-" slug "-" 1*DIGIT
 neutral-alias  = %s"neutral:" slug
 scotus-r-alias = %s"scotus-r:" 4DIGIT "-" 1*DIGIT
@@ -387,6 +401,7 @@ cmecf-alias    = %s"cmecf:" court ":" 1*DIGIT
 govinfo-alias  = %s"govinfo:" 1*( %x41-5A / LC / DIGIT / "-" / "_" )
 cap-alias      = %s"cap:" slug "/" 1*DIGIT "/" 1*DIGIT "-" 2DIGIT
 cl-alias       = ( %s"cl-cluster:" / %s"cl-opinion:" ) %x31-39 *DIGIT
+printed-alias  = %s"crk-printed:" jurisdiction "/" court "/" docket "/" decided [ ord ]
 ```
 
 Further schemes are added by a minor version.

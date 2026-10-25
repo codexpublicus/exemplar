@@ -21,3 +21,5 @@
 {"id": "neutral-il-app", "scheme": "neutral", "printed": "2011 IL App (1st) 101234", "alias": "neutral:2011-il-app-1st-101234", "provenance": "spec-derived", "source": "spec/court-record-key.md 11.1"}
 {"id": "neutral-sd", "scheme": "neutral", "printed": "2024 S.D. 7", "alias": "neutral:2024-sd-7", "provenance": "spec-derived", "source": "spec/court-record-key.md 11.1"}
 {"id": "cite-supp", "scheme": "cite", "printed": "1 F. Supp. 2d 5", "alias": "cite:1-f-supp-2d-5", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.6"}
+{"id": "printed-date-alias", "scheme": "crk-printed", "alias": "crk-printed:us/dakotasup/rpt.3-dakota-1/1882-05-00", "resolves_to": ["us/dakotasup/rpt.3-dakota-1/1882-05-04"], "provenance": "spec-derived", "source": "spec/court-record-key.md 6.3, 11.1; compute.jsonl printed-alias-day-established (illustrative day)"}
+{"id": "printed-date-alias-same-as-key", "scheme": "crk-printed", "alias": "crk-printed:us/scotus/1/1895-11-18", "resolves_to": ["us/scotus/1/1895-11-18"], "provenance": "spec-derived", "source": "spec/court-record-key.md 6.3; Hilton's Administrator v. Jones, 159 U.S. 584"}
