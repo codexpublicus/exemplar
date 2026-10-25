@@ -12,7 +12,7 @@ A court record key (CRK) is a deterministic identifier for a court decision and 
 - `us/ca10/14-9585/2016-08-23/concurrence.gorsuch` is one writing within it.
 - `us/scotus/25-365/2026-06-30@2026-07-01` is a revised version of a decision.
 - `pr/prsupreme/8561/1943-05-18` is a decision of the Supreme Court of Puerto Rico.
-- `us/dakotasup/rpt.3-dakota-1/1882-05` is a decision the source dates only to May 1882.
+- `us/dakotasup/rpt.3-dakota-1/1882-05-00` is a decision dated, as far as any trustworthy source establishes, only to May 1882.
 
 The research behind this design, including the survey of alternatives and the sources for each docket profile, is codexpublicus/gorsuch-library `docs/research/2026-09-25-case-identifier-recommendation.md` ("the research doc"). This document supersedes it as the normative source. Where the two disagree, this document governs and the disagreement is a bug in one of them.
 
@@ -42,11 +42,9 @@ jurisdiction = 2*16LC                           ; a jurisdiction code (section 3
 court       = LC *( LC / DIGIT / "-" )          ; from the court registry (section 4)
 docket      = ( LC / DIGIT ) *( LC / DIGIT / "-" / "_" / "." )
                                                 ; normalized per docket profile (section 5)
-decided     = date / year-month / year          ; decision date, as precise as known (section 6)
+decided     = date                              ; decision date, zeroed where not established (section 6)
 revised     = date                              ; date of an amended/corrected version
-date        = 4DIGIT "-" 2DIGIT "-" 2DIGIT      ; ISO 8601 calendar date
-year-month  = 4DIGIT "-" 2DIGIT                 ; ISO 8601 reduced precision
-year        = 4DIGIT
+date        = 4DIGIT "-" 2DIGIT "-" 2DIGIT      ; YYYY-MM-DD, always ten characters
 
 part        = role [ "." authors ] [ ord ]
 role        = %s"opinion" / %s"per-curiam" / %s"plurality" / %s"concurrence"
@@ -62,10 +60,10 @@ LC          = %x61-7A                           ; a-z
 
 ### 2.2 Regular expression
 
-The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the jurisdiction segment and the decision date (0.4.0, section 13).
+The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the jurisdiction segment (0.4.0, section 13.5).
 
 ```regex
-^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
+^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
 ```
 
 Implementations MUST match the whole string. In engines where `$` also matches before a final newline (Python's `re`, PCRE without `D`), they MUST use a whole-string match (`re.fullmatch`, `\z`) so that `us/ca10/14-9585/2016-08-23\n` is rejected.
@@ -75,8 +73,8 @@ Implementations MUST match the whole string. In engines where `$` also matches b
 A string is a **valid key** when it matches the grammar and all of the following hold:
 
 1. `jurisdiction` is a jurisdiction code this version defines (section 3).
-2. `decided` is a real Gregorian calendar date (`2016-02-30` matches the grammar and is not valid), or a year and a month `01` to `12`, or a year.
-3. `revised`, if present, is a real calendar date and is not earlier than `decided`; a partial `decided` is compared by the first day of its period (section 6.2).
+2. `decided` is a real Gregorian calendar date (`2016-02-30` matches the grammar and is not valid), or a zeroed date (section 6.2): a year from `0001`, a month `01` to `12` and the day `00` (`1882-05-00`), or a year from `0001` with month and day `00` (`1793-00-00`). `1882-00-05` is not valid.
+3. `revised`, if present, is a real calendar date and is not earlier than `decided`; a zeroed `decided` is compared by the first day of its period (section 6.2).
 4. A part whose role is `per-curiam` has no authors.
 5. A docket segment that begins `rpt.` is a reporter fallback (section 5.6) and MUST have the shape `rpt.{volume}-{reporter}-{page}` defined there.
 
@@ -98,11 +96,11 @@ A validator that reports why it rejected a string SHOULD use these classes. When
 | `jurisdiction` | Jurisdiction segment is not a jurisdiction code this version defines (section 3) |
 | `court` | Court segment fails the `court` rule (uppercase, leading digit, illegal character) |
 | `docket` | Docket segment fails the `docket` rule, or is a malformed `rpt.` segment |
-| `date` | `decided` fails the `decided` rule, or is not a calendar date, or names a month outside `01` to `12` |
+| `date` | `decided` fails the `decided` rule, or is neither a calendar date nor a zeroed date (`2016-02-30`, `1882-13-00`, `1882-00-05`) |
 | `ordinal` | A `~` ordinal is `~0`, `~1`, has a leading zero, or is not a number |
 | `role` | The part's role is not in the role vocabulary |
 | `author` | An author fails the `author` rule, or a `per-curiam` part has authors |
-| `revised` | `revised` fails the `date` rule, is not a calendar date, or is earlier than `decided` |
+| `revised` | `revised` fails the `date` rule, is not a calendar date (a zeroed date included), or is earlier than `decided` |
 
 ### 2.6 Key references: the `crk` URI scheme
 
@@ -225,7 +223,7 @@ Letter case-type codes are part of the docket wherever they appear and are kept:
 
 When the court has a docket profile for the decision date, and the decision has no docket (the cleaned docket is empty or has no digit, or the source records none) or that profile rejects the docket it has, a producer MUST use the reporter fallback if the decision has a reporter citation, and MUST otherwise refuse (`no-docket` or `docket-profile`, section 12). This mostly affects historical Caselaw Access Project (CAP) cases whose scan carries no usable docket.
 
-The fallback replaces only the docket. It needs the same complete decision date as any other key (section 6), so it never yields a key for a decision dated only to the year or month.
+The fallback replaces only the docket. Its decision date is the one section 6 gives any key, zeroed where the producer can't establish the day or the month.
 
 The fallback docket segment is `rpt.{volume}-{reporter}-{page}` where:
 
@@ -256,7 +254,7 @@ Before 1971-07-01 the Supreme Court's docket numbers carry no year, and a number
 | Miscellaneous | `No. 94, Misc.` | `^\d{1,5},? Misc\.?$` | the number and `-misc`: `94-misc` |
 | Original | `No. 13, Original`, `No. 4. Original` | `^\d{1,3}[,.]? Orig(inal)?\.?$` | the number and `-orig`: `13-orig` |
 
-Hilton's Administrator v. Jones, 159 U.S. 584, printed `No. 1.` and decided 1895-11-18, is `us/scotus/1/1895-11-18`. A list of dockets is keyed by its first (section 5.1): `No. 365; No. 366; No. 367; No. 368` gives `365`. A docket the profile rejects (a range, `Nos. 202-207`; a lower court's number a reprint prints in its place) or a decision with none takes the reporter fallback, as the decisions in 2 U.S. (2 Dall.) do: Chisholm v. Georgia, which CAP dates only to 1793, is `us/scotus/rpt.2-us-419/1793`.
+Hilton's Administrator v. Jones, 159 U.S. 584, printed `No. 1.` and decided 1895-11-18, is `us/scotus/1/1895-11-18`. A list of dockets is keyed by its first (section 5.1): `No. 365; No. 366; No. 367; No. 368` gives `365`. A docket the profile rejects (a range, `Nos. 202-207`; a lower court's number a reprint prints in its place) or a decision with none takes the reporter fallback, as the decisions in 2 U.S. (2 Dall.) do: Chisholm v. Georgia, which CAP dates only to 1793, is `us/scotus/rpt.2-us-419/1793-00-00`.
 
 Two decisions decided the same day can print the same number, by misprint (United States v. Alexander, 148 U.S. 186, and United States v. Truesdell, 148 U.S. 196, both print `No. 552.` and were decided 1893-03-06) or because CAP's metadata reads a case name's `(No. 1)` as a docket. They compute the same key, and the decision ordinal separates them (section 7): for this profile it is counted in the order the United States Reports prints them, volume then page, because the Court's docket entries for those terms are not available to a producer.
 
@@ -264,21 +262,23 @@ Two decisions decided the same day can print the same number, by misprint (Unite
 
 `decided` is the date printed on the decision as the date of decision: "Decided" (Supreme Court), the "FILED" stamp date (courts of appeals), or the entry date of an order. A producer MUST NOT use the date an opinion was posted, published or received by a publisher.
 
-### 6.1 Precision
+### 6.1 The best trustworthy date at minting
 
-`decided` is the complete calendar date when the producer can establish it, and otherwise as much of it as the producer can establish: the year and month (`1882-05`) or the year (`1793`). A producer MUST NOT pad a missing month or day, and MUST NOT write a part it can't establish: `1882-05-15` for a decision dated May 1882 presents an invented fact as the court's. A decision whose year can't be established has no key (`no-decision-date`).
+`decided` is the most precise date of decision the producer can establish from trustworthy sources when it mints the key. A date is established when the decision prints it, or when a trustworthy second source states it for that decision: another printing of the decision, the court's records or docket, or a dataset that records the date without marking it approximate and without padding it. The part of the date the producer can't establish is zeroed (section 6.2). A producer MUST NOT pad a missing month or day: `1882-05-15` for a decision dated May 1882 presents an invented fact as the court's. A decision whose year can't be established has no key (`no-decision-date`).
 
-A date is established when the decision prints it, or when another source states it for that decision: another printing of the decision, the court's records or docket, a dataset that records the date without marking it approximate. This spec doesn't supply dates; a consumer that generates data in exemplar's formats is responsible for determining them, and SHOULD record where a date it didn't take from the decision came from (provenance, not part of the key).
+This spec doesn't supply dates; a consumer that generates data in exemplar's formats is responsible for determining them, and SHOULD record where a date it didn't take from the decision came from (provenance, not part of the key).
 
 A date a source marks approximate is established only as far as the source knows it. CourtListener marks such a date `date_filed_is_approximate` and pads a year and month to the 15th and a year to 1 July: a flagged date on 1 July is established to its year, and any other flagged date to its year and month. A date a source doesn't flag but that is a fill value is not established past its month either: in CourtListener's 2026-09-30 export, 14,976 of the 14,993 unflagged clusters for North Carolina Reports cases that CAP dates only to the month fall on the 5th, and every one of the 827 for Rhode Island Reports on the 6th. A producer SHOULD check a second source's dates for fill values before relying on it.
 
-### 6.2 Keys with a partial date
+The date is the best one at minting, and the key keeps it (section 13.1). A date established later, more precise than the key's or different from it, doesn't change the key: the producer mints a new key with that date and records the old key `replaced-by` the new one, and the old key keeps resolving, as a redirect. Where trustworthy sources disagree about the date, the producer MAY mint the key provisional (section 13.3).
 
-A key whose `decided` is a year and month, or a year, is a **partial-date key**. Like a fallback key (section 5.6) it is deterministic but **non-canonical**: if the full date is established later, the producer mints the full-date key and records the partial-date key `replaced-by` it (section 11.2). The partial-date key MUST NOT be deleted or reused.
+### 6.2 Zeroed dates
 
-A partial date is part of the key as written. Decisions in one court and docket dated `1882-05` and `1882-05-04` have different keys and are not counted against each other for an ordinal; two dated `1882-05` share a `decided` segment, and their decision ordinal (section 7) is counted in the order the reporter prints them (volume, page, then CAP's file ordinal), since no docket entry orders them.
+When the producer can establish the year and month of a decision but not the day, `decided` is the year and month with the day `00`: `1882-05-00`. When it can establish only the year, the month and day are `00`: `1793-00-00`. A zeroed date is as canonical as a full one; it is the decision's key until a later date replaces it (section 6.1).
 
-Where a rule compares a partial date with a full date (the date a docket profile or a jurisdiction code applies from, a revision date), it uses the first day of the partial date's period: a decision dated `1971` takes the Supreme Court's `scotus-numbered` profile, and one dated `1776-07` keys under `gb`.
+A zeroed date keeps the key's date segment ten characters wide, and sorts before every full date in its period. It is not an ISO 8601 date: ISO 8601 writes the same reduced precision `1882-05` and `1793`, and a producer reading dates in that form (CAP's `decision_date`) zeroes them. Where a rule or a format needs a calendar date, a zeroed date stands for the first day of its period, `1882-05-01` and `1793-01-01`: comparing it with the date a docket profile or a jurisdiction code applies from, or with a revision date, and the Akoma Ntoso `FRBRdate`, which the profile names `decided-year-month` or `decided-year` so that no consumer reads that day as the court's. So a decision dated `1971-00-00` takes the Supreme Court's `scotus-numbered` profile, and one dated `1776-07-00` keys under `gb`.
+
+A zeroed date is part of the key as written. Decisions in one court and docket dated `1882-05-00` and `1882-05-04` have different keys and are not counted against each other for an ordinal; two dated `1882-05-00` share a `decided` segment, and their initial decision ordinals (section 7) are counted in the order the reporter prints them (volume, page, then CAP's file ordinal), since no docket entry orders them.
 
 ## 7. Ordinals
 
@@ -407,7 +407,7 @@ A producer computes a key from: the court code, and the jurisdiction code the re
 | `docket-profile` | The docket doesn't fit the profile, and there is no reporter citation for the fallback |
 | `no-docket` | The decision has no docket, and no reporter citation for the fallback |
 | `no-decision-date` | Not even the decision's year is known |
-| `date` | The decision date is not a calendar date, or not a year and month, or a year |
+| `date` | The decision date is neither a calendar date nor a year and month or a year that section 6.2 zeroes |
 | `unregistered-author` | An author is not in the judge registry for the court |
 | `per-curiam-author` | A `per-curiam` part was given authors |
 | `role` | The role is not in the vocabulary |

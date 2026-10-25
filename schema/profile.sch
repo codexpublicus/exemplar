@@ -36,7 +36,7 @@
 
   <!-- The court record key regex, byte-identical to spec/court-record-key.md section 2.2. -->
   <xsl:function name="f:crk-regex" as="xs:string">
-    <xsl:sequence select="'^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$'"/>
+    <xsl:sequence select="'^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$'"/>
   </xsl:function>
 
   <!-- The jurisdiction codes CRK spec section 3 defines. -->
@@ -78,23 +78,25 @@
     <xsl:sequence select="matches(string($s), '^[0-9]{4}-[0-9]{2}-[0-9]{2}$') and string($s) castable as xs:date"/>
   </xsl:function>
 
-  <!-- A decided segment, CRK spec section 6.1: a calendar date, a year and month, or a year. -->
+  <!-- A decided segment, CRK spec sections 2.3 and 6.2: a calendar date, or a zeroed date,
+       YYYY-MM-00 with a month 01 to 12 or YYYY-00-00, with a year from 0001. -->
   <xsl:function name="f:is-decided" as="xs:boolean">
     <xsl:param name="s" as="xs:string?"/>
-    <xsl:sequence select="f:is-date($s) or matches(string($s), '^[0-9]{4}$')
-        or (matches(string($s), '^[0-9]{4}-(0[1-9]|1[0-2])$'))"/>
+    <xsl:sequence select="f:is-date($s)
+        or (matches(string($s), '^[0-9]{4}-((0[1-9]|1[0-2])-00|00-00)$') and not(starts-with(string($s), '0000')))"/>
   </xsl:function>
 
-  <!-- The first day of a decided segment's period (CRK spec section 6.2). -->
+  <!-- The calendar date a decided segment stands for, the first day of its period (CRK spec
+       section 6.2). -->
   <xsl:function name="f:period-start" as="xs:string">
     <xsl:param name="s" as="xs:string?"/>
-    <xsl:sequence select="if (string-length($s) eq 4) then concat($s, '-01-01') else if (string-length($s) eq 7) then concat($s, '-01') else string($s)"/>
+    <xsl:sequence select="if (ends-with(string($s), '-00-00')) then concat(substring($s, 1, 4), '-01-01') else if (ends-with(string($s), '-00')) then concat(substring($s, 1, 7), '-01') else string($s)"/>
   </xsl:function>
 
   <!-- The FRBRdate a decided segment gives (profile section 5.1.1): its @date and @name. -->
   <xsl:function name="f:decided-name" as="xs:string">
     <xsl:param name="s" as="xs:string?"/>
-    <xsl:sequence select="if (string-length($s) eq 4) then 'decided-year' else if (string-length($s) eq 7) then 'decided-year-month' else 'decided'"/>
+    <xsl:sequence select="if (ends-with(string($s), '-00-00')) then 'decided-year' else if (ends-with(string($s), '-00')) then 'decided-year-month' else 'decided'"/>
   </xsl:function>
 
   <!-- The parts of a key. They assume nothing about the input and return empty strings for

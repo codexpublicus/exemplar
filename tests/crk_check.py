@@ -38,7 +38,9 @@ RPT = re.compile(r"rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+")
 AUTHOR = re.compile(r"[a-z][a-z-]*")
 ORD = re.compile(r"[2-9]|[1-9][0-9]+")
 DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
-DECIDED = re.compile(r"[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?")
+# A date as a source states it (facts): ISO 8601, a calendar date or reduced to a year and month
+# or a year.
+ISO_DECIDED = re.compile(r"[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?")
 
 
 class Refusal(Exception):
@@ -56,17 +58,31 @@ def is_date(text: str) -> bool:
 
 
 def is_decided(text: str) -> bool:
-    """Section 6: a calendar date, or a year and month, or a year."""
-    if not DECIDED.fullmatch(text):
+    """Sections 2.3, 6.2: a calendar date, or a zeroed date (YYYY-MM-00, YYYY-00-00)."""
+    if not DATE.fullmatch(text):
         return False
-    if len(text) == 10:
+    year, month, day = text[:4], text[5:7], text[8:]
+    if day != "00":
         return is_date(text)
-    return len(text) == 4 or 1 <= int(text[5:7]) <= 12
+    return year != "0000" and (month == "00" or 1 <= int(month) <= 12)
+
+
+def zeroed(fact: str) -> str | None:
+    """Section 6.2: the decided segment for a date a source states in ISO 8601 form (a calendar
+    date, a year and month, or a year), or None when it is none of these."""
+    if not ISO_DECIDED.fullmatch(fact):
+        return None
+    segment = {4: fact + "-00-00", 7: fact + "-00"}.get(len(fact), fact)
+    return segment if is_decided(segment) else None
 
 
 def period_start(decided: str) -> str:
-    """The first day a decided segment can name, for comparing it with a full date."""
-    return {4: decided + "-01-01", 7: decided + "-01"}.get(len(decided), decided)
+    """Section 6.2: the calendar date a decided segment stands for, the first day of its period."""
+    if decided.endswith("-00-00"):
+        return decided[:4] + "-01-01"
+    if decided.endswith("-00"):
+        return decided[:7] + "-01"
+    return decided
 
 
 def classify(key: str) -> str | None:
@@ -260,7 +276,7 @@ PROFILES = {
 def _dated(steps: list[dict[str, Any]], field: str, decided: str | None) -> Any:
     """The value of the last step that starts on or before decided (sections 5, 10.1).
 
-    A partial date picks a step only when its whole period is on or after the step's start.
+    A zeroed date picks a step only when its whole period is on or after the step's start.
     """
     chosen = None
     for step in steps:
@@ -336,17 +352,18 @@ def compute(
     "judges" map (spec section 10.2; the vectors use a fixture); cap_courts is
     registry/cap-courts.json, for facts that name the court by its CAP id.
     """
+    fact = facts.get("decided")
+    decided = zeroed(fact) if fact is not None else None
     if "court" in facts:
         court = facts["court"]
     else:
         assert cap_courts is not None
-        court = court_for_cap(cap_courts, facts["cap_court"], facts.get("decided"))
+        court = court_for_cap(cap_courts, facts["cap_court"], decided)
     if court not in courts:
         raise Refusal("unregistered-court")
-    decided = facts.get("decided")
-    if decided is None:
+    if fact is None:
         raise Refusal("no-decision-date")
-    if not is_decided(decided):
+    if decided is None:
         raise Refusal("date")
     # Section 3: the registry's jurisdiction code, never the facts'.
     jurisdiction = jurisdiction_for(courts[court], decided)
@@ -366,7 +383,7 @@ def compute(
     if docket.startswith("rpt.") and "page_decisions" in facts:
         # Section 5.6: count every decision that begins on the page and shares the date.
         before = facts["page_decisions"][: facts["page_position"]]
-        ordinal = sum(1 for d in before if d["decided"] == decided)
+        ordinal = sum(1 for d in before if d["decided"] == fact)
     if ordinal < 1:
         raise Refusal("ordinal")
     parts: dict[str, Any] = {
