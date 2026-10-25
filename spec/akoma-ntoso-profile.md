@@ -701,6 +701,7 @@ While the version is 0.x, a minor version MAY break these rules (SemVer item 4).
 - `FRBRcountry` is the key's jurisdiction segment, which CRK 0.4.0 makes a jurisdiction code (`pr`, `gb`, ...), and the `akn-nc` IRI starts with it (sections 5.1.1, AKN-10, AKN-13; codexpublicus/exemplar#38, #39);
 - the `FRBRdate` of a key with a zeroed date (`1882-05-00`, `1793-00-00`) is the first day of its period, named `decided-year-month` or `decided-year`, and a year and month or a year is never a `docDate` (sections 5.1.1, 5.1.2, 6, AKN-11, AKN-16; codexpublicus/exemplar#37);
 - CourtListener's approximate dates map as CRK 0.4.0 section 6.1 says (section 15.3; codexpublicus/exemplar#33).
+- an `FRBRalias` named `crk-printed` holds the decision's printed-date alias (CRK spec section 6.3), which AKN-10 accepts as an alias scheme.
 
 No example's key, eId or content changes; the examples, the minimal example and the no-text vector name profile 0.4.0, release tag `v0.4.0` and court registry `2026.10.23`.
 
