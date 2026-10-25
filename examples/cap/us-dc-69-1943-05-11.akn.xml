@@ -36,18 +36,18 @@
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/cap/judges.json#hood" showAs="Hood"/>
+        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json#hood" showAs="Hood"/>
         <TLCReference eId="printing_31-a2d-647" name="printing" href="cite:31-a2d-647" showAs="31 A.2d 647"/>
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0647-01" showAs="Caselaw Access Project, a2d/31/0647-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.3.1"/>
+        <cx:profile version="0.4.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json" version="2026.10.23"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_31-a2d-647" type="official" reporter="A.2d" volume="31" firstPage="647" lastPage="649" text="transcribed">
           <cx:scans source="#source_cap" volume="a2d/31" first="695" last="697"/>

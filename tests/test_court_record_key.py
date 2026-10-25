@@ -10,6 +10,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 import pytest
 from abnf.parser import ParseError, Rule
 
@@ -54,7 +55,9 @@ def load(name: str) -> list[dict[str, Any]]:
 
 COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-8"))["courts"]
 JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
+CAP_COURTS = json.loads((ROOT / "registry" / "cap-courts.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
+ERRATA_SCHEMA = json.loads((ROOT / "schema" / "crk-errata.schema.json").read_text("utf-8"))
 
 
 def ids(name: str) -> list[str]:
@@ -112,7 +115,7 @@ class TestCompute:
     @pytest.mark.parametrize("v", load("compute.jsonl"), ids=ids("compute.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "key" in v:
-            key = crk_check.compute(v["facts"], COURTS, JUDGES)
+            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
             assert key == v["key"]
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
@@ -122,10 +125,83 @@ class TestCompute:
                 assert aliases == v["aliases"]
                 for alias in aliases:
                     assert abnf_accepts("crk-ref", alias)
+            if "provisional" in v:
+                assert crk_check.is_provisional(v["facts"]) is v["provisional"]
+            if "printed_alias" in v:
+                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                assert alias == v["printed_alias"]
+                assert abnf_accepts("printed-alias", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.compute(v["facts"], COURTS, JUDGES)
+                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
             assert refusal.value.args[0] == v["error"]
+
+
+class TestLedger:
+    """ledger.jsonl: a ledger confirms or advances a candidate; a resolver follows replaced-by."""
+
+    @pytest.mark.parametrize("v", load("ledger.jsonl"), ids=ids("ledger.jsonl"))
+    def test_ledger_is_well_formed(self, v: dict[str, Any]) -> None:
+        keys = [e["key"] for e in v["ledger"]]
+        assert len(set(keys)) == len(keys)
+        active: set[str] = set()
+        for e in v["ledger"]:
+            # Section 13.2: decision keys only; at most one active key per decision.
+            assert crk_check.classify(e["key"]) is None, e["key"]
+            assert crk_check.decision_key(crk_check.parse(e["key"])) == e["key"]
+            assert e["status"] in {"active", "replaced", "errata"}
+            assert ("replaced_by" in e) is (e["status"] == "replaced") or e["status"] == "errata"
+            if "replaced_by" in e:
+                assert e["replaced_by"] in keys
+            if e["status"] == "active":
+                assert e["decision"] not in active
+                active.add(e["decision"])
+
+    @pytest.mark.parametrize("v", load("ledger.jsonl"), ids=ids("ledger.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        assert crk_check.classify(v["key"]) is None
+        if "candidate" in v:
+            assert crk_check.classify(v["candidate"]) is None
+            got = crk_check.mint(v["ledger"], v["decision"], v["candidate"])
+            assert got == {"key": v["key"], "minted": v["minted"], "replaces": v["replaces"]}
+            if v["minted"]:
+                # Never a key the ledger already holds, whatever its status.
+                assert v["key"] not in {e["key"] for e in v["ledger"]}
+                assert crk_check.stem(v["key"]) == crk_check.stem(v["candidate"])
+        else:
+            got = crk_check.resolve(v["ledger"], v["resolve"])
+            assert got == {
+                "key": v["key"],
+                "decision": v["decision"],
+                "provisional": v["provisional"],
+            }
+
+
+class TestErrata:
+    """errata.jsonl and the spec's example: errata lists against the schema and section 13.4."""
+
+    @staticmethod
+    def problem(errata: dict[str, Any], previous: dict[str, Any] | None = None) -> str | None:
+        validator = jsonschema.Draft202012Validator(
+            ERRATA_SCHEMA, format_checker=jsonschema.Draft202012Validator.FORMAT_CHECKER
+        )
+        if any(validator.iter_errors(errata)):
+            return "schema"
+        return crk_check.errata_problem(errata, previous)
+
+    def test_schema_is_valid(self) -> None:
+        jsonschema.Draft202012Validator.check_schema(ERRATA_SCHEMA)
+
+    @pytest.mark.parametrize("v", load("errata.jsonl"), ids=ids("errata.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        if "previous" in v:
+            assert self.problem(v["previous"]) is None
+        assert self.problem(v["errata"], v.get("previous")) == v.get("problem")
+        assert v["valid"] is ("problem" not in v)
+
+    def test_spec_example(self) -> None:
+        (example,) = _blocks("json")
+        assert self.problem(json.loads(example)) is None
 
 
 class TestDocket:
@@ -134,12 +210,12 @@ class TestDocket:
     @pytest.mark.parametrize("v", load("docket.jsonl"), ids=ids("docket.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "segment" in v:
-            segment = crk_check.docket_segment(COURTS, v["court"], v["printed"])
+            segment = crk_check.docket_segment(COURTS, v["court"], v["printed"], v.get("decided"))
             assert segment == v["segment"]
             assert abnf_accepts("docket", segment)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.docket_segment(COURTS, v["court"], v["printed"])
+                crk_check.docket_segment(COURTS, v["court"], v["printed"], v.get("decided"))
             assert refusal.value.args[0] == v["error"]
 
 
@@ -182,6 +258,12 @@ class TestAlias:
         if v["scheme"] == "crk":
             assert abnf_accepts("crk-ref", alias)
             assert regex_accepts(alias.removeprefix("crk:"))
+        if v["scheme"] == "crk-printed":
+            # Section 6.3: a decision key after the prefix, never a key reference.
+            value = alias.removeprefix("crk-printed:")
+            assert crk_check.classify(value) is None
+            assert crk_check.parse(value)["role"] is None and "@" not in value
+            assert not abnf_accepts("crk-ref", alias)
         if "printed" in v:
             assert crk_check.normalize_alias(v["scheme"], v["printed"]) == alias
         for key in v.get("resolves_to", []):
@@ -224,7 +306,7 @@ def _vector_courts() -> list[tuple[str, str]]:
     """(vector id, court code) for every court code a vector resolves or names in a valid key."""
     found = []
     for v in load("compute.jsonl"):
-        if v.get("error") != "unregistered-court":
+        if v.get("error") != "unregistered-court" and "court" in v["facts"]:
             found.append((v["id"], v["facts"]["court"]))
         if "key" in v:
             found.append((v["id"], crk_check.parse(v["key"])["court"]))
@@ -248,8 +330,12 @@ class TestVectorCourts:
 
     def test_unregistered_court_vectors_are_unregistered(self) -> None:
         for v in load("compute.jsonl"):
-            if v.get("error") == "unregistered-court":
+            if v.get("error") == "unregistered-court" and "court" in v["facts"]:
                 assert v["facts"]["court"] not in COURTS, v["id"]
+            if v.get("error") == "unregistered-court" and "cap_court" in v["facts"]:
+                assert v["facts"]["cap_court"] not in CAP_COURTS["courts"], v["id"]
+            if v.get("error") == "court-under-review":
+                assert CAP_COURTS["courts"][v["facts"]["cap_court"]]["review"], v["id"]
 
 
 class TestGrammarAgreement:

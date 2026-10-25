@@ -1,12 +1,12 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.3.1",
+  "spec_version": "0.4.0",
   "courts_registry": "registry/courts.json",
   "judges_fixture": "judges-fixture.json",
   "provenance": {
     "human-curated": "A person checked it against the primary source. Ground truth: where it disagrees with any other vector, it wins.",
     "hand-checked": "Taken from a worked example in gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md.",
-    "engine-output": "Taken from an implementation's tests or output (gorsuch-library); it shows what an implementation does, not what is correct.",
+    "engine-output": "Taken from an implementation's tests or output (gorsuch-library), or computed from a source's records (CAP's case metadata, with the court code registry/cap-courts.json gives) by the spec's rules; it shows what the data and an implementation give, not what is correct.",
     "spec-derived": "Constructed from the spec's rules to exercise an edge case; not yet checked by a person."
   },
   "files": {
@@ -14,7 +14,7 @@
       "checks": "A validator accepts key; a parser returns parts and decision; formatting parts gives key back.",
       "fields": {
         "key": "string",
-        "parts": "{country, court, docket, decided, decision_ordinal (1 when unmarked), role (null for a decision), authors (list), part_ordinal (null for a decision, 1 when unmarked), revised (null when absent), fallback (true for an rpt. docket)}",
+        "parts": "{jurisdiction, court, docket, decided, decision_ordinal (1 when unmarked), role (null for a decision), authors (list), part_ordinal (null for a decision, 1 when unmarked), revised (null when absent), fallback (true for an rpt. docket)}",
         "decision": "the decision key (spec section 2.4)"
       }
     },
@@ -27,19 +27,22 @@
       }
     },
     "compute.jsonl": {
-      "checks": "A producer given facts, the court registry (registry/courts.json) and the judges fixture emits key, or refuses with error.",
+      "checks": "A producer given facts, the court registry (registry/courts.json), the CAP court table (registry/cap-courts.json) and the judges fixture emits key, or refuses with error.",
       "fields": {
-        "facts": "{country, court, docket (as printed, or null), decided (ISO date, possibly partial, or null), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}, page_decisions? (every decision that begins on the reporter page, in printed order, this one included: {docket (as printed, or null), decided}), page_position? (this decision's 1-based position in page_decisions)}. Under the reporter fallback, page_decisions and page_position give the decision ordinal (spec section 5.6)",
+        "facts": "{jurisdiction (informational: the key's jurisdiction is the registry's for the court and date, spec section 3), court, or cap_court in its place (a CAP court id, translated through registry/cap-courts.json for the decision date, spec section 4), docket (as printed, or null), decided (as far as established: an ISO 8601 date, or reduced precision, a year and month or a year, which the key zeroes, spec section 6.2; or null), printed_decided? (the date as the printing prints it, for the printed-date alias, spec section 6.3; decided when absent), second_sources? (other sources' dates for the decision, [{date, kind}], kind official, human-curated, courtlistener, engine-output, printing, ...; spec section 13.3), printed_ordinal? (the decision's position in printed order for the printed-date alias; 1 when absent), decision_ordinal?, role?, authors?, part_ordinal?, revised?, reporter_citation? {volume, reporter, page}, page_decisions? (every decision that begins on the reporter page, in printed order, this one included: {docket (as printed, or null), decided, printed_decided?}), page_position? (this decision's 1-based position in page_decisions)}. Under the reporter fallback, page_decisions and page_position give the decision ordinal (spec section 5.6)",
         "key": "expected key, when the producer succeeds",
         "fallback": "true when key uses the rpt. fallback",
         "error": "refusal class, spec section 12, when it refuses",
-        "aliases": "key-shaped aliases (key references) for the other dockets of a consolidated case, when the vector checks them (spec sections 5.1, 11.1)"
+        "aliases": "key-shaped aliases (key references) for the other dockets of a consolidated case, when the vector checks them (spec sections 5.1, 11.1)",
+        "printed_alias": "the expected printed-date alias, when the vector checks it (spec section 6.3)",
+        "provisional": "whether the key is minted provisional, when the vector checks it (spec section 13.3)"
       }
     },
     "docket.jsonl": {
       "checks": "The court's docket profile (from registry/courts.json) maps printed to segment, or refuses with error.",
       "fields": {
         "court": "court code",
+        "decided": "decision date, when the court's profile depends on it (absent: the court's last profile)",
         "printed": "docket as printed",
         "segment": "expected docket segment",
         "error": "refusal class"
@@ -57,10 +60,32 @@
     "alias.jsonl": {
       "checks": "printed normalizes to alias under scheme; alias matches the alias grammar; resolves_to lists the keys a resolver returns.",
       "fields": {
-        "scheme": "alias scheme, spec section 11.1 (crk for a key-shaped alias, written as a key reference, section 2.6)",
+        "scheme": "alias scheme, spec section 11.1 (crk for a key-shaped alias, written as a key reference, section 2.6; crk-printed for a printed-date alias, section 6.3)",
         "printed": "identifier as printed, when the vector tests normalization",
         "alias": "alias string",
         "resolves_to": "keys, when known"
+      }
+    },
+    "ledger.jsonl": {
+      "checks": "A publisher's minted-key ledger confirms or advances a candidate key (mint vectors), or a resolver follows replaced-by from a key to the decision's current key (resolve vectors) (spec sections 13.1 to 13.4).",
+      "fields": {
+        "ledger": "the ledger before the step: [{key (a decision key), decision (the publisher's identifier for the decision), status (active, replaced or errata), replaced_by? (a key), provisional? (true when marked, spec section 13.3)}]",
+        "decision": "mint vectors: the decision being keyed; resolve vectors: the expected decision",
+        "candidate": "mint vectors: the key sections 3 to 12 compute",
+        "resolve": "resolve vectors: the key given to the resolver",
+        "key": "mint vectors: the key the ledger gives the decision; resolve vectors: the current key",
+        "minted": "mint vectors: false when the ledger confirms the decision's active key and nothing is minted",
+        "replaces": "mint vectors: the decision's active key that the new key supersedes, or null",
+        "provisional": "resolve vectors: whether the current key is marked provisional"
+      }
+    },
+    "errata.jsonl": {
+      "checks": "errata is a valid errata list (schema/crk-errata.schema.json, spec section 13.4) whose seq numbers 1, 2, ... with no gaps, whose keys are valid keys (section 2.3), and which, given previous, holds every entry of previous unchanged and in order; or it is not, for the stated problem.",
+      "fields": {
+        "errata": "an errata list",
+        "previous": "the version published before it, when the vector checks the append-only rule",
+        "valid": "true when errata meets every rule",
+        "problem": "when invalid: schema, seq, key or append-only"
       }
     }
   }

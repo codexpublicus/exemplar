@@ -1,6 +1,6 @@
 # Akoma Ntoso judgment profile for US decisions
 
-Specification version: **0.3.1** (draft). Status: not yet stable; see sections 17 and 18.
+Specification version: **0.4.0** (draft). Status: not yet stable; see sections 17 and 18.
 
 This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, gorsuch-library for its corpus) write documents in this form, and the shared viewer reads them.
 
@@ -14,7 +14,7 @@ Each requirement a machine can check carries a rule id in brackets, `[AKN-n]`. S
 
 Terms:
 
-- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.3.1. A key reference is `crk:` followed by a key (CRK spec section 2.6).
+- **Decision**, **part**, **version**, **key**, **decision key**, **part key**, **alias**, **key reference**: as defined in [`court-record-key.md`](court-record-key.md) ("the CRK spec"), version 0.4.0. A key reference is `crk:` followed by a key (CRK spec section 2.6).
 - **Printing.** One publication of a decision on numbered pages: the official report, a regional reporter's reprint, a nominative reporter. A printing is identified by its citation.
 - **Source.** The digital record a producer took the document's content from: a CAP case (its JSON and HTML), a CourtListener cluster and its opinions.
 - **Producer.** A program that writes documents in this profile. **Consumer.** A program that reads them (the viewer, a validator, an indexer).
@@ -83,18 +83,18 @@ The root MUST be `akomaNtoso` with exactly one `judgment` child and no `componen
 | Element | Value | Rule |
 |---|---|---|
 | `FRBRthis/@value`, `FRBRuri/@value` | a key reference to the decision key: `crk:` followed by the key exactly as computed under the CRK spec (no part, no `@revised`), `crk:us/dc/57/1943-04-06` | [AKN-9] |
-| `FRBRalias` | one per alias of the decision: `name` is the CRK alias scheme (`cite`, `neutral`, `cap`, `cl-cluster`, ...) and `value` the alias string (CRK spec section 11.1); `name="akn-nc"` holds the AKN Naming Convention IRI derived from the key (CRK spec section 15); `name="vendor"` holds a vendor citation verbatim (`1954 U.S. LEXIS 2094`), which has no alias scheme; a key-shaped alias is described below the table | [AKN-10] |
-| `FRBRdate` | `@date` the decision date, `@name="decided"` | [AKN-11] |
+| `FRBRalias` | one per alias of the decision: `name` is the CRK alias scheme (`cite`, `neutral`, `cap`, `cl-cluster`, `crk-printed`, ...) and `value` the alias string (CRK spec section 11.1); `name="akn-nc"` holds the AKN Naming Convention IRI derived from the key (CRK spec section 15); `name="vendor"` holds a vendor citation verbatim (`1954 U.S. LEXIS 2094`), which has no alias scheme; a key-shaped alias is described below the table | [AKN-10] |
+| `FRBRdate` | the key's `decided` segment: a calendar date as `@date` with `@name="decided"`; for a zeroed date (CRK spec section 6.2), which is not an ISO 8601 date, `@date` the first day of its period and `@name` `decided-year-month` (`1882-05-00` is `@date="1882-05-01"`) or `decided-year` (`1793-00-00` is `@date="1793-01-01"`), so that no consumer reads that day as the court's | [AKN-11] |
 | `FRBRauthor/@href` | `#` + the court's `TLCOrganization` eId | [AKN-12] |
-| `FRBRcountry/@value` | `us`, the key's country segment | [AKN-13] |
+| `FRBRcountry/@value` | the key's jurisdiction segment, a jurisdiction code (CRK spec section 3): `us`, `pr` | [AKN-13] |
 | `FRBRnumber` | OPTIONAL: `@value` the key's docket segment, `@showAs` the docket as printed | |
 | `FRBRname` | OPTIONAL: `@value` the decision's short name as the source gives it | |
 
 An alias that is itself a decision key, such as the key under another docket of a consolidated case, is a key-shaped alias (CRK spec section 11.1). Its `@name` MUST be `crk` and its `@value` a key reference to a valid decision key, with no part and no `@{revised}`: `crk:us/scotus/17-1623/2020-06-15` [AKN-10]. An alias whose `@name` is a CRK alias scheme MUST be valid under that scheme; `cl-opinion` names a part, not a decision, and is not used in `FRBRWork`. `@name` MUST be a CRK alias scheme, `akn-nc` or `vendor` [AKN-10].
 
-The `akn-nc` IRI of a decision key without a decision ordinal is `/akn/us/judgment/{court}/{decided}/{docket}` [AKN-10]. CRK section 15 gives no mapping for a key with a decision ordinal (`~2`); for such a key this version doesn't fix the value of an `akn-nc` alias, and AKN-10 doesn't check it.
+The `akn-nc` IRI of a decision key without a decision ordinal is `/akn/{jurisdiction}/judgment/{court}/{decided}/{docket}` [AKN-10], with `{decided}` as the key writes it, zeroed or not (`/akn/us/judgment/dc/1943-04-00/57`). CRK section 15 gives no mapping for a key with a decision ordinal (`~2`); for such a key this version doesn't fix the value of an `akn-nc` alias, and AKN-10 doesn't check it.
 
-A document MUST NOT be written for a decision whose key the producer can't compute [AKN-14, not machine-checkable]; the CRK spec's refusals apply unchanged. Open question O7 covers decisions that have no key under CRK 0.1.0, such as Supreme Court decisions before 1971-07-01.
+A document MUST NOT be written for a decision whose key the producer can't compute [AKN-14, not machine-checkable]; the CRK spec's refusals apply unchanged. Open question O7 covers decisions that still have no key, such as Federal Circuit decisions.
 
 Every URI value in this profile that names a key is a key reference: the work and expression URIs, the manifestation URI built from them (section 5.1.3), a `ref/@href` that names a key (section 10), and the value of a key-shaped alias. A bare key in any of these places makes the document invalid [AKN-9, AKN-10, AKN-15, AKN-18, AKN-51]. The key follows `crk:` verbatim, with no percent-encoding (CRK spec section 2.4). A key reference is an absolute URI in RFC 3986 terms; consumers MUST resolve key references and alias values through a resolver and MUST NOT resolve them against the document's own URL.
 
@@ -105,7 +105,7 @@ An attribute that holds the key of the element it sits on, rather than a referen
 | Element | Value | Rule |
 |---|---|---|
 | `FRBRthis/@value`, `FRBRuri/@value` | a key reference to the version key: `crk:` followed by the decision key for the decision as first issued, or by the decision key with `@{revised}` | [AKN-15] |
-| `FRBRdate` | `@name="decided"` with the decision date, or `@name="revised"` with the revision date | [AKN-16] |
+| `FRBRdate` | as in `FRBRWork` for the decision as first issued, or `@name="revised"` with the revision date | [AKN-16] |
 | `FRBRauthor/@href` | as in `FRBRWork` | |
 | `FRBRauthoritative/@value` | `false` | [AKN-17] |
 | `FRBRlanguage/@language` | `eng` for English text | |
@@ -141,7 +141,7 @@ Two producers writing documents for the same expression write the same manifesta
 | Each printing | `TLCReference @name="printing"` | `printing_{volume}-{reporter slug}-{page}` | the printing's `cite:` alias | the citation as printed |
 | Each source | `TLCReference @name="source"` | `source_{name}` | the source record's alias (`cap:...`, `cl-cluster:...`) | a readable label |
 
-The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
+The registry URI is the `cx:registry/@uri` of section 5.3, an absolute URI, so the court's and judges' hrefs are absolute too: `https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json#dc`. The fragment is the court code or judge slug, as this profile defines it; it is not a JSON Pointer.
 
 Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `_` that every other eId in this table has; the two kinds can't collide.
 
@@ -170,7 +170,7 @@ Judge slugs match `[a-z][a-z-]*` (CRK spec section 10.2) and never contain the `
 
 Blocks of class `syllabus`, `headnotes`, `summary` and `synopsis` MUST NOT have `@cx:origin="court"` [AKN-27]. They are added by a reporter or a publisher; the official syllabus of the Supreme Court is itself prepared by the Reporter of Decisions and is not part of the opinion.
 
-Inside head matter blocks, a producer SHOULD mark: the caption with `docTitle`; the docket number with `docketNumber`; the court's name with `courtType @refersTo` (the court's `TLCOrganization`); the decision date with `docDate @date`. A producer MUST NOT mark text with `courtType` unless the text names the court; a division, department, panel, county or sitting (`Division One.`, `Suffolk.`, `En Banc.`) is not the court's name. A `courtType` the producer adds after reading the text carries `@cx:provenance="engine-output"`. It MAY mark other dates with `date @date`, judges with `judge @refersTo` (a `TLCPerson`), parties with `party @refersTo`, and counsel with `lawyer @refersTo`. Markup that the producer derived, rather than copied from the source's own structure, carries `@cx:provenance="engine-output"` (section 12.2). The text inside stays as the source gives it: `Rebearing Denied` in the example is CAP's OCR of "Rehearing Denied", and it stays.
+Inside head matter blocks, a producer SHOULD mark: the caption with `docTitle`; the docket number with `docketNumber`; the court's name with `courtType @refersTo` (the court's `TLCOrganization`); the decision date with `docDate @date`, only where the text prints a full date (a year and month, or a year, is not a `docDate`; `@date` is a calendar date). A producer MUST NOT mark text with `courtType` unless the text names the court; a division, department, panel, county or sitting (`Division One.`, `Suffolk.`, `En Banc.`) is not the court's name. A `courtType` the producer adds after reading the text carries `@cx:provenance="engine-output"`. It MAY mark other dates with `date @date`, judges with `judge @refersTo` (a `TLCPerson`), parties with `party @refersTo`, and counsel with `lawyer @refersTo`. Markup that the producer derived, rather than copied from the source's own structure, carries `@cx:provenance="engine-output"` (section 12.2). The text inside stays as the source gives it: `Rebearing Denied` in the example is CAP's OCR of "Rehearing Denied", and it stays.
 
 ## 7. Parts: opinions and other separately headed writings
 
@@ -388,13 +388,13 @@ Facts behind its identifiers:
 - Docket `57`: CAP prints `No. 57.`; cleaning (CRK spec section 5.1) gives `57`, which the `printed` profile keeps.
 - Decision key `us/dc/57/1943-04-06`; parts `opinion.hood` (CAP type `majority`) and `dissent.cayton` (`dissent`). The judge slugs come from `examples/minimal/judges.json`, a fixture standing in for a judge registry.
 - Work and expression URI `crk:us/dc/57/1943-04-06`, the key reference to that key; `@cx:part` holds the part keys themselves.
-- Registry URIs name the release tag `v0.3.1`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
+- Registry URIs name the release tag `v0.4.0`, the tag this example is to be published under; they don't resolve until that tag exists. The judges fixture's URI is its raw file URL at the same tag.
 - The court line's `courtType` carries `@cx:provenance="engine-output"`, as section 6 requires of a `courtType` the producer adds after reading the text.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Minimal example for spec/akoma-ntoso-profile.md 0.3.1, quoted in full in section 14 of that spec.
+  Minimal example for spec/akoma-ntoso-profile.md 0.4.0, quoted in full in section 14 of that spec.
   An excerpt of Taylor v. Yellow Cab Co., 31 A.2d 683, built by hand from the Caselaw Access Project
   case a2d/31/0683-01. The text is CAP's, OCR errors included; omitted text is marked with omissis.
 -->
@@ -431,20 +431,20 @@ Facts behind its identifiers:
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
+        <TLCOrganization eId="court_dc" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json#dc" showAs="District of Columbia Court of Appeals"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#cayton" showAs="Cayton"/>
-        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#hood" showAs="Hood"/>
-        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json#richardson" showAs="Richardson"/>
+        <TLCPerson eId="cayton" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/minimal/judges.json#cayton" showAs="Cayton"/>
+        <TLCPerson eId="hood" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/minimal/judges.json#hood" showAs="Hood"/>
+        <TLCPerson eId="richardson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/minimal/judges.json#richardson" showAs="Richardson"/>
         <TLCReference eId="printing_31-a2d-683" name="printing" href="cite:31-a2d-683" showAs="31 A.2d 683"/>
         <TLCReference eId="source_cap" name="source" href="cap:a2d/31/0683-01" showAs="Caselaw Access Project, a2d/31/0683-01"/>
       </references>
       <proprietary source="#org_exemplar">
-        <cx:profile version="0.3.1"/>
+        <cx:profile version="0.4.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/registry/courts.json" version="2026.10.18"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.3.1/examples/minimal/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json" version="2026.10.23"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/minimal/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_31-a2d-683" type="official" reporter="A.2d" volume="31" firstPage="683" lastPage="687" text="transcribed">
           <cx:scans source="#source_cap" volume="a2d/31" first="731" last="735"/>
@@ -502,7 +502,7 @@ These tables say where each profile element comes from in each source. Field and
 | `file_name`, with the volume's reporter and number | `cap:` alias: `FRBRalias @name="cap"`, `TLCReference` of the source, `cx:source/@record` |
 | `name_abbreviation` | `FRBRWork/FRBRname` |
 | `name` | not used; the printed caption comes from the HTML |
-| `decision_date` | key input; `FRBRdate @name="decided"`; `docDate/@date`. A date with no month or day is a key refusal (`incomplete-date`) |
+| `decision_date` | key input; `FRBRdate` (section 5.1.1); `docDate/@date` when it is a full date. A date with no day, or no month, gives a key with a zeroed date (CRK spec section 6.2) unless the producer establishes the full date from a trustworthy second source (CRK spec section 6.1) |
 | `docket_number` | key input (CRK spec section 5); `FRBRnumber`. The printed form comes from the HTML |
 | `court.name`, `court.id` | key input: the court code, mapped to the court registry (`engine-output`) |
 | `jurisdiction` | not used |
@@ -573,7 +573,7 @@ A CourtListener record is a cluster with its docket, court, citations and opinio
 | cluster `case_name`, `case_name_short`, `case_name_full` | `FRBRname`; a header block of class `parties` with `@cx:origin="producer"` when no printed caption is available |
 | docket `docket_number` | key input; `FRBRnumber` |
 | docket `court_id` | key input: the court code, from the court registry entry with that code, checked by the producer |
-| cluster `date_filed` | key input; `FRBRdate @name="decided"`. A cluster flagged as having an approximate date gives no key (`incomplete-date`) |
+| cluster `date_filed` | key input; `FRBRdate` (section 5.1.1). A cluster flagged `date_filed_is_approximate` gives the date only as far as CRK spec section 6.1 says: its year when it falls on 1 July, otherwise its year and month |
 | cluster citations | printings and aliases as for CAP (15.1), after stare-builder's typing into `official`, `parallel`, `neutral`, `vendor` |
 | opinion `type` | the part's role, through stare-builder's map to CAP types (`OPINION_TYPES`) and then 15.4 |
 | opinion `author_str`, `author` | key input: author slugs via the judge registry (`engine-output`) |
@@ -631,7 +631,7 @@ The Schematron rules are in `schema/profile.sch` (codexpublicus/exemplar#3). Thi
 | AKN-9, AKN-15 | work and expression URIs are key references to valid keys and agree with each other and with `@contains` | Schematron (regex from the CRK spec; calendar dates through `xs:date`) |
 | AKN-10 | aliases well formed per CRK section 11.1; a key-shaped alias is named `crk` and is a key reference | Schematron |
 | AKN-11, AKN-16 | `FRBRdate` names and values match the key's dates | Schematron |
-| AKN-12, AKN-13 | work author is the court; country is `us` | Schematron |
+| AKN-12, AKN-13 | work author is the court; FRBRcountry is the key's jurisdiction segment | Schematron |
 | AKN-14, AKN-37 | no document without keys | not machine-checkable |
 | AKN-17 | `FRBRauthoritative` is `false` | Schematron |
 | AKN-18, AKN-20 | manifestation URI and format | Schematron |
@@ -696,7 +696,16 @@ This profile is versioned with [Semantic Versioning 2.0.0](https://semver.org/sp
 - **Minor:** a change that only adds: an optional element or attribute, a header class, an origin or provenance value, a source mapping.
 - **Patch:** editorial changes and new examples that don't change any rule.
 
-While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.3.1, follows CRK spec 0.3.1 and court registry `2026.10.18`. It is a patch release of 0.3.0 and changes no rule: section 5.3 names the copies of CAP's volume records inside each volume zip (`metadata/VolumeMetadata.json`, `metadata/CasesMetadata.json`), which is where the CAP examples now read every printing's `@ordinal` and `@text`. The examples' keys and eIds don't change.
+While the version is 0.x, a minor version MAY break these rules (SemVer item 4). This version, 0.4.0, follows CRK spec 0.4.0 and court registry `2026.10.23`. It is a minor version that breaks, and the Schematron rules check profile 0.4.x documents only:
+
+- `FRBRcountry` is the key's jurisdiction segment, which CRK 0.4.0 makes a jurisdiction code (`pr`, `gb`, ...), and the `akn-nc` IRI starts with it (sections 5.1.1, AKN-10, AKN-13; codexpublicus/exemplar#38, #39);
+- the `FRBRdate` of a key with a zeroed date (`1882-05-00`, `1793-00-00`) is the first day of its period, named `decided-year-month` or `decided-year`, and a year and month or a year is never a `docDate` (sections 5.1.1, 5.1.2, 6, AKN-11, AKN-16; codexpublicus/exemplar#37);
+- CourtListener's approximate dates map as CRK 0.4.0 section 6.1 says (section 15.3; codexpublicus/exemplar#33).
+- an `FRBRalias` named `crk-printed` holds the decision's printed-date alias (CRK spec section 6.3), which AKN-10 accepts as an alias scheme.
+
+No example's key, eId or content changes; the examples, the minimal example and the no-text vector name profile 0.4.0, release tag `v0.4.0` and court registry `2026.10.23`.
+
+The version before it, 0.3.1, followed CRK spec 0.3.1 and court registry `2026.10.18`. It was a patch release of 0.3.0 and changes no rule: section 5.3 names the copies of CAP's volume records inside each volume zip (`metadata/VolumeMetadata.json`, `metadata/CasesMetadata.json`), which is where the CAP examples now read every printing's `@ordinal` and `@text`. The examples' keys and eIds don't change.
 
 The version before it, 0.3.0, follows CRK spec 0.3.0. It is a minor version that breaks: a document records its profile version, and the Schematron rules check profile 0.3.x documents only. It writes in the owner's rulings of 2026-10-23 on the gaps listed in codexpublicus/exemplar#10:
 
@@ -728,7 +737,7 @@ Non-normative. Each open question needs a decision from the owner; the text abov
 - **O4. Manifestation URI.** `{expression}.akn.xml` names neither the producer nor its source. Options: (a) current, with the producer in `FRBRauthor` and the source in `cx:source`; (b) name both (`{expression}~{producer}@{release}.akn.xml`); (c) a content hash.
 - **O5. Transcription corrections.** A corrected OCR text or an updated source record is a new manifestation of the same expression. Options: (a) current; (b) a new expression with `FRBRversionNumber`, treating the corrected text as a different version of the text; (c) record corrections inline (`ins`/`del` with provenance) in one manifestation.
 - **O6. Parts without keys.** A part whose author isn't in the judge registry makes the producer refuse the whole document. Options: (a) current; (b) emit the part without `@cx:part`, with `@cx:keyRefusal` naming the CRK refusal class and an eId such as `opinion_{role}_{n}`, until the registry covers the judge. Under (a), coverage of CAP depends on the judge registry's coverage.
-- **O7. Decisions without a decision key.** No document is written. This covers every Supreme Court decision before 1971-07-01 (no docket profile in CRK 0.1.0), every Federal Circuit decision, and every decision dated only to the year or month. Options: (a) current, waiting for CRK profiles and dates; (b) a document identified by a non-canonical alias (`cap:...`) marked as such, replaced when a key exists; (c) a resolver record without a document.
+- **O7. Decisions without a decision key.** No document is written. Since CRK 0.4.0 this covers every Federal Circuit decision (no docket profile), decisions in courts the registry can't name, and decisions with neither a usable docket nor a reporter citation; Supreme Court decisions before 1971-07-01 and decisions dated only to the year or month have keys. Options: (a) current, waiting for CRK profiles and dates; (b) a document identified by a non-canonical alias (`cap:...`) marked as such, replaced when a key exists; (c) a resolver record without a document.
 - **O8. CAP opinion types with no role.** `rehearing`, `addendum`, `remittitur`, `on-the-merits` and `on-motion-to-strike-cost-bill` writings make the producer refuse. Options: (a) current; (b) a separate decision with its own key (it often has its own date, sometimes printed only in the head matter's `otherdate`); (c) a part of the same decision with role `statement` or `order`; (d) a new CRK role (a CRK minor version).
 - **O9. Citations to legislation.** They stay unmarked. Options: (a) current; (b) `ref` with an alias scheme for legislation, which the CRK spec doesn't have (see codexpublicus/stare#9); (c) `ref` to an external URL.
 - **O10. Origin of CAP head matter.** CAP doesn't say who wrote each head matter block, so all of it is `unknown`. Options: (a) current; (b) a table of defaults per reporter and period (for example, the U.S. Reports syllabus as `reporter`), applied as `engine-output`.

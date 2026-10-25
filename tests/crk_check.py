@@ -27,13 +27,20 @@ ROLES = frozenset(
     }
 )
 
+# Section 3: the jurisdiction codes this version defines.
+JURISDICTIONS = frozenset(
+    {"us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "england", "hawaii", "texas", "vermont"}
+)
+JURISDICTION = re.compile(r"[a-z]{2,16}")
 COURT = re.compile(r"[a-z][a-z0-9-]*")
 DOCKET = re.compile(r"[a-z0-9][a-z0-9_.-]*")
 RPT = re.compile(r"rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+")
 AUTHOR = re.compile(r"[a-z][a-z-]*")
 ORD = re.compile(r"[2-9]|[1-9][0-9]+")
 DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
-PARTIAL_DATE = re.compile(r"[0-9]{4}(-[0-9]{2})?")
+# A date as a source states it (facts): ISO 8601, a calendar date or reduced to a year and month
+# or a year.
+ISO_DECIDED = re.compile(r"[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?")
 
 
 class Refusal(Exception):
@@ -50,6 +57,34 @@ def is_date(text: str) -> bool:
     return True
 
 
+def is_decided(text: str) -> bool:
+    """Sections 2.3, 6.2: a calendar date, or a zeroed date (YYYY-MM-00, YYYY-00-00)."""
+    if not DATE.fullmatch(text):
+        return False
+    year, month, day = text[:4], text[5:7], text[8:]
+    if day != "00":
+        return is_date(text)
+    return year != "0000" and (month == "00" or 1 <= int(month) <= 12)
+
+
+def zeroed(fact: str) -> str | None:
+    """Section 6.2: the decided segment for a date a source states in ISO 8601 form (a calendar
+    date, a year and month, or a year), or None when it is none of these."""
+    if not ISO_DECIDED.fullmatch(fact):
+        return None
+    segment = {4: fact + "-00-00", 7: fact + "-00"}.get(len(fact), fact)
+    return segment if is_decided(segment) else None
+
+
+def period_start(decided: str) -> str:
+    """Section 6.2: the calendar date a decided segment stands for, the first day of its period."""
+    if decided.endswith("-00-00"):
+        return decided[:4] + "-01-01"
+    if decided.endswith("-00"):
+        return decided[:7] + "-01"
+    return decided
+
+
 def classify(key: str) -> str | None:
     """The error class of spec section 2.5, or None for a valid key."""
     if key.count("@") > 1:
@@ -58,15 +93,15 @@ def classify(key: str) -> str | None:
     segments = body.split("/")
     if len(segments) not in (4, 5):
         return "structure"
-    country, court, docket, decided = segments[:4]
-    if country != "us":
-        return "country"
+    jurisdiction, court, docket, decided = segments[:4]
+    if not JURISDICTION.fullmatch(jurisdiction) or jurisdiction not in JURISDICTIONS:
+        return "jurisdiction"
     if not COURT.fullmatch(court):
         return "court"
     if not DOCKET.fullmatch(docket) or (docket.startswith("rpt.") and not RPT.fullmatch(docket)):
         return "docket"
     day, tilde, ordinal = decided.partition("~")
-    if not is_date(day):
+    if not is_decided(day):
         return "date"
     if tilde and not ORD.fullmatch(ordinal):
         return "ordinal"
@@ -81,7 +116,7 @@ def classify(key: str) -> str | None:
             return "author"
         if tilde and not ORD.fullmatch(ordinal):
             return "ordinal"
-    if at and (not is_date(revised) or revised < day):
+    if at and (not is_date(revised) or revised < period_start(day)):
         return "revised"
     return None
 
@@ -91,10 +126,10 @@ def parse(key: str) -> dict[str, Any]:
     assert classify(key) is None, key
     body, _, revised = key.partition("@")
     segments = body.split("/")
-    country, court, docket, decided = segments[:4]
+    jurisdiction, court, docket, decided = segments[:4]
     day, _, ordinal = decided.partition("~")
     parts: dict[str, Any] = {
-        "country": country,
+        "jurisdiction": jurisdiction,
         "court": court,
         "docket": docket,
         "decided": day,
@@ -115,7 +150,7 @@ def parse(key: str) -> dict[str, Any]:
 
 
 def decision_key(parts: dict[str, Any]) -> str:
-    key = f"{parts['country']}/{parts['court']}/{parts['docket']}/{parts['decided']}"
+    key = f"{parts['jurisdiction']}/{parts['court']}/{parts['docket']}/{parts['decided']}"
     if parts["decision_ordinal"] > 1:
         key += f"~{parts['decision_ordinal']}"
     return key
@@ -200,6 +235,16 @@ def _scotus(text: str) -> str | None:
     return None
 
 
+def _scotus_numbered(text: str) -> str | None:
+    if m := re.fullmatch(r"([0-9]{1,5})", text):
+        return m.group(1)
+    if m := re.fullmatch(r"([0-9]{1,5}),? misc\.?", text, re.IGNORECASE):
+        return f"{m.group(1)}-misc"
+    if m := re.fullmatch(r"([0-9]{1,3})[,.]? orig(?:inal)?\.?", text, re.IGNORECASE):
+        return f"{m.group(1)}-orig"
+    return None
+
+
 def _coa(text: str) -> str | None:
     text = re.sub(r"\s*\(L\)$", "", text)
     text = re.sub(r"(?<=[0-9])-[A-Za-z]$", "", text)
@@ -219,15 +264,36 @@ def _printed(text: str) -> str | None:
     return text if DOCKET.fullmatch(text) and not text.startswith("rpt.") else None
 
 
-PROFILES = {"scotus-ot1971": _scotus, "us-coa": _coa, "us-district": _district, "printed": _printed}
+PROFILES = {
+    "scotus-numbered": _scotus_numbered,
+    "scotus-ot1971": _scotus,
+    "us-coa": _coa,
+    "us-district": _district,
+    "printed": _printed,
+}
+
+
+def _dated(steps: list[dict[str, Any]], field: str, decided: str | None) -> Any:
+    """The value of the last step that starts on or before decided (sections 5, 10.1).
+
+    A zeroed date picks a step only when its whole period is on or after the step's start.
+    """
+    chosen = None
+    for step in steps:
+        if step["from"] is None or decided is None or step["from"] <= period_start(decided):
+            chosen = step[field]
+    return chosen
 
 
 def profile_for(court: dict[str, Any], decided: str | None) -> str | None:
-    chosen = None
-    for entry in court["profiles"]:
-        if entry["from"] is None or decided is None or entry["from"] <= decided:
-            chosen = entry["profile"]
-    return chosen
+    return _dated(court["profiles"], "profile", decided)
+
+
+def jurisdiction_for(court: dict[str, Any], decided: str | None) -> str:
+    """Section 3: the issuing sovereign's code for the decision date."""
+    if "jurisdictions" in court:
+        return _dated(court["jurisdictions"], "jurisdiction", decided)
+    return court["jurisdiction"]
 
 
 def docket_segment(
@@ -264,22 +330,43 @@ def rpt_segment(citation: dict[str, str]) -> str:
     return f"rpt.{citation['volume']}-{slug(citation['reporter'])}-{citation['page']}"
 
 
-def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any]) -> str:
+def court_for_cap(cap_courts: dict[str, Any], cap_id: str, decided: str | None) -> str:
+    """Section 4: the registry code registry/cap-courts.json gives a CAP court id, or Refusal."""
+    entry = cap_courts["courts"].get(cap_id)
+    if entry is None:
+        raise Refusal("unregistered-court")
+    if entry.get("review"):
+        raise Refusal("court-under-review")
+    return _dated(entry["codes"], "code", decided)
+
+
+def compute(
+    facts: dict[str, Any],
+    courts: dict[str, Any],
+    judges: dict[str, Any],
+    cap_courts: dict[str, Any] | None = None,
+) -> str:
     """Spec section 12: a key from facts, or Refusal.
 
     courts is the court registry's "courts" map; judges is a judge registry's
-    "judges" map (spec section 10.2; the vectors use a fixture).
+    "judges" map (spec section 10.2; the vectors use a fixture); cap_courts is
+    registry/cap-courts.json, for facts that name the court by its CAP id.
     """
-    court = facts["court"]
-    if facts.get("country") != "us" or court not in courts:
+    fact = facts.get("decided")
+    decided = zeroed(fact) if fact is not None else None
+    if "court" in facts:
+        court = facts["court"]
+    else:
+        assert cap_courts is not None
+        court = court_for_cap(cap_courts, facts["cap_court"], decided)
+    if court not in courts:
         raise Refusal("unregistered-court")
-    decided = facts.get("decided")
-    if decided is None:
+    if fact is None:
         raise Refusal("no-decision-date")
-    if PARTIAL_DATE.fullmatch(decided):
-        raise Refusal("incomplete-date")
-    if not is_date(decided):
+    if decided is None:
         raise Refusal("date")
+    # Section 3: the registry's jurisdiction code, never the facts'.
+    jurisdiction = jurisdiction_for(courts[court], decided)
     if profile_for(courts[court], decided) is None:
         raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
     citation = facts.get("reporter_citation")
@@ -296,11 +383,11 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
     if docket.startswith("rpt.") and "page_decisions" in facts:
         # Section 5.6: count every decision that begins on the page and shares the date.
         before = facts["page_decisions"][: facts["page_position"]]
-        ordinal = sum(1 for d in before if d["decided"] == decided)
+        ordinal = sum(1 for d in before if d["decided"] == fact)
     if ordinal < 1:
         raise Refusal("ordinal")
     parts: dict[str, Any] = {
-        "country": "us",
+        "jurisdiction": jurisdiction,
         "court": court,
         "docket": docket,
         "decided": decided,
@@ -324,12 +411,39 @@ def compute(facts: dict[str, Any], courts: dict[str, Any], judges: dict[str, Any
             raise Refusal("ordinal")
         parts.update(role=role, authors=authors, part_ordinal=part_ordinal)
     if (revised := facts.get("revised")) is not None:
-        if not is_date(revised) or revised < decided:
+        if not is_date(revised) or revised < period_start(decided):
             raise Refusal("revised")
         parts["revised"] = revised
     key = format_key(parts)
     assert classify(key) is None, key
     return key
+
+
+def printed_alias(
+    facts: dict[str, Any],
+    courts: dict[str, Any],
+    judges: dict[str, Any],
+    cap_courts: dict[str, Any] | None = None,
+) -> str:
+    """Section 6.3: the printed-date alias, the decision key computed from the printing alone.
+
+    facts' printed_decided is the date the printing prints (decided when absent), page_decisions'
+    likewise, and printed_ordinal the decision's position in printed order among decisions
+    whose aliases are otherwise the same (1 when absent).
+    """
+    printed = {
+        k: v
+        for k, v in facts.items()
+        if k not in ("role", "authors", "part_ordinal", "revised", "decision_ordinal")
+    }
+    printed["decided"] = facts.get("printed_decided", facts.get("decided"))
+    printed["decision_ordinal"] = facts.get("printed_ordinal", 1)
+    if "page_decisions" in facts:
+        printed["page_decisions"] = [
+            {**d, "decided": d.get("printed_decided", d["decided"])}
+            for d in facts["page_decisions"]
+        ]
+    return "crk-printed:" + compute(printed, courts, judges, cap_courts)
 
 
 def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str) -> list[str]:
@@ -340,6 +454,80 @@ def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str
     others = other_dockets(courts, facts["court"], printed, facts["decided"])
     decision = parse(key)
     return ["crk:" + decision_key({**decision, "docket": d, "decision_ordinal": 1}) for d in others]
+
+
+# The minted-key ledger (spec section 13.2).
+
+
+def stem(key: str) -> str:
+    """The decision key without its decision ordinal."""
+    return decision_key({**parse(key), "decision_ordinal": 1})
+
+
+def mint(ledger: list[dict[str, Any]], decision: str, candidate: str) -> dict[str, Any]:
+    """Section 13.2: the key a ledger confirms or advances a candidate to.
+
+    Returns {key, minted (false when the ledger confirms the decision's active key), replaces
+    (the decision's active key the new one supersedes, or None)}.
+    """
+    active = [e for e in ledger if e["decision"] == decision and e["status"] == "active"]
+    assert len(active) <= 1, decision
+    if active and stem(active[0]["key"]) == stem(candidate):
+        return {"key": active[0]["key"], "minted": False, "replaces": None}
+    held = {e["key"] for e in ledger}
+    parts = parse(candidate)
+    key = candidate
+    while key in held:
+        parts["decision_ordinal"] += 1
+        key = decision_key(parts)
+    return {"key": key, "minted": True, "replaces": active[0]["key"] if active else None}
+
+
+OVERRIDING_SOURCES = frozenset({"official", "human-curated"})
+
+
+def is_provisional(facts: dict[str, Any]) -> bool:
+    """Section 13.3: whether second sources' dates make the key provisional.
+
+    facts' second_sources is [{date (ISO 8601, reduced or not), kind}]: kind official or
+    human-curated may override a date the printing gives in full; any other kind (courtlistener,
+    engine-output, another printing, ...) only a date the printing gives to the month or year.
+    """
+    printed = facts.get("printed_decided", facts["decided"])
+    sources = facts.get("second_sources", [])
+    if len(printed) == 10:
+        return any(s["kind"] in OVERRIDING_SOURCES and s["date"] != printed for s in sources)
+    return any(not s["date"].startswith(printed) for s in sources)
+
+
+def resolve(ledger: list[dict[str, Any]], key: str) -> dict[str, Any]:
+    """Section 13.1: follow replaced-by to the current key; {key, decision, provisional}."""
+    entries = {e["key"]: e for e in ledger}
+    entry, seen = entries[key], {key}
+    while entry.get("replaced_by"):
+        entry = entries[entry["replaced_by"]]
+        assert entry["key"] not in seen, key
+        seen.add(entry["key"])
+    return {
+        "key": entry["key"],
+        "decision": entry["decision"],
+        "provisional": entry.get("provisional", False),
+    }
+
+
+def errata_problem(errata: dict[str, Any], previous: dict[str, Any] | None = None) -> str | None:
+    """Section 13.4, past what schema/crk-errata.schema.json checks: seq, keys, append-only."""
+    entries = errata["entries"]
+    if [e["seq"] for e in entries] != list(range(1, len(entries) + 1)):
+        return "seq"
+    for e in entries:
+        if classify(e["key"]) is not None or (
+            "replaced_by" in e and classify(e["replaced_by"]) is not None
+        ):
+            return "key"
+    if previous is not None and entries[: len(previous["entries"])] != previous["entries"]:
+        return "append-only"
+    return None
 
 
 def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:

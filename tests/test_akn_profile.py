@@ -151,7 +151,7 @@ def test_minimal_example_keys_follow_from_printed_facts() -> None:
     doc = etree.parse(str(MINIMAL))
     court = one(doc, "//a:TLCOrganization[starts-with(@eId, 'court_')]/@eId")[len("court_") :]
     facts = {
-        "country": "us",
+        "jurisdiction": "us",
         "court": court,
         "docket": doc.xpath("string(//a:header//a:docketNumber)", namespaces=NS),
         "decided": one(doc, "//a:header//a:docDate/@date"),

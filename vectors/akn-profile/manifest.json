@@ -1,6 +1,6 @@
 {
   "spec": "spec/akoma-ntoso-profile.md",
-  "spec_version": "0.3.1",
+  "spec_version": "0.4.0",
   "schematron": "schema/profile.sch",
   "sidecar_schema": "schema/sidecar.schema.json",
   "namespaces": {

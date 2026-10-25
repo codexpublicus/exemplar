@@ -50,12 +50,33 @@
   },
   "$defs": {
     "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "jurisdiction": {
+      "description": "A jurisdiction code (spec section 3)",
+      "enum": ["us", "pr", "gu", "vi", "as", "mp", "gb", "ph", "ccj", "england", "hawaii", "texas", "vermont"]
+    },
     "court": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["country", "name", "profiles", "source"],
+      "required": ["jurisdiction", "name", "profiles", "source"],
       "properties": {
-        "country": {"const": "us"},
+        "jurisdiction": {
+          "description": "The jurisdiction code of the court's decisions; with jurisdictions, the code of its last step",
+          "$ref": "#/$defs/jurisdiction"
+        },
+        "jurisdictions": {
+          "description": "Jurisdiction codes in date order, for a court whose decisions span a change of sovereign (spec section 3); each applies from its date (null: from the start) until the next",
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "jurisdiction"],
+            "properties": {
+              "from": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/date"}]},
+              "jurisdiction": {"$ref": "#/$defs/jurisdiction"}
+            }
+          }
+        },
         "name": {"type": "string", "minLength": 1},
         "profiles": {
           "description": "Docket profiles in date order; each applies from its date (null: from the start) until the next. An empty list: no profile for any date.",
@@ -66,20 +87,20 @@
             "required": ["from", "profile"],
             "properties": {
               "from": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/date"}]},
-              "profile": {"enum": ["scotus-ot1971", "us-coa", "us-district", "printed"]}
+              "profile": {"enum": ["scotus-numbered", "scotus-ot1971", "us-coa", "us-district", "printed"]}
             }
           }
         },
         "aliases": {
-          "description": "Other services' ids for the same court (spec section 10.1)",
+          "description": "Other services' ids for the same court or a part of it, as {service}:{id} (spec section 10.1)",
           "type": "array",
-          "items": {"type": "string", "minLength": 1},
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*:[^\\s]+$"},
           "uniqueItems": true
         },
         "replaced-by": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
         "source": {
-          "description": "Where the code came from: courts-db, or exemplar for a code this registry minted",
-          "enum": ["courts-db", "exemplar"]
+          "description": "Where the code came from: courts-db; courtlistener, CourtListener's court id for a court courts-db lacks; or exemplar for a code this registry minted",
+          "enum": ["courts-db", "courtlistener", "exemplar"]
         }
       }
     }

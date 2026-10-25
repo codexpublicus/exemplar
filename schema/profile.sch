@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Schematron rules for spec/akoma-ntoso-profile.md 0.3.x.
+  Schematron rules for spec/akoma-ntoso-profile.md 0.4.x.
 
   These rules check what the Akoma Ntoso 1.0 XML Schema can't: the profile's rules marked
   "Schematron" in section 16.2 of the profile. Run them after XSD validation; a document that
@@ -19,7 +19,7 @@
   absolute (section 5.3): the court registry's is its raw file URL at a release tag.
 
   Open question O7 (decisions without a decision key) is still open. These rules implement the
-  0.3.1 text, which takes its option (a): every document has a decision key.
+  0.4.0 text, which takes its option (a): every document has a decision key.
 -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -27,7 +27,7 @@
         xmlns:f="https://codexpublicus.org/ns/exemplar/functions"
         queryBinding="xslt2">
 
-  <title>Akoma Ntoso judgment profile for US decisions, 0.3.x</title>
+  <title>Akoma Ntoso judgment profile for US decisions, 0.4.x</title>
 
   <ns prefix="a" uri="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"/>
   <ns prefix="cx" uri="https://codexpublicus.org/ns/exemplar"/>
@@ -36,12 +36,17 @@
 
   <!-- The court record key regex, byte-identical to spec/court-record-key.md section 2.2. -->
   <xsl:function name="f:crk-regex" as="xs:string">
-    <xsl:sequence select="'^us/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$'"/>
+    <xsl:sequence select="'^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$'"/>
+  </xsl:function>
+
+  <!-- The jurisdiction codes CRK spec section 3 defines. -->
+  <xsl:function name="f:jurisdictions" as="xs:string+">
+    <xsl:sequence select="('us', 'pr', 'gu', 'vi', 'as', 'mp', 'gb', 'ph', 'ccj', 'england', 'hawaii', 'texas', 'vermont')"/>
   </xsl:function>
 
   <!-- Alias schemes, CRK spec section 11.1: scheme name and the regex for the whole alias. -->
   <xsl:function name="f:alias-schemes" as="xs:string+">
-    <xsl:sequence select="('cite', 'neutral', 'scotus-r', 'ca6', 'cmecf', 'govinfo', 'cap', 'cl-cluster', 'cl-opinion')"/>
+    <xsl:sequence select="('cite', 'neutral', 'scotus-r', 'ca6', 'cmecf', 'govinfo', 'cap', 'cl-cluster', 'cl-opinion', 'crk-printed')"/>
   </xsl:function>
   <xsl:function name="f:alias-regexes" as="xs:string+">
     <xsl:sequence select="(
@@ -53,7 +58,8 @@
       '^govinfo:[A-Za-z0-9_-]+$',
       '^cap:[a-z0-9][a-z0-9-]*/[0-9]+/[0-9]+-[0-9]{2}$',
       '^cl-cluster:[1-9][0-9]*$',
-      '^cl-opinion:[1-9][0-9]*$')"/>
+      '^cl-opinion:[1-9][0-9]*$',
+      '^crk-printed:[a-z]{2,16}/[a-z][a-z0-9-]*/[a-z0-9][a-z0-9_.-]*/[0-9]{4}-[0-9]{2}-[0-9]{2}(~([2-9]|[1-9][0-9]+))?$')"/>
   </xsl:function>
 
   <!-- The key a key reference names: the string after "crk:" (CRK spec section 2.6), or '' when
@@ -73,6 +79,27 @@
     <xsl:sequence select="matches(string($s), '^[0-9]{4}-[0-9]{2}-[0-9]{2}$') and string($s) castable as xs:date"/>
   </xsl:function>
 
+  <!-- A decided segment, CRK spec sections 2.3 and 6.2: a calendar date, or a zeroed date,
+       YYYY-MM-00 with a month 01 to 12 or YYYY-00-00, with a year from 0001. -->
+  <xsl:function name="f:is-decided" as="xs:boolean">
+    <xsl:param name="s" as="xs:string?"/>
+    <xsl:sequence select="f:is-date($s)
+        or (matches(string($s), '^[0-9]{4}-((0[1-9]|1[0-2])-00|00-00)$') and not(starts-with(string($s), '0000')))"/>
+  </xsl:function>
+
+  <!-- The calendar date a decided segment stands for, the first day of its period (CRK spec
+       section 6.2). -->
+  <xsl:function name="f:period-start" as="xs:string">
+    <xsl:param name="s" as="xs:string?"/>
+    <xsl:sequence select="if (ends-with(string($s), '-00-00')) then concat(substring($s, 1, 4), '-01-01') else if (ends-with(string($s), '-00')) then concat(substring($s, 1, 7), '-01') else string($s)"/>
+  </xsl:function>
+
+  <!-- The FRBRdate a decided segment gives (profile section 5.1.1): its @date and @name. -->
+  <xsl:function name="f:decided-name" as="xs:string">
+    <xsl:param name="s" as="xs:string?"/>
+    <xsl:sequence select="if (ends-with(string($s), '-00-00')) then 'decided-year' else if (ends-with(string($s), '-00')) then 'decided-year-month' else 'decided'"/>
+  </xsl:function>
+
   <!-- The parts of a key. They assume nothing about the input and return empty strings for
        strings that aren't keys; f:is-key decides validity. -->
   <xsl:function name="f:body" as="xs:string">
@@ -87,6 +114,10 @@
     <xsl:param name="key" as="xs:string?"/>
     <xsl:param name="n" as="xs:integer"/>
     <xsl:sequence select="string(tokenize(f:body($key), '/')[$n])"/>
+  </xsl:function>
+  <xsl:function name="f:jurisdiction" as="xs:string">
+    <xsl:param name="key" as="xs:string?"/>
+    <xsl:sequence select="f:segment($key, 1)"/>
   </xsl:function>
   <xsl:function name="f:court" as="xs:string">
     <xsl:param name="key" as="xs:string?"/>
@@ -128,8 +159,9 @@
     <xsl:param name="key" as="xs:string?"/>
     <xsl:variable name="s" select="string($key)"/>
     <xsl:sequence select="matches($s, f:crk-regex())
-        and f:is-date(f:decided($s))
-        and (f:revised($s) eq '' or (f:is-date(f:revised($s)) and f:revised($s) ge f:decided($s)))
+        and f:jurisdiction($s) = f:jurisdictions()
+        and f:is-decided(f:decided($s))
+        and (f:revised($s) eq '' or (f:is-date(f:revised($s)) and f:revised($s) ge f:period-start(f:decided($s))))
         and (not(starts-with(f:docket($s), 'rpt.')) or matches(f:docket($s), '^rpt\.[0-9]+-[a-z0-9][a-z0-9-]*-[0-9]+$'))
         and not(f:role($s) eq 'per-curiam' and exists(f:authors($s)))"/>
   </xsl:function>
@@ -168,7 +200,7 @@
     <xsl:sequence select="if (matches($n, '^[1-9][0-9]*$')) then xs:integer($n) else -1"/>
   </xsl:function>
 
-  <let name="profile-line" value="'0.3'"/>
+  <let name="profile-line" value="'0.4'"/>
   <let name="meta" value="/a:akomaNtoso/a:judgment/a:meta"/>
   <let name="work" value="f:key-of-uri($meta/a:identification/a:FRBRWork/a:FRBRthis/@value)"/>
   <let name="expression" value="f:key-of-uri($meta/a:identification/a:FRBRExpression/a:FRBRthis/@value)"/>
@@ -208,14 +240,14 @@
       <let name="this" value="f:key-of-uri(a:FRBRthis/@value)"/>
       <assert test="f:is-key($this) and f:part($this) eq '' and f:revised($this) eq ''">[AKN-9] The work URI "<value-of select="a:FRBRthis/@value"/>" is a key reference, crk: followed by a valid decision key.</assert>
       <assert test="every $u in a:FRBRuri satisfies string($u/@value) eq string(a:FRBRthis/@value)">[AKN-9] FRBRWork/FRBRuri equals FRBRthis.</assert>
-      <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq 'decided' and string($d/@date) eq f:decided($this)))">[AKN-11] FRBRWork/FRBRdate is the decision date, <value-of select="f:decided($this)"/>, named "decided".</assert>
+      <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq f:decided-name(f:decided($this)) and string($d/@date) eq f:period-start(f:decided($this))))">[AKN-11] FRBRWork/FRBRdate is dated <value-of select="f:period-start(f:decided($this))"/> and named "<value-of select="f:decided-name(f:decided($this))"/>", from the key's decided segment <value-of select="f:decided($this)"/>.</assert>
       <assert test="every $a in a:FRBRauthor satisfies $a/@href eq $court-ref">[AKN-12] FRBRWork/FRBRauthor/@href is "<value-of select="$court-ref"/>".</assert>
-      <assert test="a:FRBRcountry/@value eq 'us'">[AKN-13] FRBRcountry/@value is "us".</assert>
+      <assert test="not(f:is-key($this)) or a:FRBRcountry/@value eq f:jurisdiction($this)">[AKN-13] FRBRcountry/@value is the key's jurisdiction segment, "<value-of select="f:jurisdiction($this)"/>".</assert>
       <assert test="every $n in a:FRBRnumber satisfies $n/@value eq f:docket($this)">[5.1.1] FRBRnumber/@value is the key's docket segment, "<value-of select="f:docket($this)"/>".</assert>
     </rule>
     <rule context="a:identification/a:FRBRWork/a:FRBRalias">
       <let name="key" value="f:key-of-uri(../a:FRBRthis/@value)"/>
-      <let name="akn-nc" value="concat('/akn/us/judgment/', f:court($key), '/', f:decided($key), '/', f:docket($key))"/>
+      <let name="akn-nc" value="concat('/akn/', f:jurisdiction($key), '/judgment/', f:court($key), '/', f:decided($key), '/', f:docket($key))"/>
       <assert test="if (@name eq 'akn-nc') then (f:decision-ordinal($key) ne '' or @value eq $akn-nc)
                     else if (@name eq 'vendor') then normalize-space(@value) ne ''
                     else if (@name = f:alias-schemes()) then (@name ne 'cl-opinion' and f:alias-scheme(@value) eq @name)
@@ -224,8 +256,8 @@
     </rule>
     <rule context="a:identification/a:FRBRExpression">
       <let name="this" value="f:key-of-uri(a:FRBRthis/@value)"/>
-      <let name="date-name" value="if (f:revised($this) ne '') then 'revised' else 'decided'"/>
-      <let name="date" value="if (f:revised($this) ne '') then f:revised($this) else f:decided($this)"/>
+      <let name="date-name" value="if (f:revised($this) ne '') then 'revised' else f:decided-name(f:decided($this))"/>
+      <let name="date" value="if (f:revised($this) ne '') then f:revised($this) else f:period-start(f:decided($this))"/>
       <assert test="f:is-key($this) and f:part($this) eq '' and f:decision-key($this) eq $work">[AKN-15] The expression URI "<value-of select="a:FRBRthis/@value"/>" is a key reference, crk: followed by a valid version key of the work "<value-of select="$work"/>".</assert>
       <assert test="every $u in a:FRBRuri satisfies string($u/@value) eq string(a:FRBRthis/@value)">[AKN-15] FRBRExpression/FRBRuri equals FRBRthis.</assert>
       <assert test="a:FRBRdate and (every $d in a:FRBRdate satisfies ($d/@name eq $date-name and string($d/@date) eq $date))">[AKN-16] FRBRExpression/FRBRdate is named "<value-of select="$date-name"/>" with date <value-of select="$date"/>.</assert>
