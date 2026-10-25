@@ -483,6 +483,23 @@ def mint(ledger: list[dict[str, Any]], decision: str, candidate: str) -> dict[st
     return {"key": key, "minted": True, "replaces": active[0]["key"] if active else None}
 
 
+OVERRIDING_SOURCES = frozenset({"official", "human-curated"})
+
+
+def is_provisional(facts: dict[str, Any]) -> bool:
+    """Section 13.3: whether second sources' dates make the key provisional.
+
+    facts' second_sources is [{date (ISO 8601, reduced or not), kind}]: kind official or
+    human-curated may override a date the printing gives in full; any other kind (courtlistener,
+    engine-output, another printing, ...) only a date the printing gives to the month or year.
+    """
+    printed = facts.get("printed_decided", facts["decided"])
+    sources = facts.get("second_sources", [])
+    if len(printed) == 10:
+        return any(s["kind"] in OVERRIDING_SOURCES and s["date"] != printed for s in sources)
+    return any(not s["date"].startswith(printed) for s in sources)
+
+
 def resolve(ledger: list[dict[str, Any]], key: str) -> dict[str, Any]:
     """Section 13.1: follow replaced-by to the current key; {key, decision, provisional}."""
     entries = {e["key"]: e for e in ledger}

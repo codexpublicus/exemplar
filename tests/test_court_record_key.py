@@ -125,6 +125,8 @@ class TestCompute:
                 assert aliases == v["aliases"]
                 for alias in aliases:
                     assert abnf_accepts("crk-ref", alias)
+            if "provisional" in v:
+                assert crk_check.is_provisional(v["facts"]) is v["provisional"]
             if "printed_alias" in v:
                 alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS)
                 assert alias == v["printed_alias"]
