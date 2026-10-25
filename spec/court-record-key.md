@@ -1,6 +1,6 @@
 # Court record key
 
-Specification version: **0.4.0** (draft). Status: not yet stable; see section 13.
+Specification version: **0.4.0** (draft). Status: not yet stable; see section 13.5.
 
 A court record key (CRK) is a deterministic identifier for a court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the jurisdiction and the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation. This version registers the courts of the United States, of five US territories, and the few English and colonial courts American sources hold (section 3).
 
@@ -27,7 +27,8 @@ Terms:
 - **Decision.** One issuance by a court, on one date, in one docket or consolidated group of dockets. It includes the judgment and every writing issued with it. This is the FRBR *work*.
 - **Part.** A separately headed writing within a decision: the opinion of the court, a concurrence, a dissent, a statement, and so on.
 - **Version.** A later amended, corrected or revised issuance of the same decision with no new judgment. This is the FRBR *expression*.
-- **Mint.** To compute a key for a decision or part and publish it.
+- **Mint.** To publish a key for a decision or part, recording a decision key in the publisher's minted-key ledger (section 13.2). A minted key keeps resolving to its decision (section 13.1).
+- **Publisher.** Whoever mints keys and resolves them, such as stare.pub. A publisher keeps a minted-key ledger and publishes an errata list (section 13.4).
 - **Producer.** An implementation that computes keys from facts. **Validator.** An implementation that checks a string against this grammar and the validity rules. **Resolver.** An implementation that maps a key or alias to a record.
 
 ## 2. Grammar
@@ -238,7 +239,7 @@ slug        = ( LC / DIGIT ) *( LC / DIGIT / "-" )
 
 Example: 1 Mass. 1, decided 1804-03-01, gives `us/mass/rpt.1-mass-1/1804-03-01`.
 
-When a decision takes the fallback, its decision ordinal (section 7) is its position, in the order the reporter prints them (CAP's file ordinal: `-01`, `-02`), among all the decisions that begin on the same reporter page and share its decision date, whether or not they take the fallback themselves. The first is unmarked and the second takes `~2`, even when no decision on the page has the unmarked fallback key. Glover, printed second on 500 Pa. 524 after the docketed Kibler and decided the same day, is `us/pa/rpt.500-pa-524/1983-04-27~2`.
+When a decision takes the fallback, its initial decision ordinal (sections 7, 13.2) is its position, in the order the reporter prints them (CAP's file ordinal: `-01`, `-02`), among all the decisions that begin on the same reporter page and share its decision date, whether or not they take the fallback themselves. The first is unmarked and the second takes `~2`, even when no decision on the page has the unmarked fallback key. Glover, printed second on 500 Pa. 524 after the docketed Kibler and decided the same day, is `us/pa/rpt.500-pa-524/1983-04-27~2`.
 
 A fallback key is **non-canonical**: it is deterministic, but it rests on a citation a publisher assigned after the fact, and the `rpt.` prefix marks that. If a docket number is later recovered, the producer mints the docket key and records the fallback key as `replaced-by` that key (section 11). The fallback key MUST NOT be deleted or reused.
 
@@ -256,7 +257,7 @@ Before 1971-07-01 the Supreme Court's docket numbers carry no year, and a number
 
 Hilton's Administrator v. Jones, 159 U.S. 584, printed `No. 1.` and decided 1895-11-18, is `us/scotus/1/1895-11-18`. A list of dockets is keyed by its first (section 5.1): `No. 365; No. 366; No. 367; No. 368` gives `365`. A docket the profile rejects (a range, `Nos. 202-207`; a lower court's number a reprint prints in its place) or a decision with none takes the reporter fallback, as the decisions in 2 U.S. (2 Dall.) do: Chisholm v. Georgia, which CAP dates only to 1793, is `us/scotus/rpt.2-us-419/1793-00-00`.
 
-Two decisions decided the same day can print the same number, by misprint (United States v. Alexander, 148 U.S. 186, and United States v. Truesdell, 148 U.S. 196, both print `No. 552.` and were decided 1893-03-06) or because CAP's metadata reads a case name's `(No. 1)` as a docket. They compute the same key, and the decision ordinal separates them (section 7): for this profile it is counted in the order the United States Reports prints them, volume then page, because the Court's docket entries for those terms are not available to a producer.
+Two decisions decided the same day can print the same number, by misprint (United States v. Alexander, 148 U.S. 186, and United States v. Truesdell, 148 U.S. 196, both print `No. 552.` and were decided 1893-03-06) or because CAP's metadata reads a case name's `(No. 1)` as a docket. They compute the same candidate key, and the decision ordinal separates them (section 7): for this profile the initial ordinal is counted in the order the United States Reports prints them, volume then page, because the Court's docket entries for those terms are not available to a producer, and it is frozen at minting like any other (section 13.2).
 
 ## 6. Decision date
 
@@ -297,7 +298,7 @@ The alias is never minted and never a key. A resolver maps it to the decision's 
 
 The first instance of anything is unmarked. Later instances take `~2`, `~3`, and so on, in decimal with no leading zero. `~0` and `~1` are invalid.
 
-- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Under the reporter fallback, the ordinal is counted as section 5.6 says; for a partial-date key as section 6.2 says, and under the `scotus-numbered` profile as section 5.7 says. Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
+- **Decision ordinal.** When one court issues several separate decisions in one docket on one date (an opinion and a separately entered order on a motion, or two orders-list entries), the first is unmarked and the later ones take `~2`, `~3` in the order the court's docket records them (ascending docket-entry or document number). Under the reporter fallback, the ordinal is counted as section 5.6 says; for a zeroed date as section 6.2 says, and under the `scotus-numbered` profile as section 5.7 says. These rules give the initial ordinals: once a key is minted its ordinal is frozen, and a decision keyed later takes the next free ordinal (section 13.2). Writings issued together (an opinion with its concurrences and dissents, or an orders-list disposition with the statements appended to it) are one decision, not several.
 - **Part ordinal.** When the same role and the same author list appear twice in one decision, the second takes `~2`, in the order printed. The same author in two different roles is already unique (Gorsuch wrote both the opinion and a concurrence in Gutierrez-Brizuela v. Lynch).
 
 ## 8. Parts: roles and authors
@@ -408,7 +409,7 @@ Further schemes are added by a minor version.
 
 ### 11.2 Relations
 
-- `replaces` / `replaced-by`: between a new decision and the decision it vacates and replaces; between a fallback key and the docket key that supersedes it; and between a wrongly minted key and its correction.
+- `replaces` / `replaced-by`: between a new decision and the decision it vacates and replaces, whose keys each keep resolving to their own decision (section 9); and, in a publisher's ledger, from a superseded key to the key that supersedes it for the same decision (a fallback or zeroed-date key and the key minted when the docket or the date is established, a provisional key and its settled one), which makes the superseded key a redirect (section 13.1). A key corrected as an outright error is recorded in the errata list (section 13.4).
 
 ## 12. Computing a key (producer refusals)
 
@@ -431,9 +432,72 @@ A producer computes a key from: the court code, and the jurisdiction code the re
 
 An ordinal of 1 means the first instance and produces no mark. Every key a producer emits MUST be a valid key (section 2.3).
 
+What this section computes is a candidate key. A publisher mints it through its minted-key ledger, which confirms it or advances its decision ordinal (section 13.2).
+
 ## 13. Persistence and versioning
 
-**Freeze at mint.** Once minted, a key MUST NOT change, even if a later version of the decision reorders the caption or corrects the date. A key minted wrongly is retired with a `replaced-by` relation and MUST NOT be reused.
+### 13.1 The address guarantee
+
+A minted key always resolves to the decision it was minted for. A publisher MUST NOT change the decision a key resolves to, delete a key, or reuse a retired key for a different decision, except to correct an outright error (section 13.4).
+
+A key is never edited, even if a later version of the decision reorders the caption or corrects the date. When the facts a key was computed from change for the same decision (a date established later, section 6.1; a docket recovered for a fallback key, section 5.6; a provisional key settled, section 13.3; a version of this spec that computes the key differently), the publisher mints the new key and records the old one `replaced-by` it. The old key is then a permanent redirect: a resolver given it returns the key it is replaced by, following each `replaced-by` in turn to the decision's current key. A new decision that vacates and replaces an earlier one (section 9) is not a redirect: each key keeps resolving to its own decision, and the two decisions are related by `replaces` and `replaced-by` (section 11.2).
+
+### 13.2 The minted-key ledger
+
+A publisher that mints keys keeps a **minted-key ledger**. For each decision key it has minted, the ledger records:
+
+- the key;
+- the decision it was minted for, by the publisher's own identifier for its record;
+- its status: `active` (the decision's current key), `replaced` (superseded for the same decision, section 13.1) or `errata` (corrected by an errata entry, section 13.4);
+- the key it is `replaced-by`, when its status is `replaced`, or `errata` with a replacement;
+- whether it is provisional (section 13.3).
+
+A key enters the ledger when it is minted and never leaves it, and a decision has at most one active key. Part keys and version keys are formed from the decision's key as minted (sections 8, 9) and need no entries of their own. This spec doesn't fix the ledger's format.
+
+Sections 3 to 12 compute a **candidate** key. The ledger confirms or advances it, and only then is it minted:
+
+1. If the ledger holds an active key for the decision with the candidate's **stem** (the decision key without its decision ordinal), that key is the decision's key, whatever ordinal the candidate has, and nothing is minted.
+2. Otherwise, if no ledger entry holds the candidate, whatever its status, the candidate is minted as computed. If one does, the ordinal advances: the key minted is the candidate's stem with the lowest decision ordinal above the candidate's that no ledger entry holds.
+3. The minted key is recorded `active`. If the decision had an active key, that key becomes `replaced`, `replaced-by` the new one.
+
+Ordinals are therefore frozen at minting. The first decision minted under a stem keeps its ordinal, and a decision that arrives later (one the producer couldn't key before, or one a new source adds) takes the next free ordinal, even where the printed order or the docket would put it first. Before any key with a stem is minted, the ledger holds nothing under it and confirms every candidate, so the initial ordinals are those sections 5.6, 5.7, 6.2 and 7 compute. For example, decisions A and B, printed in that order on one page and dated May 1882, are minted `us/dakotasup/rpt.3-dakota-1/1882-05-00` and `~2`. A decision printed on the page before them that a later source adds computes the unmarked candidate; the ledger holds it, and holds `~2`, so the new decision is minted `~3`, and A and B keep their keys.
+
+The ledger makes a minted key a fact about a publisher, not only about the decision: two publishers with different ledgers can mint different keys for one decision. The candidate key, and the printed-date alias (section 6.3), stay the same for both.
+
+### 13.3 Provisional keys
+
+Where trustworthy sources disagree about the decision date, or about another fact a key is computed from, a producer MAY mint the key all the same, marked **provisional** in the ledger. It SHOULD compute it from the value the decision's printing gives for the disputed fact (section 6.3). The mark is metadata, never part of the key: a provisional key has the same form as any other and resolves like any other, and a resolver SHOULD report the mark with it.
+
+When a person settles the disagreement, the producer recomputes the key from the settled facts. If that gives the same key, the mark is removed. Otherwise the settled key is minted (section 13.2), and the provisional key is `replaced-by` it.
+
+### 13.4 Errata
+
+The one exception to section 13.1 is the correction of an outright error: a key minted for the wrong decision, or computed from facts that were wrong (a misread docket, a wrong date, the wrong court), not merely less precise than facts established later. A publisher MAY retarget such a key to the decision it should have named, or retire it with a replacement. Every such correction MUST be recorded in the publisher's errata list, and none is ever made silently; the key's ledger status becomes `errata`.
+
+A publisher that mints keys MUST publish an errata list, an empty one included, at a stable URL it records alongside its keys and the registry snapshots it used (section 10.3). The list is a JSON document, valid under `schema/crk-errata.schema.json`:
+
+- `publisher`: an absolute URI naming the publisher.
+- `entries`: the corrections, in the order they were made. Each has `seq`, its position in the list (1, 2, ... with no gaps); `date`, the date of the correction (`YYYY-MM-DD`); `key`, the key corrected; `error`, `wrong-decision` or `wrong-facts`; `reason`, what was wrong, in words; and exactly one of `replaced_by`, the key that replaces it, which the corrected key then redirects to, or `target`, an alias (section 11.1) of the decision the key resolves to from then on.
+
+The list is append-only: each published version holds every entry of the one before, unchanged and in the same order, and adds new entries at the end. An illustrative list with one correction:
+
+```json
+{
+  "publisher": "https://stare.pub/",
+  "entries": [
+    {
+      "seq": 1,
+      "date": "2026-11-02",
+      "key": "us/mass/rpt.1-mass-1/1804-03-10",
+      "error": "wrong-facts",
+      "reason": "Decision date misread from the scan; the report prints March 1, 1804.",
+      "replaced_by": "us/mass/rpt.1-mass-1/1804-03-01"
+    }
+  ]
+}
+```
+
+### 13.5 Versions
 
 **Spec versions.** This spec is versioned with [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html), because consumers pin it:
 
@@ -480,6 +544,7 @@ A producer that minted a key under 0.2.0 that these rules compute differently re
 | `docket.jsonl` | printed docket to docket segment, per profile |
 | `byline.jsonl` | the name a byline prints to a judge slug, through the judge registry's names and printed forms |
 | `alias.jsonl` | printed identifier to alias string, and alias to key |
+| `ledger.jsonl` | a candidate key and a minted-key ledger to the key minted, and a key to the current key it resolves to (sections 13.1 to 13.4) |
 
 Every vector records its `provenance`:
 
@@ -506,4 +571,4 @@ Non-normative. Each is a gap this version leaves for a later one.
 - The `us-district` profile is assigned to historical district courts, whose dockets predate the PACER form and so fall to `rpt.`; they may want a profile of their own.
 - Codes for tribal nations (codexpublicus/exemplar#45), and the courts that sit for several states and would take a body code, such as the Caribbean Court of Justice or the Privy Council in its modern jurisdiction (codexpublicus/exemplar#25).
 - The colonies' change of sovereign is dated 1776-07-04 for all thirteen, although some broke with the Crown earlier and New York's courts sat under it until 1783.
-- The decision ordinal when a docket doesn't record which of two decisions came first is settled only for partial-date keys (section 6.2) and the `scotus-numbered` profile (section 5.7); codexpublicus/exemplar#29 asks about the rest.
+- The decision ordinal when a docket doesn't record which of two decisions came first is settled only for zeroed dates (section 6.2) and the `scotus-numbered` profile (section 5.7); codexpublicus/exemplar#29 asks about the rest.

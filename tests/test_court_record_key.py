@@ -133,6 +133,46 @@ class TestCompute:
             assert refusal.value.args[0] == v["error"]
 
 
+class TestLedger:
+    """ledger.jsonl: a ledger confirms or advances a candidate; a resolver follows replaced-by."""
+
+    @pytest.mark.parametrize("v", load("ledger.jsonl"), ids=ids("ledger.jsonl"))
+    def test_ledger_is_well_formed(self, v: dict[str, Any]) -> None:
+        keys = [e["key"] for e in v["ledger"]]
+        assert len(set(keys)) == len(keys)
+        active: set[str] = set()
+        for e in v["ledger"]:
+            # Section 13.2: decision keys only; at most one active key per decision.
+            assert crk_check.classify(e["key"]) is None, e["key"]
+            assert crk_check.decision_key(crk_check.parse(e["key"])) == e["key"]
+            assert e["status"] in {"active", "replaced", "errata"}
+            assert ("replaced_by" in e) is (e["status"] == "replaced") or e["status"] == "errata"
+            if "replaced_by" in e:
+                assert e["replaced_by"] in keys
+            if e["status"] == "active":
+                assert e["decision"] not in active
+                active.add(e["decision"])
+
+    @pytest.mark.parametrize("v", load("ledger.jsonl"), ids=ids("ledger.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        assert crk_check.classify(v["key"]) is None
+        if "candidate" in v:
+            assert crk_check.classify(v["candidate"]) is None
+            got = crk_check.mint(v["ledger"], v["decision"], v["candidate"])
+            assert got == {"key": v["key"], "minted": v["minted"], "replaces": v["replaces"]}
+            if v["minted"]:
+                # Never a key the ledger already holds, whatever its status.
+                assert v["key"] not in {e["key"] for e in v["ledger"]}
+                assert crk_check.stem(v["key"]) == crk_check.stem(v["candidate"])
+        else:
+            got = crk_check.resolve(v["ledger"], v["resolve"])
+            assert got == {
+                "key": v["key"],
+                "decision": v["decision"],
+                "provisional": v["provisional"],
+            }
+
+
 class TestDocket:
     """docket.jsonl: each profile's printed-to-segment mapping."""
 

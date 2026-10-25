@@ -456,6 +456,48 @@ def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str
     return ["crk:" + decision_key({**decision, "docket": d, "decision_ordinal": 1}) for d in others]
 
 
+# The minted-key ledger (spec section 13.2).
+
+
+def stem(key: str) -> str:
+    """The decision key without its decision ordinal."""
+    return decision_key({**parse(key), "decision_ordinal": 1})
+
+
+def mint(ledger: list[dict[str, Any]], decision: str, candidate: str) -> dict[str, Any]:
+    """Section 13.2: the key a ledger confirms or advances a candidate to.
+
+    Returns {key, minted (false when the ledger confirms the decision's active key), replaces
+    (the decision's active key the new one supersedes, or None)}.
+    """
+    active = [e for e in ledger if e["decision"] == decision and e["status"] == "active"]
+    assert len(active) <= 1, decision
+    if active and stem(active[0]["key"]) == stem(candidate):
+        return {"key": active[0]["key"], "minted": False, "replaces": None}
+    held = {e["key"] for e in ledger}
+    parts = parse(candidate)
+    key = candidate
+    while key in held:
+        parts["decision_ordinal"] += 1
+        key = decision_key(parts)
+    return {"key": key, "minted": True, "replaces": active[0]["key"] if active else None}
+
+
+def resolve(ledger: list[dict[str, Any]], key: str) -> dict[str, Any]:
+    """Section 13.1: follow replaced-by to the current key; {key, decision, provisional}."""
+    entries = {e["key"]: e for e in ledger}
+    entry, seen = entries[key], {key}
+    while entry.get("replaced_by"):
+        entry = entries[entry["replaced_by"]]
+        assert entry["key"] not in seen, key
+        seen.add(entry["key"])
+    return {
+        "key": entry["key"],
+        "decision": entry["decision"],
+        "provisional": entry.get("provisional", False),
+    }
+
+
 def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:
     """Section 10.2: the slug whose name or printed forms equal a byline's name after case
     folding, for the court."""

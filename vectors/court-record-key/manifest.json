@@ -64,6 +64,19 @@
         "alias": "alias string",
         "resolves_to": "keys, when known"
       }
+    },
+    "ledger.jsonl": {
+      "checks": "A publisher's minted-key ledger confirms or advances a candidate key (mint vectors), or a resolver follows replaced-by from a key to the decision's current key (resolve vectors) (spec sections 13.1 to 13.4).",
+      "fields": {
+        "ledger": "the ledger before the step: [{key (a decision key), decision (the publisher's identifier for the decision), status (active, replaced or errata), replaced_by? (a key), provisional? (true when marked, spec section 13.3)}]",
+        "decision": "mint vectors: the decision being keyed; resolve vectors: the expected decision",
+        "candidate": "mint vectors: the key sections 3 to 12 compute",
+        "resolve": "resolve vectors: the key given to the resolver",
+        "key": "mint vectors: the key the ledger gives the decision; resolve vectors: the current key",
+        "minted": "mint vectors: false when the ledger confirms the decision's active key and nothing is minted",
+        "replaces": "mint vectors: the decision's active key that the new key supersedes, or null",
+        "provisional": "resolve vectors: whether the current key is marked provisional"
+      }
     }
   }
 }
