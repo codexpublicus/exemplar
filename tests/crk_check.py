@@ -251,6 +251,24 @@ def _coa(text: str) -> str | None:
     return text if re.fullmatch(r"[0-9]{2}-[0-9]{3,5}", text) else None
 
 
+def _cafc(text: str) -> str | None:
+    """Proposed 0.5.0, section 5.8: the Federal Circuit from 1982-10-01."""
+    if m := re.fullmatch(r"(?:19|20)([0-9]{2})-([0-9]{3,5})", text):
+        return f"{m.group(1)}-{m.group(2)}"
+    if re.fullmatch(r"[0-9]{2}-[0-9]{3,5}", text):
+        return text
+    if m := re.fullmatch(
+        r"(?:misc(?:ellaneous)?\.?\s*(?:nos?\.?\s*)?|(?:(?:19|20)?[0-9]{2}-)?m)([0-9]{1,4})"
+        r"(?:\s*(?:,|&|\band\b)\s*[0-9]{1,4})*",
+        text,
+        re.IGNORECASE,
+    ):
+        return f"{m.group(1)}-misc"
+    if re.fullmatch(r"[0-9]{1,3}-(?:[0-9]{2}[a-z]?|[a-z])", text, re.IGNORECASE):
+        return text.lower()
+    return None
+
+
 def _district(text: str) -> str | None:
     m = re.fullmatch(
         r"([0-9]):([0-9]{2})-([a-z]{1,4})-([0-9]{1,5})(?:-[a-z]{2,4})*", text, re.IGNORECASE
@@ -268,6 +286,7 @@ PROFILES = {
     "scotus-numbered": _scotus_numbered,
     "scotus-ot1971": _scotus,
     "us-coa": _coa,
+    "us-cafc": _cafc,
     "us-district": _district,
     "printed": _printed,
 }
@@ -322,12 +341,54 @@ def other_dockets(
 
 
 def slug(text: str) -> str:
-    text = re.sub(r"[.'’(),]", "", text.lower())
+    """Section 5.6: a reporter abbreviation reduced to a slug (proposed 0.5.0: `&` deleted)."""
+    text = re.sub(r"[.'’(),&]", "", text.lower())
     return re.sub(r"\s+", "-", text.strip())
 
 
+def volume_text(volume: str) -> str:
+    """Section 5.6 (proposed 0.5.0): a volume numbered with a fraction, `81 1/2`, is `81-1-2`."""
+    return re.sub(r"[\s/]+", "-", volume.strip())
+
+
 def rpt_segment(citation: dict[str, str]) -> str:
-    return f"rpt.{citation['volume']}-{slug(citation['reporter'])}-{citation['page']}"
+    return f"rpt.{volume_text(citation['volume'])}-{slug(citation['reporter'])}-{citation['page']}"
+
+
+SUPREME_COURT_REPORTERS = frozenset({"us", "sct", "led", "led2d"})
+
+
+def supreme_court_citation(citation: dict[str, str] | None) -> bool:
+    """Proposed 0.5.0 (P4), section 4: whether an official citation is one only the Supreme
+    Court's decisions take: the United States Reports from volume 5, the Supreme Court Reporter,
+    the Lawyers' Edition. 1 to 4 U.S. (Dallas) also print Pennsylvania and circuit decisions."""
+    if citation is None:
+        return False
+    reporter = slug(citation["reporter"]).replace("-", "")
+    if reporter not in SUPREME_COURT_REPORTERS:
+        return False
+    return not (reporter == "us" and int(citation["volume"].split()[0]) <= 4)
+
+
+def fallback_citation(facts: dict[str, Any]) -> dict[str, str] | None:
+    """Section 5.6 (proposed 0.5.0): the citation the fallback uses.
+
+    reporter_citation is the decision's official citation; printed_in is the volume and page the
+    source's volume prints it on, and that volume's reporter. With no official citation, printed_in.
+    When the official citation names printed_in's volume number but another reporter, the
+    reporter is printed_in's.
+    """
+    official, printed_in = facts.get("reporter_citation"), facts.get("printed_in")
+    if official is None:
+        return printed_in
+    if (
+        printed_in is not None
+        and official["volume"] == printed_in["volume"]
+        and slug(official["reporter"]).replace("-", "")
+        != slug(printed_in["reporter"]).replace("-", "")
+    ):
+        return {**official, "reporter": printed_in["reporter"]}
+    return official
 
 
 def court_for_cap(cap_courts: dict[str, Any], cap_id: str, decided: str | None) -> str:
@@ -365,11 +426,13 @@ def compute(
         raise Refusal("no-decision-date")
     if decided is None:
         raise Refusal("date")
+    if court != "scotus" and supreme_court_citation(facts.get("reporter_citation")):
+        raise Refusal("court-conflict")  # proposed 0.5.0 (P4), section 4
     # Section 3: the registry's jurisdiction code, never the facts'.
     jurisdiction = jurisdiction_for(courts[court], decided)
     if profile_for(courts[court], decided) is None:
         raise Refusal("no-docket-profile")  # before the docket: no rpt. fallback (5.6)
-    citation = facts.get("reporter_citation")
+    citation = fallback_citation(facts)
     printed = facts.get("docket")
     try:
         if printed is None:
@@ -380,7 +443,18 @@ def compute(
             raise
         docket = rpt_segment(citation)
     ordinal = facts.get("decision_ordinal", 1)
-    if docket.startswith("rpt.") and "page_decisions" in facts:
+    if docket.startswith("rpt.") and "volume_decisions" in facts:
+        # Section 5.6 (proposed 0.5.0): count, in printed order, the decisions in the volume whose
+        # fallback citation is the same and that share the date.
+        before = facts["volume_decisions"][: facts["volume_position"]]
+        ordinal = sum(
+            1
+            for d in before
+            if d["decided"] == fact
+            and (c := fallback_citation(d)) is not None
+            and rpt_segment(c) == docket
+        )
+    elif docket.startswith("rpt.") and "page_decisions" in facts:
         # Section 5.6: count every decision that begins on the page and shares the date.
         before = facts["page_decisions"][: facts["page_position"]]
         ordinal = sum(1 for d in before if d["decided"] == fact)
@@ -438,6 +512,11 @@ def printed_alias(
     }
     printed["decided"] = facts.get("printed_decided", facts.get("decided"))
     printed["decision_ordinal"] = facts.get("printed_ordinal", 1)
+    if "volume_decisions" in facts:
+        printed["volume_decisions"] = [
+            {**d, "decided": d.get("printed_decided", d["decided"])}
+            for d in facts["volume_decisions"]
+        ]
     if "page_decisions" in facts:
         printed["page_decisions"] = [
             {**d, "decided": d.get("printed_decided", d["decided"])}
@@ -551,9 +630,9 @@ def author_for(printed: str, court: str, judges: dict[str, Any]) -> str:
 
 def normalize_alias(scheme: str, printed: str) -> str:
     if scheme == "cite":
-        m = re.fullmatch(r"([0-9]+)\s+(.+?)\s+([0-9]+)", printed.strip())
+        m = re.fullmatch(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+([0-9]+)", printed.strip())
         assert m, printed
-        return f"cite:{m.group(1)}-{slug(m.group(2))}-{m.group(3)}"
+        return f"cite:{volume_text(m.group(1))}-{slug(m.group(2))}-{m.group(3)}"
     if scheme == "neutral":
         return f"neutral:{slug(printed)}"
     if scheme == "ca6":

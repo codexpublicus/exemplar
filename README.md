@@ -76,7 +76,7 @@ The build is deterministic, and the checks run `--check`. It refuses a case rath
 
 ## Court registry
 
-`registry/courts.json` is the court registry the court record key spec references (section 10). Its version is a CalVer date (`2026.10.23`), separate from the spec's SemVer version: adding courts is a new registry version, and a release tag pins both. It holds 2,812 courts: every court in courts-db but one whose id fails the court rule, each with the jurisdiction code and docket profile this registry assigns it, and four courts courts-db lacks, under CourtListener's ids.
+`registry/courts.json` is the court registry the court record key spec references (section 10). Its version is a CalVer date (`2026.10.25`), separate from the spec's SemVer version: adding courts is a new registry version, and a release tag pins both. It holds 2,812 courts: every court in courts-db but one whose id fails the court rule, each with the jurisdiction code and docket profile this registry assigns it, and four courts courts-db lacks, under CourtListener's ids.
 
 Source and provenance: the court codes are the ids in Free Law Project's courts-db, <https://github.com/freelawproject/courts-db>, file `courts_db/data/courts.json` at commit `c22604dff8b6819d022cc5ddfd6d9080101149e3` (2026-10-07), retrieved 2026-10-18. That file is vendored unchanged at `registry/sources/courts-db/courts.json`, with the repository's LICENSE file beside it; courts-db's LICENSE states the BSD 2-Clause License. The registry's `source` block records the same facts and the vendored file's SHA-256, and its `excluded` block lists the one courts-db id left out and why.
 
@@ -88,7 +88,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.4.0 (draft), with court registry 2026.10.23; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.4.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.4.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
+Early. Nothing here is stable yet. The court record key spec is at 0.5.0 (draft, with proposals pending the owner's ruling), with court registry 2026.10.25; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.4.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.4.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
