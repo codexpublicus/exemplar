@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Check registry/courts.json: its schema, its source pin, and the spec's rules for it."""
 
 import hashlib

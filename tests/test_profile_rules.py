@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Check schema/profile.sch, schema/sidecar.schema.json and the reference validator.
 
 The document vectors in vectors/akn-profile/documents.jsonl each edit a base document and name

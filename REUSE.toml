@@ -1,0 +1,40 @@
+# Licence annotations for files that can't carry an SPDX header (JSON, JSON Lines, XML data,
+# Markdown). Code files carry their own SPDX headers. README.md says which licence covers which
+# path.
+#
+# Not annotated here: the vendored third-party files (schema/akn/1.0/*.xsd,
+# registry/sources/courts-db/, validator/vendor/schxslt2/ other than source.json), which keep the
+# terms they state, and registry/NOTICE-courts-db.txt, which reproduces courts-db's notice.
+version = 1
+
+[[annotations]]
+path = ["uv.lock", ".gitignore", "pyproject.toml", "validator/vendor/schxslt2/source.json"]
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = [
+    "README.md",
+    "CHANGELOG.md",
+    "spec/**",
+    "schema/*.json",
+    "schema/profile.sch",
+    "schema/akn/1.0/source.json",
+    "registry/courts.json",
+    "registry/cap-courts.json",
+    "vectors/**",
+    "examples/README.md",
+    "examples/minimal/**",
+    "examples/cap/*.akn.xml",
+    "examples/cap/*.sidecar.json",
+    "examples/cap/judges.json",
+    "examples/cap/manifest.json",
+    "examples/cap/volumes.lock.json",
+]
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
+SPDX-License-Identifier = "CC-BY-ND-4.0"
+
+# The Caselaw Access Project's own case files, unchanged, which CAP publishes under CC0 1.0.
+[[annotations]]
+path = ["examples/cap/source/**"]
+SPDX-License-Identifier = "CC0-1.0"

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
+# SPDX-License-Identifier: BSD-3-Clause
+
 """A minimal reading of spec/court-record-key.md, used only to check the vectors.
 
 It is written from the spec's prose, not from any producer, so a vector that
