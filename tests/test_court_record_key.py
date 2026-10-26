@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Check the court record key vectors against the spec's ABNF, its regex, and its rules.
 
 The ABNF and the regex are read out of spec/court-record-key.md, so the spec,

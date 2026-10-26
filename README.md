@@ -103,3 +103,22 @@ The checks read the ABNF and the regex straight out of the spec, so a grammar ch
 For the Akoma Ntoso profile, they validate every `examples/**/*.akn.xml` against the vendored Akoma Ntoso 1.0 schema (after checking its files against their pins), check each example's work, expression and part URIs against the court record key rules, and check that the example quoted in the profile is identical to `examples/minimal/`.
 
 For the Schematron rules and the sidecar, they run every vector in `vectors/akn-profile/`: each edits a valid document or sidecar and names the rules the result must fail, no more and no fewer. They also check the vendored transpiler against its pins, that the Schematron's key regex is byte-identical to the court record key spec's, that its key and alias functions accept and reject what the court record key vectors say, that it covers every rule section 16.2 assigns it, and that every rule it checks has a vector.
+
+## Licensing
+
+Copyright (c) 2026 <COPYRIGHT HOLDER>.
+
+The specification text, the schemas, the court registry and the test vectors are licensed under the Creative Commons Attribution-NoDerivatives 4.0 International licence (CC BY-ND 4.0), whose legal code is in [`LICENSES/CC-BY-ND-4.0.txt`](LICENSES/CC-BY-ND-4.0.txt). The code is licensed under the BSD 3-Clause License, in [`LICENSE`](LICENSE).
+
+| Path | Licence |
+|---|---|
+| `spec/` | CC BY-ND 4.0 |
+| `schema/` (except `schema/akn/1.0/*.xsd`) | CC BY-ND 4.0 |
+| `registry/courts.json`, `registry/cap-courts.json` | CC BY-ND 4.0 |
+| `vectors/` | CC BY-ND 4.0 |
+| `validator/validate.py`, `validator/__init__.py`, `validator/vendor/schxslt2/source.json`, `tests/`, `registry/build_courts.py`, `examples/cap/build.py`, `.mise/`, `.github/`, `pyproject.toml`, `uv.lock` | BSD 3-Clause |
+| `examples/` (except `examples/cap/build.py`) | not yet assigned; see [`examples/README.md`](examples/README.md) |
+| `README.md`, `CHANGELOG.md` | not yet assigned |
+| `schema/akn/1.0/*.xsd`, `registry/sources/courts-db/`, `validator/vendor/schxslt2/` (except `source.json`) | vendored third-party files under the terms each states, described above |
+
+Code files carry SPDX headers (`SPDX-License-Identifier: BSD-3-Clause`); [`REUSE.toml`](REUSE.toml) records the same for the files that can't carry one.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Reference validator for exemplar documents and viewer sidecars.
 
 An Akoma Ntoso document (*.akn.xml) is checked against the vendored Akoma Ntoso 1.0 XML Schema

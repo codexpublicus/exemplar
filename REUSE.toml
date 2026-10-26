@@ -1,0 +1,37 @@
+# Licence annotations for files that can't carry an SPDX header (JSON, JSON Lines, XML data,
+# Markdown specs). Code files carry their own SPDX headers. README.md says which licence covers
+# which directory.
+#
+# Not annotated here, and so not covered by either of this repository's licences:
+# - the vendored third-party files (schema/akn/1.0/*.xsd, registry/sources/courts-db/,
+#   validator/vendor/schxslt2/), which keep the terms they state;
+# - examples/ apart from examples/cap/build.py (see examples/README.md);
+# - README.md and CHANGELOG.md.
+version = 1
+
+[[annotations]]
+path = ["uv.lock", ".gitignore", "pyproject.toml"]
+SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ["validator/vendor/schxslt2/source.json"]
+SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ["spec/**"]
+SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-License-Identifier = "CC-BY-ND-4.0"
+
+[[annotations]]
+path = [
+    "schema/*.json",
+    "schema/profile.sch",
+    "schema/akn/1.0/source.json",
+    "registry/courts.json",
+    "registry/cap-courts.json",
+    "vectors/**",
+]
+SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-License-Identifier = "CC-BY-ND-4.0"

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Check the Akoma Ntoso examples against the vendored schema and spec/akoma-ntoso-profile.md.
 
 The profile's own rules (Schematron) are checked in test_profile_rules.py; these checks cover

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: BSD-3-Clause
+
 """Check the examples built from Caselaw Access Project data (examples/cap).
 
 The documents and sidecars themselves are checked like every other example, by

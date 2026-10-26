@@ -2,6 +2,8 @@
 name = "exemplar-checks"
 version = "0.0.0"
 description = "Conformance checks for the exemplar specs and test vectors"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = []
 
