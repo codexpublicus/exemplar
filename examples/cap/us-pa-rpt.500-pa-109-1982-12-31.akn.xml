@@ -36,12 +36,12 @@
         </FRBRManifestation>
       </identification>
       <references source="#org_exemplar">
-        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
+        <TLCOrganization eId="court_pa" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/registry/courts.json#pa" showAs="Supreme Court of Pennsylvania"/>
         <TLCOrganization eId="org_exemplar" href="https://github.com/codexpublicus/exemplar" showAs="codexpublicus/exemplar"/>
         <TLCOrganization eId="org_cap" href="https://case.law/" showAs="Caselaw Access Project"/>
-        <TLCPerson eId="hutchinson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json#hutchinson" showAs="Hutchinson"/>
-        <TLCPerson eId="mcdermott" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json#mcdermott" showAs="McDermott"/>
-        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
+        <TLCPerson eId="hutchinson" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/examples/cap/judges.json#hutchinson" showAs="Hutchinson"/>
+        <TLCPerson eId="mcdermott" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/examples/cap/judges.json#mcdermott" showAs="McDermott"/>
+        <TLCPerson eId="roberts" href="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/examples/cap/judges.json#roberts" showAs="Roberts"/>
         <TLCReference eId="printing_500-pa-109" name="printing" href="cite:500-pa-109" showAs="500 Pa. 109"/>
         <TLCReference eId="printing_454-a2d-985" name="printing" href="cite:454-a2d-985" showAs="454 A.2d 985"/>
         <TLCReference eId="source_cap" name="source" href="cap:pa/500/0109-01" showAs="Caselaw Access Project, pa/500/0109-01"/>
@@ -49,8 +49,8 @@
       <proprietary source="#org_exemplar">
         <cx:profile version="0.4.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/registry/courts.json" version="2026.10.23"/>
-          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.4.0/examples/cap/judges.json" version="fixture"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/registry/courts.json" version="2026.10.25"/>
+          <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.5.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_500-pa-109" type="official" reporter="Pa." volume="500" firstPage="109" lastPage="120" text="transcribed">
           <cx:scans source="#source_cap" volume="pa/500" first="159" last="170"/>

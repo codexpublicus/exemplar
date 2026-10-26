@@ -87,7 +87,7 @@
             "required": ["from", "profile"],
             "properties": {
               "from": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/date"}]},
-              "profile": {"enum": ["scotus-numbered", "scotus-ot1971", "us-coa", "us-district", "printed"]}
+              "profile": {"enum": ["scotus-numbered", "scotus-ot1971", "us-coa", "us-cafc", "us-district", "printed"]}
             }
           }
         },

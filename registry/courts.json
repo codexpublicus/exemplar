@@ -1,8 +1,8 @@
 {
   "registry": "courts",
-  "version": "2026.10.23",
+  "version": "2026.10.25",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.4.0",
+  "spec_version": "0.5.0",
   "description": "Court registry for the court record key (spec section 10.1). Every court code is a courts-db id from the snapshot named in source, or, where an entry's source says courtlistener, CourtListener's id for a court courts-db lacks; the jurisdiction codes, docket profiles and aliases are this registry's assignments (registry/build_courts.py).",
   "source": {
     "name": "courts-db",
@@ -95,7 +95,7 @@
     "cadc": {"jurisdiction": "us", "name": "Court of Appeals for the D.C. Circuit", "profiles": [{"from": null, "profile": "us-coa"}], "source": "courts-db"},
     "caeb": {"jurisdiction": "us", "name": "United States Bankruptcy Court, E.D. California", "profiles": [{"from": null, "profile": "us-district"}], "source": "courts-db"},
     "caed": {"jurisdiction": "us", "name": "United States District Court for the Eastern District of California", "profiles": [{"from": null, "profile": "us-district"}], "source": "courts-db"},
-    "cafc": {"jurisdiction": "us", "name": "Court of Appeals for the Federal Circuit", "profiles": [], "source": "courts-db"},
+    "cafc": {"jurisdiction": "us", "name": "Court of Appeals for the Federal Circuit", "profiles": [{"from": "1982-10-01", "profile": "us-cafc"}], "source": "courts-db"},
     "cal": {"jurisdiction": "us", "name": "California Supreme Court", "profiles": [{"from": null, "profile": "printed"}], "source": "courts-db"},
     "calag": {"jurisdiction": "us", "name": "California Attorney General Reports", "profiles": [{"from": null, "profile": "printed"}], "source": "courts-db"},
     "calappdeptsuper": {"jurisdiction": "us", "name": "California Superior Court, Appellate Division", "profiles": [{"from": null, "profile": "printed"}], "source": "courts-db"},
