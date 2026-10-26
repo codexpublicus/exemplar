@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #MISE description="Run every check CI runs: ruff, the reference validator and pytest"
-# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
 # SPDX-License-Identifier: BSD-3-Clause
 set -euo pipefail
 uv run ruff check .

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Build registry/courts.json from the vendored courts-db snapshot.

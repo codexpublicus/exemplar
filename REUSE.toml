@@ -11,17 +11,17 @@ version = 1
 
 [[annotations]]
 path = ["uv.lock", ".gitignore", "pyproject.toml"]
-SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
 SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
 path = ["validator/vendor/schxslt2/source.json"]
-SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
 SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
 path = ["spec/**"]
-SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
 SPDX-License-Identifier = "CC-BY-ND-4.0"
 
 [[annotations]]
@@ -33,5 +33,5 @@ path = [
     "registry/cap-courts.json",
     "vectors/**",
 ]
-SPDX-FileCopyrightText = "Copyright (c) 2026 <COPYRIGHT HOLDER>"
+SPDX-FileCopyrightText = "Copyright (c) 2026 Codex Publicus contributors"
 SPDX-License-Identifier = "CC-BY-ND-4.0"

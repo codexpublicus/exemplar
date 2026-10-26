@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Check the licence files and the SPDX annotations README.md's Licensing section describes."""

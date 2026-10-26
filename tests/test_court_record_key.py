@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Check the court record key vectors against the spec's ABNF, its regex, and its rules.

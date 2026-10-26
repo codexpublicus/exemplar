@@ -106,7 +106,7 @@ For the Schematron rules and the sidecar, they run every vector in `vectors/akn-
 
 ## Licensing
 
-Copyright (c) 2026 <COPYRIGHT HOLDER>.
+Copyright (c) 2026 Codex Publicus contributors.
 
 The specification text, the schemas, the court registry and the test vectors are licensed under the Creative Commons Attribution-NoDerivatives 4.0 International licence (CC BY-ND 4.0), whose legal code is in [`LICENSES/CC-BY-ND-4.0.txt`](LICENSES/CC-BY-ND-4.0.txt). The code is licensed under the BSD 3-Clause License, in [`LICENSE`](LICENSE).
 

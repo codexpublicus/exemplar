@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 <COPYRIGHT HOLDER>
+# SPDX-FileCopyrightText: Copyright (c) 2026 Codex Publicus contributors
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Check vectors/akn-profile/cap-mapping.jsonl against a minimal reading of the CAP mappings.
