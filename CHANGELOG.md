@@ -2,6 +2,12 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.5.1 (unreleased)
+
+CRK 0.5.1, a patch release.
+
+- **A date that contradicts a partial printed date** (D136, 2026-10-26). Sections 6.1 and 13.3: where the decision prints only a year and month, or a year, a second source's date in another year or month establishes nothing and doesn't make the key provisional; a source giving one decision several dates establishes none. Sources whose dates fit the printed partial date but disagree with each other still make the key provisional. **Changes no keys**; the 0.5.0 wording of 13.3 could be read to mark about 8,600 more CAP decisions provisional.
+
 ## v0.5.0 (unreleased)
 
 CRK 0.5.0, court registry `2026.10.25`, CAP court table `2026.10.25`. The owner's ruling D118 (2026-10-25) opens 0.5.0 on the three largest refusal classes left in CAP under 0.4.0: `page-elsewhere` ([exemplar#32](https://github.com/codexpublicus/exemplar/issues/32)), the Federal Circuit's `no-docket-profile`, and `invalid-key` ([exemplar#30](https://github.com/codexpublicus/exemplar/issues/30)). The owner ruled the proposals P1a to P4 in D123 (2026-10-26), all as proposed except that P2 takes a four-digit year. A minor version that breaks, under SemVer item 4. With all of them, the reference oracle keys 6,911,474 of CAP's 6,920,598 decisions (99.87%), against 6,834,385 under 0.4.0.
