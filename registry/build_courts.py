@@ -55,7 +55,7 @@ def profiles(court: dict[str, Any]) -> list[dict[str, str | None]]:
     if code in COURTS_OF_APPEALS:
         return [{"from": None, "profile": "us-coa"}]
     if code == "cafc":
-        # proposed 0.5.0 (spec section 5.8): from the court's first day, 1982-10-01
+        # spec section 5.8, from 0.5.0: from the court's first day, 1982-10-01
         return [{"from": "1982-10-01", "profile": "us-cafc"}]
     federal = court.get("system") == "federal"
     if (

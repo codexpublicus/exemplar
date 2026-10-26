@@ -252,11 +252,12 @@ def _coa(text: str) -> str | None:
 
 
 def _cafc(text: str) -> str | None:
-    """Proposed 0.5.0, section 5.8: the Federal Circuit from 1982-10-01."""
-    if m := re.fullmatch(r"(?:19|20)([0-9]{2})-([0-9]{3,5})", text):
-        return f"{m.group(1)}-{m.group(2)}"
-    if re.fullmatch(r"[0-9]{2}-[0-9]{3,5}", text):
+    """Section 5.8: the Federal Circuit from 1982-10-01, with four-digit years."""
+    if re.fullmatch(r"(?:19|20)[0-9]{2}-[0-9]{3,5}", text):
         return text
+    if m := re.fullmatch(r"([0-9]{2})-([0-9]{3,5})", text):
+        century = "19" if int(m.group(1)) >= 82 else "20"
+        return f"{century}{m.group(1)}-{m.group(2)}"
     if m := re.fullmatch(
         r"(?:misc(?:ellaneous)?\.?\s*(?:nos?\.?\s*)?|(?:(?:19|20)?[0-9]{2}-)?m)([0-9]{1,4})"
         r"(?:\s*(?:,|&|\band\b)\s*[0-9]{1,4})*",
@@ -341,13 +342,13 @@ def other_dockets(
 
 
 def slug(text: str) -> str:
-    """Section 5.6: a reporter abbreviation reduced to a slug (proposed 0.5.0: `&` deleted)."""
+    """Section 5.6: a reporter abbreviation reduced to a slug (`&` deleted from 0.5.0)."""
     text = re.sub(r"[.'’(),&]", "", text.lower())
     return re.sub(r"\s+", "-", text.strip())
 
 
 def volume_text(volume: str) -> str:
-    """Section 5.6 (proposed 0.5.0): a volume numbered with a fraction, `81 1/2`, is `81-1-2`."""
+    """Section 5.6 (from 0.5.0): a volume numbered with a fraction, `81 1/2`, is `81-1-2`."""
     return re.sub(r"[\s/]+", "-", volume.strip())
 
 
@@ -359,7 +360,7 @@ SUPREME_COURT_REPORTERS = frozenset({"us", "sct", "led", "led2d"})
 
 
 def supreme_court_citation(citation: dict[str, str] | None) -> bool:
-    """Proposed 0.5.0 (P4), section 4: whether an official citation is one only the Supreme
+    """Section 4 (from 0.5.0): whether an official citation is one only the Supreme
     Court's decisions take: the United States Reports from volume 5, the Supreme Court Reporter,
     the Lawyers' Edition. 1 to 4 U.S. (Dallas) also print Pennsylvania and circuit decisions."""
     if citation is None:
@@ -371,7 +372,7 @@ def supreme_court_citation(citation: dict[str, str] | None) -> bool:
 
 
 def fallback_citation(facts: dict[str, Any]) -> dict[str, str] | None:
-    """Section 5.6 (proposed 0.5.0): the citation the fallback uses.
+    """Section 5.6 (from 0.5.0): the citation the fallback uses.
 
     reporter_citation is the decision's official citation; printed_in is the volume and page the
     source's volume prints it on, and that volume's reporter. With no official citation, printed_in.
@@ -427,7 +428,7 @@ def compute(
     if decided is None:
         raise Refusal("date")
     if court != "scotus" and supreme_court_citation(facts.get("reporter_citation")):
-        raise Refusal("court-conflict")  # proposed 0.5.0 (P4), section 4
+        raise Refusal("court-conflict")  # section 4, from 0.5.0
     # Section 3: the registry's jurisdiction code, never the facts'.
     jurisdiction = jurisdiction_for(courts[court], decided)
     if profile_for(courts[court], decided) is None:
@@ -444,7 +445,7 @@ def compute(
         docket = rpt_segment(citation)
     ordinal = facts.get("decision_ordinal", 1)
     if docket.startswith("rpt.") and "volume_decisions" in facts:
-        # Section 5.6 (proposed 0.5.0): count, in printed order, the decisions in the volume whose
+        # Section 5.6 (from 0.5.0): count, in printed order, the decisions in the volume whose
         # fallback citation is the same and that share the date.
         before = facts["volume_decisions"][: facts["volume_position"]]
         ordinal = sum(
