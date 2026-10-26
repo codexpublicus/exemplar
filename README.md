@@ -108,17 +108,20 @@ For the Schematron rules and the sidecar, they run every vector in `vectors/akn-
 
 Copyright (c) 2026 Codex Publicus contributors.
 
-The specification text, the schemas, the court registry and the test vectors are licensed under the Creative Commons Attribution-NoDerivatives 4.0 International licence (CC BY-ND 4.0), whose legal code is in [`LICENSES/CC-BY-ND-4.0.txt`](LICENSES/CC-BY-ND-4.0.txt). The code is licensed under the BSD 3-Clause License, in [`LICENSE`](LICENSE).
+The specification text, the schemas, the court registry and the test vectors are licensed under the Creative Commons Attribution-NoDerivatives 4.0 International licence (CC BY-ND 4.0), whose legal code is in [`LICENSES/CC-BY-ND-4.0.txt`](LICENSES/CC-BY-ND-4.0.txt). So are the README, the changelog and the examples built here. The code is licensed under the BSD 3-Clause License, in [`LICENSE`](LICENSE) (also at `LICENSES/BSD-3-Clause.txt`).
 
 | Path | Licence |
 |---|---|
 | `spec/` | CC BY-ND 4.0 |
 | `schema/` (except `schema/akn/1.0/*.xsd`) | CC BY-ND 4.0 |
-| `registry/courts.json`, `registry/cap-courts.json` | CC BY-ND 4.0 |
+| `registry/courts.json`, `registry/cap-courts.json` | CC BY-ND 4.0; `registry/courts.json` is built from courts-db data, whose notice is in [`registry/NOTICE-courts-db.txt`](registry/NOTICE-courts-db.txt) |
 | `vectors/` | CC BY-ND 4.0 |
 | `validator/validate.py`, `validator/__init__.py`, `validator/vendor/schxslt2/source.json`, `tests/`, `registry/build_courts.py`, `examples/cap/build.py`, `.mise/`, `.github/`, `pyproject.toml`, `uv.lock` | BSD 3-Clause |
-| `examples/` (except `examples/cap/build.py`) | not yet assigned; see [`examples/README.md`](examples/README.md) |
-| `README.md`, `CHANGELOG.md` | not yet assigned |
+| `examples/minimal/`, and in `examples/cap/` the built documents and sidecars, `judges.json`, `manifest.json` and `volumes.lock.json` | CC BY-ND 4.0 |
+| `examples/cap/source/` | the Caselaw Access Project's data, unchanged: CC0 1.0, whose legal code is in [`LICENSES/CC0-1.0.txt`](LICENSES/CC0-1.0.txt) |
+| `README.md`, `CHANGELOG.md`, `examples/README.md` | CC BY-ND 4.0 |
 | `schema/akn/1.0/*.xsd`, `registry/sources/courts-db/`, `validator/vendor/schxslt2/` (except `source.json`) | vendored third-party files under the terms each states, described above |
 
-Code files carry SPDX headers (`SPDX-License-Identifier: BSD-3-Clause`); [`REUSE.toml`](REUSE.toml) records the same for the files that can't carry one.
+<!-- REUSE-IgnoreStart -->
+Code files carry SPDX headers (`SPDX-License-Identifier: BSD-3-Clause`); [`REUSE.toml`](REUSE.toml) records the same for the files that can't carry one. The vendored third-party files and the courts-db notice carry no annotation from this repository, so `reuse lint` reports them.
+<!-- REUSE-IgnoreEnd -->
