@@ -21,8 +21,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "registry" / "sources" / "courts-db" / "courts.json"
 OUTPUT = ROOT / "registry" / "courts.json"
 
-VERSION = "2026.10.23"
-SPEC_VERSION = "0.4.0"
+VERSION = "2026.10.25"
+SPEC_VERSION = "0.5.0"
 
 PROVENANCE = {
     "name": "courts-db",
@@ -55,7 +55,8 @@ def profiles(court: dict[str, Any]) -> list[dict[str, str | None]]:
     if code in COURTS_OF_APPEALS:
         return [{"from": None, "profile": "us-coa"}]
     if code == "cafc":
-        return []  # four-digit-year dockets; no profile yet (spec section 16)
+        # spec section 5.8, from 0.5.0: from the court's first day, 1982-10-01
+        return [{"from": "1982-10-01", "profile": "us-cafc"}]
     federal = court.get("system") == "federal"
     if (
         federal
