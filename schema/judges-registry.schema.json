@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/codexpublicus/exemplar/schema/judges-registry.schema.json",
+  "title": "Court record key: judge registry",
+  "description": "A judge registry, spec/court-record-key.md section 10.2. Proposed (P8), pending ruling (codexpublicus/exemplar#47): the shape of registry/judges.json, which this repository would publish for the courts it registers outside the United States. Every field 0.5.1 uses keeps its meaning, so the fixtures standing in for a consumer's registry validate unchanged; a file that names itself the published registry (registry: judges) also needs its version and spec fields. What the schema can't check: that each court code is in the court registry, that slugs are unique across courts and never renamed, reused or deleted, that the -ii suffixes follow first appointment, and that a later version keeps every entry of the one before.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["judges"],
+  "properties": {
+    "registry": {"const": "judges"},
+    "version": {
+      "description": "CalVer snapshot version, YYYY.MM.DD[.N], or 'fixture' for a test fixture",
+      "type": "string",
+      "pattern": "^([0-9]{4}\\.(0[1-9]|1[0-2])\\.(0[1-9]|[12][0-9]|3[01])(\\.[1-9][0-9]*)?|fixture)$"
+    },
+    "spec": {"const": "spec/court-record-key.md"},
+    "spec_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "description": {"type": "string", "minLength": 1},
+    "judges": {
+      "type": "object",
+      "propertyNames": {"description": "The slug, the author rule of spec section 2.1", "pattern": "^[a-z][a-z-]*$"},
+      "additionalProperties": {"$ref": "#/$defs/judge"}
+    }
+  },
+  "if": {"required": ["registry"]},
+  "then": {"required": ["registry", "version", "spec", "spec_version", "description"]},
+  "$defs": {
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "court": {"description": "A court code from the court registry (spec section 4)", "type": "string", "pattern": "^[a-z][a-z0-9.-]*$"},
+    "provenance": {"enum": ["human-curated", "hand-checked", "engine-output", "spec-derived"]},
+    "source-ref": {
+      "description": "Where a fact was seen: a CRK alias of a source record (cap:mass/150/0108-01), a file's content address (ni:///sha-256;..., RFC 6920), or a URL",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9+.-]*:[^\\s]+$"
+    },
+    "judge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "courts"],
+      "properties": {
+        "name": {"description": "The judge's name as the courts print it in a byline, without office", "type": "string", "minLength": 1},
+        "full_name": {"description": "The judge's full name, for display", "type": "string", "minLength": 1},
+        "courts": {
+          "description": "The court codes the slug is registered for",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/court"}
+        },
+        "offices": {
+          "description": "Proposed (P8): for each court in courts, the offices the judge held there, in order",
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/court"},
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/office"}
+          }
+        },
+        "printed": {
+          "description": "Printed forms of the name, each with the source it was seen in (spec section 10.2)",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["form", "source"],
+            "properties": {
+              "form": {"type": "string", "minLength": 1},
+              "source": {"$ref": "#/$defs/source-ref"},
+              "provenance": {"$ref": "#/$defs/provenance"}
+            }
+          }
+        },
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "sources": {
+          "description": "Proposed (P8): what the entry rests on",
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/source-ref"}
+        }
+      }
+    },
+    "office": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["office", "abbreviation", "from"],
+      "properties": {
+        "office": {"description": "The office as the court names it (Justice of Appeal, Chief Justice, President)", "type": "string", "minLength": 1},
+        "abbreviation": {"description": "What the court prints after the judge's name for the office: J, JA, CJ, P, CJ (Ag)", "type": "string", "minLength": 1},
+        "from": {"description": "The day the office began; a zeroed day or month as in spec section 6.2 where only the year or month is established", "$ref": "#/$defs/date"},
+        "to": {"description": "The last day the office was held; absent while it is held", "$ref": "#/$defs/date"},
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source-ref"}}
+      }
+    }
+  }
+}
