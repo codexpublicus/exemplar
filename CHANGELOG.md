@@ -2,6 +2,17 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## Proposed: profile 0.5.0, non-US decisions (pending ruling)
+
+Draft for [exemplar#47](https://github.com/codexpublicus/exemplar/issues/47): how the profile represents decisions of the Caribbean Court of Justice and the courts of Belize. Proposals P5 to P9, each with options and a recommendation in profile section 18; open questions O15 to O20 in profile section 19. Nothing here is ruled: the profile stays 0.4.0, and no rule, vector, example or key changes until the ruling. The keys these documents need (the courts, the `bz` code, docket profiles) are [exemplar#25](https://github.com/codexpublicus/exemplar/issues/25).
+
+- **P5a, court printings.** A file the court issued is a printing of type `court`, addressed by its SHA-256 as an RFC 6920 `ni:` URI; its page markers number the file's pages, with a printed page number kept as `@cx:label`.
+- **P5b, court paragraph numbers.** A part the court numbered holds AKN `paragraph` elements with `num` (`[57]`) and eId `__para_57`; the sidecar indexes them for pinpoints.
+- **P6a, P6b, court summaries.** `court` origin allowed on summaries and catchwords the court issued, every such block labelled as not part of the opinion; new header classes `catchwords`, `authorities`, `contents`, `hearing`; a summary file's text goes in `header`, tied to the part it summarizes.
+- **P7, writings in separate files.** One document per decision, each file a court printing tied to its part.
+- **P8, judge registry.** This repository publishes `registry/judges.json` for the courts it registers outside the United States (CRK section 10.2); new `schema/judges-registry.schema.json`, which the existing judge fixtures also validate against, with offices and their printed abbreviations (`J`, `JA`, `CJ`, `P`) by date.
+- **P9, P9b, archive objects as sources.** `cx:source` for an archive object: content address, SHA-256, size, media type, URL, fetch time or Wayback capture; a court's rescan or retype is another court printing of the same expression.
+
 ## v0.5.1 (unreleased)
 
 CRK 0.5.1, a patch release.

@@ -4,6 +4,8 @@ Specification version: **0.5.1** (draft). Status: not yet stable; see section 13
 
 The rules 0.5.0 adds were proposed as P1a to P4 and ruled by the owner in D123 (2026-10-26). Each is marked where its text begins, and section 13.5 lists them.
 
+This draft also carries one proposal the owner has not ruled on, P8 (section 10.2, codexpublicus/exemplar#47), marked *Proposed (P8), pending ruling* where its text begins. Until a ruling, the 0.5.1 text stands, and no vector computes it.
+
 A court record key (CRK) is a deterministic identifier for a court decision and for each separately headed writing within it. It is built only from facts the court prints on the decision: the jurisdiction and the court, the docket number, the decision date, and, for a separate writing, its role and author as printed in its heading. Anyone holding those facts computes the same key without the court's cooperation. This version registers the courts of the United States, of five US territories, and the few English and colonial courts American sources hold (section 3).
 
 ```
@@ -373,7 +375,14 @@ The registry is built by `registry/build_courts.py` from a copy of courts-db's `
 
 ### 10.2 Judge registry
 
-This repository publishes no judge registry. Judge slugs come from a registry the consumer supplies and identifies by URI and version (section 10.3), such as one computed and published from the consumer's own corpus.
+This repository publishes no judge registry (but see P8, below). Judge slugs come from a registry the consumer supplies and identifies by URI and version (section 10.3), such as one computed and published from the consumer's own corpus.
+
+*Proposed (P8), pending ruling:* this repository also publishes a judge registry, `registry/judges.json`, validated by `schema/judges-registry.schema.json`, for the courts it registers outside the United States, starting with the Caribbean Court of Justice and the courts of Belize once codexpublicus/exemplar#25 registers them. It is versioned, pinned and append-only like the court registry (section 10.3), under its own CalVer version, and a release tag pins it with the others. A consumer MAY still supply its own registry for any court, by URI and version as now. The CCJ draws its judges from several member states, some of whom sat on a national court first, and Belize's courts reach back to 1928, so the registry adds these rules to the ones below:
+
+- A slug is unique across every court in the registry, and a judge who sat on several courts has one slug for all of them.
+- A slug is the judge's surname as the court prints it, lowercased, its letters kept and every other character but `-` deleted (`Rajnauth-Lee` is `rajnauth-lee`, `de la Bastide` is `delabastide`). A surname the registry already holds for another judge takes `-ii`, `-iii` in the order of the judges' first appointment to any court the registry covers.
+- Each entry lists, for each court, its `offices`: the office held, the date it began and, when it has ended, the date it ended, and the abbreviation the court prints after the judge's name for it (`J`, `JA`, `CJ`, `P`; `CJ (Ag)` for an acting Chief Justice). A byline that prints an abbreviation (`BARROW J:`, `SOSA JA`, `HAFIZ BERTRAM P`) matches an entry only if the entry holds an office with that abbreviation on that court on the decision date; the abbreviation is not part of the name matched, and a byline that prints none is matched on the name alone.
+- Each entry, and each printed form, records its `provenance` (section 14) and the sources it rests on, by the file's content address (`ni:///sha-256;...`) or URL.
 
 Whatever its source, a judge registry used with this spec MUST meet these rules. Each entry has a slug, the judge's name, and the court codes the slug is registered for. A slug matches `author` (`^[a-z][a-z-]*$`; no digits, so a second Justice Harlan is `harlan-ii`). A slug identifies one judge within each court it is registered for; a registry MAY make slugs unique across all courts, and SHOULD give a judge who sat on several courts one slug for all of them. Slugs are never renamed, reused or deleted.
 
