@@ -22,6 +22,7 @@ path = [
     "schema/akn/1.0/source.json",
     "registry/courts.json",
     "registry/cap-courts.json",
+    "registry/reporters.json",
     "vectors/**",
     "examples/README.md",
     "examples/minimal/**",

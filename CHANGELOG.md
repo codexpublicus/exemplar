@@ -2,6 +2,41 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.6.0 (unreleased)
+
+CRK 0.6.0, profile 0.6.0, court registry `2026.10.28`, CAP court table `2026.10.28`, and a new reporter registry, `registry/reporters.json` (`2026.10.28`). The owner's ruling D154 (2026-10-28) on the proposals indexed on [exemplar#57](https://github.com/codexpublicus/exemplar/issues/57): [#55](https://github.com/codexpublicus/exemplar/issues/55), [#29](https://github.com/codexpublicus/exemplar/issues/29), [#26](https://github.com/codexpublicus/exemplar/issues/26), [#28](https://github.com/codexpublicus/exemplar/issues/28), [#50](https://github.com/codexpublicus/exemplar/issues/50) and [#56](https://github.com/codexpublicus/exemplar/issues/56) as proposed, and [#54](https://github.com/codexpublicus/exemplar/issues/54) limited to printings a second source links, not CourtListener's clusters alone. Minor versions that break, under SemVer item 4. No candidate key a 0.5.1 producer computes for CAP changes value. Measured over CAP with the oracle and a model of a first mint, 0.6.0 keys 6,621,485 decisions (6,563,151 under 0.5.1), holds 80,091 for a person (153,207) and refuses 398 (9,119).
+
+### Court record key 0.6.0
+
+- **One decision printed more than once** ([exemplar#54](https://github.com/codexpublicus/exemplar/issues/54)). New section 5.9: printings a second source links (a parallel citation, an official source, a person's ruling; not an engine crosswalk) take one candidate: the most precise date every printing fits, the one docket segment the printings give, and otherwise the official reporter's printing, from the reporter registry. New refusal class `printings-disagree`. **Adds keys**: 4,280 decisions; 47,867 groups linked only by CourtListener stay held, and 29,282 wait for the official-reporter table.
+- **Printings and decisions that compute one candidate** ([exemplar#55](https://github.com/codexpublicus/exemplar/issues/55), [#29](https://github.com/codexpublicus/exemplar/issues/29), [#28](https://github.com/codexpublicus/exemplar/issues/28)). New section 7.1: printings in two volumes with one docket key, a full date and one case name, or in two editions of one report, are one decision; decisions are counted in printed order when one volume prints them all, or when they are in volumes of one reporter and their names differ; sections 5.7 and 6.2 become cases of the printed-order rule. New refusal class `shared-candidate` for the rest. **Adds keys**.
+- **Supreme Court citations under another court** ([exemplar#50](https://github.com/codexpublicus/exemplar/issues/50)). Section 4: such a decision keys under `scotus`, unless the citation's volume doesn't span its date in the reporter registry; the United States Reports, then the Supreme Court Reporter, then the Lawyers' Edition give the fallback citation. **Adds keys**: 1,256 of the 1,268 decisions 0.5.x refused `court-conflict`.
+- **The docket before the citation, and dates that aren't** ([exemplar#56](https://github.com/codexpublicus/exemplar/issues/56)). Section 5.6: a reporter citation is a volume, a reporter and a page of decimal digits; the docket is read first; new refusal class `citation` when the fallback needs one that isn't. Section 6.2: a day that doesn't exist in its month is zeroed (`1911-02-29` gives `1911-02-00`); `date` narrows to a missing year or a month outside `01` to `12`. **Adds keys**: 920 by docket and 19 dates.
+- Section 10 adds the reporter registry; section 16 drops the questions this version settles and adds the official-reporter table, the abbreviations a parallel citation may use, and the per-term dockets #28 keys.
+
+### Court registry 2026.10.28
+
+- Eight codes the registry mints, source `exemplar` (`massctyctsuff` under `england`, `mdctcomplbalt`, `mdoytermct`, `njdistct`, `colctyctelpaso`, `colctyctlake`, `calspectrib`, `washterrdistct`), and three of CourtListener's (`mdgenct`, `stp`, `coregsalina`), for CAP courts no registry court is ([exemplar#26](https://github.com/codexpublicus/exemplar/issues/26)).
+
+### CAP court table 2026.10.28
+
+- 285 of the 294 CAP courts 2026.10.25 left unmapped or marked are mapped, from the court line in the head matter of their case files (new basis `head-matter`, each with a note): 200 unmapped courts, 79 marked courts that take a specific code (D. Puerto Rico's printings in B.R. are `prd`), and 6 that keep the generic `uscirct` or `usdistct` without the mark because one CAP id holds several districts within the same dates. The answers to #26's ten questions are its proposals. 3 marked and 6 unmapped courts stay.
+
+### Reporter registry 2026.10.28
+
+- New `registry/reporters.json` and `schema/reporters.schema.json`: `official` (empty: each entry needs the statute, rule or order that makes a reporter official), `editions` (P.R. Dec. and P.R.), and `supreme_court_volumes`, the dates each volume of U.S., S. Ct., L. Ed. and L. Ed. 2d prints, computed from CAP's records for a person to check.
+
+### Akoma Ntoso profile 0.6.0
+
+- Numbered with the CRK; no rule changes. Section 9.2: which printings are one document follows CRK 5.9 and 7.1. Section 15.1: a CAP date whose day doesn't exist gives a zeroed date and no `docDate`; an official citation that isn't a reporter citation gives no `cite:` alias; a Supreme Court decision CAP files under another court keys under `scotus`. O7 is restated. The Schematron rules and the sidecar schema check profile 0.6.x.
+
+### Vectors, schemas and examples
+
+- `vectors/court-record-key/decisions.jsonl` (new, 18 vectors): printings and their links to decisions, with each rule of 5.9 and 7.1, among them the second-source limit (`54-courtlistener-link-alone-held`: the same printings rule 2 keys when a parallel citation links them stay held on a CourtListener cluster alone), and P.R. Dec. and P.R. as editions. A vector MAY give `reporters`, a fixture for the official-reporter table.
+- `compute.jsonl`: **changed expected results**: `not-a-date` expects `us/ca10/14-9585/2016-02-00`; `court-conflict-cafc-sct` and `court-conflict-us-reports` expect `us/scotus/11-122/2012-01-09` and `us/scotus/74-548/1975-06-02`; `cap-court-under-review` and `cap-court-unmapped` are renamed `cap-court-reviewed-prd` and `cap-court-mapped-ard` and expect keys, and new vectors of those names use CAP courts 18767 and 16930. New: 16 compute vectors (unparsed citations keyed by docket and refused `citation`, the impossible 29 February, `date` for a month 13, citations given as printed, Supreme Court citations keyed, out of range and ordered, CAP courts the table now maps). `ledger.jsonl`: 2 vectors freezing a printed-order ordinal. A compute vector MAY give `reporter_citation` as printed, and `parallel_citations`.
+- `tests/crk_check.py` reads 0.6.0: citations as printed, zeroed impossible days, the Supreme Court re-key with the volume table, and the grouping of printings into decisions. `tests/test_cap_courts.py` checks the reporter registry.
+- The examples, the minimal example and the no-text vector name profile 0.6.0, release tag `v0.6.0` and court registry `2026.10.28`; none of their keys, eIds or content changes. `vectors/akn-profile/sidecars.jsonl`: `profile-mismatch` uses `0.6.1`, and a new `profile-0.4` vector rejects a 0.4.x sidecar.
+
 ## v0.5.1 (unreleased)
 
 CRK 0.5.1, a patch release.

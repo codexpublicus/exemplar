@@ -72,11 +72,29 @@ def is_decided(text: str) -> bool:
 
 def zeroed(fact: str) -> str | None:
     """Section 6.2: the decided segment for a date a source states in ISO 8601 form (a calendar
-    date, a year and month, or a year), or None when it is none of these."""
+    date, a year and month, or a year), or None when it gives no year or a month outside 01 to 12.
+
+    From 0.6.0 (#56), a day that doesn't exist in its month (`1911-02-29`, `2016-02-30`)
+    establishes the year and month only, and is zeroed.
+    """
     if not ISO_DECIDED.fullmatch(fact):
         return None
     segment = {4: fact + "-00-00", 7: fact + "-00"}.get(len(fact), fact)
+    if len(fact) == 10 and not is_decided(segment):
+        segment = fact[:7] + "-00"
     return segment if is_decided(segment) else None
+
+
+def period(text: str) -> tuple[str, str]:
+    """The first and last calendar day of a zeroed date's or a reduced ISO 8601 date's period."""
+    text = {4: text + "-00-00", 7: text + "-00"}.get(len(text), text)
+    if text.endswith("-00-00"):
+        return text[:4] + "-01-01", text[:4] + "-12-31"
+    if text.endswith("-00"):
+        year, month = int(text[:4]), int(text[5:7])
+        following = date(year + month // 12, month % 12 + 1, 1)
+        return text[:7] + "-01", date.fromordinal(following.toordinal() - 1).isoformat()
+    return text, text
 
 
 def period_start(decided: str) -> str:
@@ -359,13 +377,39 @@ def rpt_segment(citation: dict[str, str]) -> str:
     return f"rpt.{volume_text(citation['volume'])}-{slug(citation['reporter'])}-{citation['page']}"
 
 
-SUPREME_COURT_REPORTERS = frozenset({"us", "sct", "led", "led2d"})
+_CITATION = re.compile(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+([0-9]+)")
+_VOLUME = re.compile(r"[0-9]+(?:\s+[0-9]+/[0-9]+)?")
 
 
-def supreme_court_citation(citation: dict[str, str] | None) -> bool:
+def reporter_citation(citation: dict[str, str] | str | None) -> dict[str, str] | None:
+    """Section 5.6 (from 0.6.0, #56): a reporter citation is a volume, a reporter and a page of
+    decimal digits. facts give a citation as {volume, reporter, page} or as the source prints it;
+    one in another form (`2011-NMCA-108`, `1 Cai. Cas. iii`, `3 Ark. App. 280-A`) gives None."""
+    if citation is None:
+        return None
+    if isinstance(citation, str):
+        m = _CITATION.fullmatch(citation.strip())
+        if not m:
+            return None
+        citation = {"volume": m.group(1), "reporter": m.group(2), "page": m.group(3)}
+    if not _VOLUME.fullmatch(citation["volume"]) or not citation["page"].isdigit():
+        return None
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug(citation["reporter"])):
+        return None
+    return citation
+
+
+# Section 4: the reporters only the Supreme Court's decisions take, in the order that decides
+# which citation the fallback uses (from 0.6.0, #50), with their reporter registry names.
+SUPREME_COURT_REPORTERS = {"us": "us", "sct": "s-ct", "led": "l-ed", "led2d": "l-ed-2d"}
+_SUPREME_ORDER = {"us": 0, "sct": 1, "led": 2, "led2d": 2}
+
+
+def supreme_court_citation(citation: dict[str, str] | str | None) -> bool:
     """Section 4 (from 0.5.0): whether an official citation is one only the Supreme
     Court's decisions take: the United States Reports from volume 5, the Supreme Court Reporter,
     the Lawyers' Edition. 1 to 4 U.S. (Dallas) also print Pennsylvania and circuit decisions."""
+    citation = reporter_citation(citation)
     if citation is None:
         return False
     reporter = slug(citation["reporter"]).replace("-", "")
@@ -374,17 +418,51 @@ def supreme_court_citation(citation: dict[str, str] | None) -> bool:
     return not (reporter == "us" and int(citation["volume"].split()[0]) <= 4)
 
 
+def supreme_court_volume_fits(
+    citation: dict[str, str] | str, decided: str, reporters: dict[str, Any]
+) -> bool:
+    """Section 4 (from 0.6.0, #50): whether the citation's volume is one whose decisions span the
+    decision's date, by the reporter registry's supreme_court_volumes. A volume the registry
+    doesn't list doesn't."""
+    citation = reporter_citation(citation)
+    assert citation is not None
+    name = SUPREME_COURT_REPORTERS[slug(citation["reporter"]).replace("-", "")]
+    volumes = reporters["supreme_court_volumes"]["reporters"][name]
+    span = volumes.get(citation["volume"].split()[0])
+    if span is None:
+        return False
+    start, end = period(decided)
+    return period(span["first"])[0] <= end and start <= period(span["last"])[1]
+
+
+def supreme_court_fallback_citation(facts: dict[str, Any]) -> dict[str, str] | str | None:
+    """Section 4 (from 0.6.0, #50): of the decision's Supreme Court citations, the United States
+    Reports decides, then the Supreme Court Reporter, then the Lawyers' Edition."""
+    cited = [facts["reporter_citation"], *facts.get("parallel_citations", [])]
+    ranked = [
+        (_SUPREME_ORDER[slug(c["reporter"]).replace("-", "")], i, c)
+        for i, c in enumerate(reporter_citation(c) for c in cited)
+        if c is not None and supreme_court_citation(c)
+    ]
+    return min(ranked)[2] if ranked else facts["reporter_citation"]
+
+
 def fallback_citation(facts: dict[str, Any]) -> dict[str, str] | None:
     """Section 5.6 (from 0.5.0): the citation the fallback uses.
 
     reporter_citation is the decision's official citation; printed_in is the volume and page the
     source's volume prints it on, and that volume's reporter. With no official citation, printed_in.
     When the official citation names printed_in's volume number but another reporter, the
-    reporter is printed_in's.
+    reporter is printed_in's. From 0.6.0 (#56), a citation that isn't a reporter citation gives
+    None: the fallback can't use it.
     """
     official, printed_in = facts.get("reporter_citation"), facts.get("printed_in")
     if official is None:
-        return printed_in
+        return reporter_citation(printed_in)
+    official = reporter_citation(official)
+    if official is None:
+        return None
+    printed_in = reporter_citation(printed_in)
     if (
         printed_in is not None
         and official["volume"] == printed_in["volume"]
@@ -410,12 +488,14 @@ def compute(
     courts: dict[str, Any],
     judges: dict[str, Any],
     cap_courts: dict[str, Any] | None = None,
+    reporters: dict[str, Any] | None = None,
 ) -> str:
     """Spec section 12: a key from facts, or Refusal.
 
     courts is the court registry's "courts" map; judges is a judge registry's
     "judges" map (spec section 10.2; the vectors use a fixture); cap_courts is
-    registry/cap-courts.json, for facts that name the court by its CAP id.
+    registry/cap-courts.json, for facts that name the court by its CAP id; reporters is
+    registry/reporters.json, for a Supreme Court citation a source files under another court.
     """
     fact = facts.get("decided")
     decided = zeroed(fact) if fact is not None else None
@@ -431,7 +511,17 @@ def compute(
     if decided is None:
         raise Refusal("date")
     if court != "scotus" and supreme_court_citation(facts.get("reporter_citation")):
-        raise Refusal("court-conflict")  # section 4, from 0.5.0
+        # Section 4: from 0.5.0 refused; from 0.6.0 (#50) keyed under the Supreme Court, unless
+        # the citation's volume can't be the decision's.
+        assert reporters is not None
+        if not supreme_court_volume_fits(facts["reporter_citation"], decided, reporters):
+            raise Refusal("court-conflict")
+        court = "scotus"
+        facts = {
+            **facts,
+            "court": court,
+            "reporter_citation": supreme_court_fallback_citation(facts),
+        }
     # Section 3: the registry's jurisdiction code, never the facts'.
     jurisdiction = jurisdiction_for(courts[court], decided)
     if profile_for(courts[court], decided) is None:
@@ -439,11 +529,14 @@ def compute(
     citation = fallback_citation(facts)
     printed = facts.get("docket")
     try:
+        # Section 5.6 (from 0.6.0, #56): the docket first, whatever the citation.
         if printed is None:
             raise Refusal("no-docket")
         docket = docket_segment(courts, court, printed, decided)
     except Refusal:
         if citation is None:
+            if facts.get("reporter_citation") is not None or facts.get("printed_in") is not None:
+                raise Refusal("citation") from None  # a citation, but no reporter citation
             raise
         docket = rpt_segment(citation)
     ordinal = facts.get("decision_ordinal", 1)
@@ -502,6 +595,7 @@ def printed_alias(
     courts: dict[str, Any],
     judges: dict[str, Any],
     cap_courts: dict[str, Any] | None = None,
+    reporters: dict[str, Any] | None = None,
 ) -> str:
     """Section 6.3: the printed-date alias, the decision key computed from the printing alone.
 
@@ -526,7 +620,7 @@ def printed_alias(
             {**d, "decided": d.get("printed_decided", d["decided"])}
             for d in facts["page_decisions"]
         ]
-    return "crk-printed:" + compute(printed, courts, judges, cap_courts)
+    return "crk-printed:" + compute(printed, courts, judges, cap_courts, reporters)
 
 
 def consolidated_aliases(facts: dict[str, Any], courts: dict[str, Any], key: str) -> list[str]:
@@ -648,3 +742,259 @@ def normalize_alias(scheme: str, printed: str) -> str:
         assert m, printed
         return f"cap:{m.group(1)}/{m.group(2)}/{m.group(3)}"
     raise ValueError(f"no printed form for scheme {scheme!r}")
+
+
+# Several printings, and several decisions with one candidate (sections 5.9 and 7.1, from 0.6.0).
+
+# Section 5.9: link sources that confirm printings are one decision. A parallel citation, two
+# printings listing one citation, is the other; a link from any other source (courtlistener,
+# engine-output) confirms nothing.
+CONFIRMING_SOURCES = frozenset({"official", "human-curated"})
+
+
+def _cite_aliases(printing: dict[str, Any]) -> set[tuple[str, str, str]]:
+    """A printing's citations as (volume, reporter slug without `-`, page). Section 5.9 also
+    counts another abbreviation of the same reporter (`App. Div.` for `A.D.`) as the same; this
+    reading has no table of abbreviations, so the vectors write each reporter one way."""
+    found = set()
+    for c in printing.get("citations", []):
+        if (parsed := reporter_citation(c)) is not None:
+            reporter = slug(parsed["reporter"]).replace("-", "")
+            found.add((volume_text(parsed["volume"]), reporter, parsed["page"]))
+    return found
+
+
+def _components(ids: list[str], pairs: list[tuple[str, str]]) -> list[list[str]]:
+    parent = {i: i for i in ids}
+
+    def find(i: str) -> str:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for a, b in pairs:
+        if a in parent and b in parent:
+            parent[find(a)] = find(b)
+    groups: dict[str, list[str]] = {}
+    for i in ids:
+        groups.setdefault(find(i), []).append(i)
+    return list(groups.values())
+
+
+def _dates_fit(a: str, b: str) -> bool:
+    """Whether two decided segments can be one decision's date (section 5.9 rule 1)."""
+    for x, y in zip(a.split("-"), b.split("-"), strict=True):
+        if x != y and "00" not in (x, y):
+            return False
+        if "00" in (x, y) and x != y:
+            return True
+    return True
+
+
+def _merge_dates(dates: list[str]) -> str | None:
+    """Section 5.9 rule 1: the most precise date every printing's date fits, or None."""
+    best = dates[0].split("-")
+    for d in dates[1:]:
+        parts = d.split("-")
+        for i in range(3):
+            if parts[i] == "00":
+                continue
+            if best[i] == "00" and all(best[j] != "00" for j in range(i)):
+                best[i] = parts[i]
+            elif best[i] != parts[i] and best[i] != "00":
+                return None
+    return "-".join(best)
+
+
+def _official(court: str, decided: str, official: dict[str, Any]) -> set[str]:
+    steps = official.get(court)
+    if not steps:
+        return set()
+    chosen = _dated(steps, "reporters", decided) or []
+    return {r.replace("-", "") for r in chosen}
+
+
+def one_decision(printings: list[dict[str, Any]], official: dict[str, Any]) -> str:
+    """Section 5.9: the candidate key of a decision printed more than once, from its printings'
+    candidates, or Refusal(printings-disagree). official is the reporter registry's official."""
+    parts = [(p, parse(p["candidate"])) for p in printings]
+    if len({q["court"] for _, q in parts}) > 1:
+        raise Refusal("printings-disagree")
+    decided = _merge_dates([q["decided"] for _, q in parts])
+    if decided is None:
+        raise Refusal("printings-disagree")
+    dockets = {q["docket"] for _, q in parts if not q["fallback"]}
+    citations = {q["docket"] for _, q in parts if q["fallback"]}
+    if len(dockets) == 1 or (not dockets and len(citations) == 1):
+        segment = dockets.pop() if dockets else citations.pop()
+    else:
+        # Rules 2 to 4: the printing in the decision's official reporter decides.
+        court = parts[0][1]["court"]
+        names = _official(court, decided, official)
+        top = [(p, q) for p, q in parts if p["reporter"].replace("-", "") in names]
+        segments = {q["docket"] for _, q in top}
+        if dockets:
+            segments = {s for s in segments if not s.startswith("rpt.")} or segments
+        if len(segments) != 1:
+            raise Refusal("printings-disagree")
+        segment = segments.pop()
+    ordinal = min(q["decision_ordinal"] for _, q in parts if q["docket"] == segment)
+    first = parts[0][1]
+    return decision_key(
+        {**first, "docket": segment, "decided": decided, "decision_ordinal": ordinal}
+    )
+
+
+def _same_name(a: str, b: str) -> bool:
+    """Section 7.1 rule 1(a): case names compared after case folding, letters and digits only."""
+
+    def norm(n: str) -> str:
+        return "".join(c for c in n.casefold() if c.isalnum())
+
+    return norm(a) == norm(b)
+
+
+def _printed_order(p: dict[str, Any]) -> tuple[Any, ...]:
+    number = re.match(r"[0-9]+", p["volume"])
+    return (
+        p["reporter"],
+        int(number.group(0)) if number else 0,
+        p["volume"],
+        p["page"],
+        p["position"],
+    )
+
+
+def decisions(
+    printings: list[dict[str, Any]],
+    links: list[dict[str, Any]],
+    reporters: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Sections 5.9, 7.1 and 13.2 with an empty ledger: the decisions a producer holds, from
+    their printings, each with its key or refusal.
+
+    printings: [{id, candidate, reporter (slug), volume, page, position, name, citations}];
+    links: [{printings: [id, id], source}], the producer's links between printings; reporters:
+    the reporter registry, or a fixture with its official and editions. Returns
+    [{printings: [ids], key} or {printings: [ids], error}] in minting order.
+    """
+    by_id = {p["id"]: p for p in printings}
+    ids = [p["id"] for p in printings]
+    official = reporters.get("official", {})
+    editions = [{r.replace("-", "") for r in e["reporters"]} for e in reporters.get("editions", [])]
+
+    # The producer's links make groups, except between printings that can't be one decision.
+    def can_be_one(a: str, b: str) -> bool:
+        pa, pb = parse(by_id[a]["candidate"]), parse(by_id[b]["candidate"])
+        return pa["court"] == pb["court"] and _dates_fit(pa["decided"], pb["decided"])
+
+    linked = [
+        (lk["printings"][0], lk["printings"][1])
+        for lk in links
+        if can_be_one(lk["printings"][0], lk["printings"][1])
+    ]
+    cites = {i: _cite_aliases(by_id[i]) for i in ids}
+    confirmed = [
+        (lk["printings"][0], lk["printings"][1])
+        for lk in links
+        if lk["source"] in CONFIRMING_SOURCES
+    ] + [(a, b) for a in ids for b in ids if a < b and cites[a] & cites[b]]
+    units: list[tuple[list[str], str | None, str | None]] = []  # (printings, candidate, error)
+    grouped: set[str] = set()
+    for group in _components(ids, linked):
+        if len({by_id[i]["candidate"] for i in group}) < 2:
+            continue
+        grouped |= set(group)
+        # Section 5.9: only a link a second source confirms makes them one decision.
+        if len(_components(group, confirmed)) > 1:
+            units.append((group, None, "printings-disagree"))
+            continue
+        try:
+            units.append((group, one_decision([by_id[i] for i in group], official), None))
+        except Refusal as refusal:
+            units.append((group, None, refusal.args[0]))
+    for unit_ids, candidate, _ in list(units):
+        for i in unit_ids:
+            by_id[i] = {**by_id[i], "candidate": candidate or by_id[i]["candidate"]}
+
+    # Section 7.1: printings and decisions with one candidate.
+    by_candidate: dict[str, list[str]] = {}
+    for i in ids:
+        if i not in grouped:
+            by_candidate.setdefault(by_id[i]["candidate"], []).append(i)
+    for unit_ids, candidate, _ in units:
+        if candidate is not None:
+            by_candidate.setdefault(candidate, []).extend(unit_ids)
+    units = [u for u in units if u[2] is not None]
+    hint: dict[str, tuple[Any, ...]] = {}
+    for candidate, members in by_candidate.items():
+        key = parse(candidate)
+        full_docket = not key["fallback"] and not key["decided"].endswith("-00")
+        pairs = [(a, b) for a in members for b in members if a < b and cites[a] & cites[b]]
+        pairs += [(a, b) for a, b in linked if a in members and b in members]
+        for a in members:
+            for b in members:
+                pa, pb = by_id[a], by_id[b]
+                if a >= b or (pa["reporter"], pa["volume"]) == (pb["reporter"], pb["volume"]):
+                    continue
+                editions_pair = {pa["reporter"].replace("-", ""), pb["reporter"].replace("-", "")}
+                if full_docket and (
+                    _same_name(pa["name"], pb["name"]) or editions_pair in editions
+                ):
+                    pairs.append((a, b))  # rule 1
+        found = _components(members, pairs)
+        if len(found) == 1:
+            units.append((found[0], candidate, None))
+            continue
+        volumes = None
+        for group in found:
+            in_group = {(by_id[i]["reporter"], by_id[i]["volume"]) for i in group}
+            volumes = in_group if volumes is None else volumes & in_group
+        if volumes:
+            # Rule 2: one volume prints every one of them separately: its printed order.
+            volume = sorted(volumes)[0]
+            for group in found:
+                hint[group[0]] = min(
+                    _printed_order(by_id[i])
+                    for i in group
+                    if (by_id[i]["reporter"], by_id[i]["volume"]) == volume
+                )
+        elif (
+            full_docket
+            and len({by_id[i]["reporter"] for i in members}) == 1
+            and all(
+                not any(_same_name(by_id[a]["name"], by_id[b]["name"]) for a in g for b in h)
+                for x, g in enumerate(found)
+                for h in found[x + 1 :]
+            )
+        ):
+            # Rule 3: one reporter, different case names: printed order.
+            for group in found:
+                hint[group[0]] = min(_printed_order(by_id[i]) for i in group)
+        else:
+            units += [(group, None, "shared-candidate") for group in found]
+            continue
+        units += [(group, candidate, None) for group in found]
+
+    # Section 13.2, an empty ledger: in candidate order, then printed order.
+    def order(unit: tuple[list[str], str | None, str | None]) -> tuple[Any, ...]:
+        group, candidate, _ = unit
+        first = hint.get(group[0]) or min(_printed_order(by_id[i]) for i in group)
+        if candidate is None:
+            return (1, "", 0, first)
+        return (0, stem(candidate), parse(candidate)["decision_ordinal"], first)
+
+    held: dict[str, set[int]] = {}
+    result = []
+    for group, candidate, error in sorted(units, key=order):
+        if candidate is None:
+            result.append({"printings": sorted(group), "error": error})
+            continue
+        key = parse(candidate)
+        used = held.setdefault(stem(candidate), set())
+        while key["decision_ordinal"] in used:
+            key["decision_ordinal"] += 1
+        used.add(key["decision_ordinal"])
+        result.append({"printings": sorted(group), "key": decision_key(key)})
+    return result

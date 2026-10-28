@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Schematron rules for spec/akoma-ntoso-profile.md 0.4.x.
+  Schematron rules for spec/akoma-ntoso-profile.md 0.6.x.
 
   These rules check what the Akoma Ntoso 1.0 XML Schema can't: the profile's rules marked
   "Schematron" in section 16.2 of the profile. Run them after XSD validation; a document that
@@ -19,7 +19,7 @@
   absolute (section 5.3): the court registry's is its raw file URL at a release tag.
 
   Open question O7 (decisions without a decision key) is still open. These rules implement the
-  0.4.0 text, which takes its option (a): every document has a decision key.
+  0.6.0 text, which takes its option (a): every document has a decision key.
 -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -27,7 +27,7 @@
         xmlns:f="https://codexpublicus.org/ns/exemplar/functions"
         queryBinding="xslt2">
 
-  <title>Akoma Ntoso judgment profile for US decisions, 0.4.x</title>
+  <title>Akoma Ntoso judgment profile for US decisions, 0.6.x</title>
 
   <ns prefix="a" uri="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"/>
   <ns prefix="cx" uri="https://codexpublicus.org/ns/exemplar"/>
@@ -200,7 +200,7 @@
     <xsl:sequence select="if (matches($n, '^[1-9][0-9]*$')) then xs:integer($n) else -1"/>
   </xsl:function>
 
-  <let name="profile-line" value="'0.4'"/>
+  <let name="profile-line" value="'0.6'"/>
   <let name="meta" value="/a:akomaNtoso/a:judgment/a:meta"/>
   <let name="work" value="f:key-of-uri($meta/a:identification/a:FRBRWork/a:FRBRthis/@value)"/>
   <let name="expression" value="f:key-of-uri($meta/a:identification/a:FRBRExpression/a:FRBRthis/@value)"/>
