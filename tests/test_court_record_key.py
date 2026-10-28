@@ -59,6 +59,7 @@ def load(name: str) -> list[dict[str, Any]]:
 COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-8"))["courts"]
 JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
 CAP_COURTS = json.loads((ROOT / "registry" / "cap-courts.json").read_text(encoding="utf-8"))
+REPORTERS = json.loads((ROOT / "registry" / "reporters.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
 ERRATA_SCHEMA = json.loads((ROOT / "schema" / "crk-errata.schema.json").read_text("utf-8"))
 
@@ -118,7 +119,7 @@ class TestCompute:
     @pytest.mark.parametrize("v", load("compute.jsonl"), ids=ids("compute.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "key" in v:
-            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
+            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
             assert key == v["key"]
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
@@ -131,13 +132,35 @@ class TestCompute:
             if "provisional" in v:
                 assert crk_check.is_provisional(v["facts"]) is v["provisional"]
             if "printed_alias" in v:
-                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
                 assert alias == v["printed_alias"]
                 assert abnf_accepts("printed-alias", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
             assert refusal.value.args[0] == v["error"]
+
+
+class TestDecisions:
+    """decisions.jsonl: printings and their links give decisions, each with its key or refusal
+    (sections 5.9, 7.1, and 13.2 with an empty ledger)."""
+
+    @pytest.mark.parametrize("v", load("decisions.jsonl"), ids=ids("decisions.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        reporters = {**REPORTERS, **v.get("reporters", {})}
+        for p in v["printings"]:
+            assert crk_check.classify(p["candidate"]) is None, p["id"]
+            assert crk_check.parse(p["candidate"])["role"] is None, p["id"]
+        got = crk_check.decisions(v["printings"], v.get("links", []), reporters)
+        assert got == v["decisions"]
+        listed = sorted(i for d in v["decisions"] for i in d["printings"])
+        assert listed == sorted(p["id"] for p in v["printings"])
+        for d in v["decisions"]:
+            assert ("key" in d) is ("error" not in d)
+            if "key" in d:
+                assert crk_check.classify(d["key"]) is None
+            else:
+                assert d["error"] in {"printings-disagree", "shared-candidate"}
 
 
 class TestLedger:

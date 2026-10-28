@@ -15,8 +15,8 @@ It defines, independently of any one implementation:
 | Path | Contents |
 |---|---|
 | `spec/` | Normative specifications (MUST/SHOULD language): the court record key, the Akoma Ntoso profile |
-| `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from; CAP's courts mapped to registry codes (`cap-courts.json`) |
-| `schema/` | JSON Schema for the court registry, the CAP court table and a key publisher's errata list (`crk-errata.schema.json`, CRK section 13.4); the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
+| `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from; CAP's courts mapped to registry codes (`cap-courts.json`); the reporter registry (`reporters.json`): official reporters, editions of one report, and the dates each volume of the Supreme Court's reporters prints |
+| `schema/` | JSON Schema for the court registry, the CAP court table, the reporter registry and a key publisher's errata list (`crk-errata.schema.json`, CRK section 13.4); the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents and sidecars |
 | `examples/` | Sample documents built from Caselaw Access Project data, each with its viewer sidecar: `minimal/`, the hand-built excerpt the profile quotes, and `cap/`, complete documents generated from CAP cases |
 | `validator/` | The reference validator, which runs the XSD, the Schematron rules and the sidecar schema, and the vendored SchXslt2 transpiler it uses |
@@ -36,7 +36,7 @@ Consumers pin a release tag. Releases follow semantic versioning: a change to ho
 
 ## Schematron rules and the viewer sidecar
 
-`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.4.0 text, which takes its option (a), and check nothing it leaves open.
+`schema/profile.sch` holds the profile's rules that the XML Schema can't express: every rule section 16.2 of the profile assigns to Schematron, each assertion message starting with the rule id it enforces (`[AKN-31]`), or the section number for a requirement without one. Its query binding is `xslt2`. Open question O7 of the profile is still open; the rules implement the 0.6.0 text, which takes its option (a), and check nothing it leaves open.
 
 `schema/sidecar.schema.json` is the JSON Schema for the viewer's sidecar, the index the viewer loads beside a document (profile section 16.3): the keys, the parts, each printing's page markers with the eId they sit in, and each scan block's page and bounding box from CAP's `data-blocks`. A sidecar is named after its document (`{stem}.sidecar.json` beside `{stem}.akn.xml`), and everything in it except the bounding boxes must agree with the document.
 
@@ -76,11 +76,13 @@ The build is deterministic, and the checks run `--check`. It refuses a case rath
 
 ## Court registry
 
-`registry/courts.json` is the court registry the court record key spec references (section 10). Its version is a CalVer date (`2026.10.25`), separate from the spec's SemVer version: adding courts is a new registry version, and a release tag pins both. It holds 2,812 courts: every court in courts-db but one whose id fails the court rule, each with the jurisdiction code and docket profile this registry assigns it, and four courts courts-db lacks, under CourtListener's ids.
+`registry/courts.json` is the court registry the court record key spec references (section 10). Its version is a CalVer date (`2026.10.28`), separate from the spec's SemVer version: adding courts is a new registry version, and a release tag pins both. It holds 2,823 courts: every court in courts-db but one whose id fails the court rule, each with the jurisdiction code and docket profile this registry assigns it, seven courts courts-db lacks, under CourtListener's ids, and eight codes the registry mints for CAP courts neither has (source `exemplar`).
 
 Source and provenance: the court codes are the ids in Free Law Project's courts-db, <https://github.com/freelawproject/courts-db>, file `courts_db/data/courts.json` at commit `c22604dff8b6819d022cc5ddfd6d9080101149e3` (2026-10-07), retrieved 2026-10-18. That file is vendored unchanged at `registry/sources/courts-db/courts.json`, with the repository's LICENSE file beside it; courts-db's LICENSE states the BSD 2-Clause License. The registry's `source` block records the same facts and the vendored file's SHA-256, and its `excluded` block lists the one courts-db id left out and why.
 
-`registry/cap-courts.json` maps each of the Caselaw Access Project's 3,454 court ids to the registry code for its decisions, with the date each code applies from where one CAP court is several registry courts over time. It is engine output, computed from CAP's case metadata and CourtListener's 2026-09-30 crosswalk of CAP cases to its clusters; each entry names the basis its code rests on, and the 206 courts it can't map are listed with the reason.
+`registry/cap-courts.json` maps each of the Caselaw Access Project's 3,454 court ids to the registry code for its decisions, with the date each code applies from where one CAP court is several registry courts over time. It is engine output, computed from CAP's case metadata and CourtListener's 2026-09-30 crosswalk of CAP cases to its clusters; each entry names the basis its code rests on, and the 6 courts it can't map are listed with the reason. Version `2026.10.28` maps 285 courts the earlier table left unmapped or marked for review, read from the head matter of their case files (codexpublicus/exemplar#26).
+
+`registry/reporters.json` is the reporter registry (spec section 10.1): the reporters official for each court's decisions (none listed yet; each entry needs the statute or rule that makes a reporter official), the reporters that are editions of one report, and the dates each volume of the United States Reports, the Supreme Court Reporter and the Lawyers' Edition prints, computed from CAP's records for a person to check.
 
 To rebuild after vendoring a newer courts-db snapshot, update the pin in `registry/build_courts.py` and run `uv run python registry/build_courts.py`. The registry is append-only: a rebuild may add courts, and must not drop or change one already published.
 
@@ -88,7 +90,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.5.0 (draft), with court registry 2026.10.25; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.4.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.4.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
+Early. Nothing here is stable yet. The court record key spec is at 0.6.0 (draft), with court and reporter registries 2026.10.28; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
@@ -114,7 +116,7 @@ The specification text, the schemas, the court registry and the test vectors are
 |---|---|
 | `spec/` | CC BY-ND 4.0 |
 | `schema/` (except `schema/akn/1.0/*.xsd`) | CC BY-ND 4.0 |
-| `registry/courts.json`, `registry/cap-courts.json` | CC BY-ND 4.0; `registry/courts.json` is built from courts-db data, whose notice is in [`registry/NOTICE-courts-db.txt`](registry/NOTICE-courts-db.txt) |
+| `registry/courts.json`, `registry/cap-courts.json`, `registry/reporters.json` | CC BY-ND 4.0; `registry/courts.json` is built from courts-db data, whose notice is in [`registry/NOTICE-courts-db.txt`](registry/NOTICE-courts-db.txt) |
 | `vectors/` | CC BY-ND 4.0 |
 | `validator/validate.py`, `validator/__init__.py`, `validator/vendor/schxslt2/source.json`, `tests/`, `registry/build_courts.py`, `examples/cap/build.py`, `.mise/`, `.github/`, `pyproject.toml`, `uv.lock` | BSD 3-Clause |
 | `examples/minimal/`, and in `examples/cap/` the built documents and sidecars, `judges.json`, `manifest.json` and `volumes.lock.json` | CC BY-ND 4.0 |

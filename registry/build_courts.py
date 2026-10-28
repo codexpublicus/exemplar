@@ -24,8 +24,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "registry" / "sources" / "courts-db" / "courts.json"
 OUTPUT = ROOT / "registry" / "courts.json"
 
-VERSION = "2026.10.25"
-SPEC_VERSION = "0.5.1"
+VERSION = "2026.10.28"
+SPEC_VERSION = "0.6.0"
 
 PROVENANCE = {
     "name": "courts-db",
@@ -159,13 +159,37 @@ def jurisdictions(court: dict[str, Any]) -> list[dict[str, str | None]] | None:
     return [{"from": start, "jurisdiction": code} for code, start in dated]
 
 
-# Courts courts-db lacks, as CourtListener names them (codexpublicus/exemplar#27). Each code is
+# Courts courts-db lacks, as CourtListener names them (codexpublicus/exemplar#27; from 2026.10.28,
+# the three CAP courts of codexpublicus/exemplar#26 that CourtListener names). Each code is
 # CourtListener's court id.
 MINTED = {
+    "coregsalina": "Salina Register and Receiver",
     "kyctapphigh": "Court of Appeals of Kentucky (pre-1976)",
+    "mdgenct": "General Court of Maryland",
     "mspb": "Merit Systems Protection Board",
+    "stp": "United States Special Tribunals of Pennsylvania",
     "tennsuperct": "Tennessee Superior Court for Law and Equity",
     "tennworkcompcl": "Tennessee Court of Workers' Compensation Claims",
+}
+
+# Courts neither courts-db nor CourtListener has, for CAP courts no registry court is
+# (codexpublicus/exemplar#26, ruled D154, 2026-10-28): codes this registry mints, source exemplar,
+# each with its jurisdiction code (spec section 3).
+EXEMPLAR = {
+    "calspectrib": (
+        "us",
+        "California Special Tribunal (1977, McComb v. Commission on Judicial Performance)",
+    ),
+    "colctyctelpaso": ("us", "El Paso County District Court, Colorado"),
+    "colctyctlake": ("us", "Lake County District Court, Colorado"),
+    "massctyctsuff": ("england", "Suffolk County Court (Massachusetts Bay Colony)"),
+    "mdctcomplbalt": ("us", "Court of Common Pleas of Baltimore City"),
+    "mdoytermct": ("us", "Maryland Court of Oyer and Terminer"),
+    "njdistct": (
+        "us",
+        "New Jersey District Courts (county and municipal district courts, 1877-1983)",
+    ),
+    "washterrdistct": ("us", "District Court of Washington Territory"),
 }
 
 # Other services' ids for a registered court (spec section 10.1): CourtListener's ids for the
@@ -203,6 +227,14 @@ def build() -> dict[str, Any]:
             "profiles": [{"from": None, "profile": "printed"}],
             "source": "courtlistener",
         }
+    for code, (jurisdiction_code, name) in EXEMPLAR.items():
+        assert code not in courts, code
+        courts[code] = {
+            "jurisdiction": jurisdiction_code,
+            "name": name,
+            "profiles": [{"from": None, "profile": "printed"}],
+            "source": "exemplar",
+        }
     courts = dict(sorted(courts.items()))
     return {
         "registry": "courts",
@@ -212,7 +244,8 @@ def build() -> dict[str, Any]:
         "description": (
             "Court registry for the court record key (spec section 10.1). Every court code is "
             "a courts-db id from the snapshot named in source, or, where an entry's source says "
-            "courtlistener, CourtListener's id for a court courts-db lacks; the jurisdiction "
+            "courtlistener, CourtListener's id for a court courts-db lacks, or, where it says "
+            "exemplar, a code this registry mints for a court neither has; the jurisdiction "
             "codes, docket profiles and aliases are this registry's assignments "
             "(registry/build_courts.py)."
         ),
