@@ -151,8 +151,22 @@ class TestDecisions:
         for p in v["printings"]:
             assert crk_check.classify(p["candidate"]) is None, p["id"]
             assert crk_check.parse(p["candidate"])["role"] is None, p["id"]
-        got = crk_check.decisions(v["printings"], v.get("links", []), reporters)
+        rulings = v.get("rulings", [])
+        printing_ids = {p["id"] for p in v["printings"]}
+        for r in rulings:
+            # Section 5.9 (from 0.6.2, D167): a ruling cites its evidence and records who and when.
+            assert r["ruling"] in {"one-decision", "distinct-decisions"}, r["id"]
+            assert r["evidence"] and r["by"], r["id"]
+            assert re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", r["date"]), r["id"]
+            assert len(r["printings"]) >= 2 and set(r["printings"]) <= printing_ids, r["id"]
+            if "key_printing" in r:
+                assert r["ruling"] == "one-decision", r["id"]
+                assert r["key_printing"] in r["printings"], r["id"]
+        got = crk_check.decisions(v["printings"], v.get("links", []), reporters, rulings)
         assert got == v["decisions"]
+        if not rulings:
+            # With no rulings, 0.6.2 gives what 0.6.1 gave: no conflicts can arise.
+            assert not any("conflicts" in d for d in got)
         listed = sorted(i for d in v["decisions"] for i in d["printings"])
         assert listed == sorted(p["id"] for p in v["printings"])
         for d in v["decisions"]:

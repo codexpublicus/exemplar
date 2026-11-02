@@ -1,6 +1,6 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.6.1",
+  "spec_version": "0.6.2",
   "courts_registry": "registry/courts.json",
   "reporter_registry": "registry/reporters.json",
   "judges_fixture": "judges-fixture.json",
@@ -40,12 +40,13 @@
       }
     },
     "decisions.jsonl": {
-      "checks": "A producer holding printings, the links it has between them and the reporter registry (registry/reporters.json, or the vector's fixture in its place) gives the decisions they are, each with its key or refusal, as minted into an empty ledger (spec sections 5.9, 7.1, 13.2; from 0.6.0).",
+      "checks": "A producer holding printings, the links it has between them, a person's rulings on them and the reporter registry (registry/reporters.json, or the vector's fixture in its place) gives the decisions they are, each with its key or refusal, as minted into an empty ledger (spec sections 5.9, 7.1, 13.2; from 0.6.0, rulings from 0.6.2).",
       "fields": {
         "printings": "[{id (the printing's identifier, a cap: alias where it is CAP's), candidate (the decision key sections 3 to 12 compute from that printing alone), reporter (its volume's reporter slug), volume (the volume as the source numbers it), page and position (where the decision begins in the volume: page, then position on the page), name (the case name the printing prints), citations (the citations the source lists for the printing, its own and its parallel citations, as printed)}]",
         "links": "the producer's links between printings, [{printings: [id, id], source}], source courtlistener (a CourtListener cluster), official (the court's record or docket, or the official reporter's tables) or human-curated (a person's ruling); a citation two printings both list is a link too, and needs no entry (spec section 5.9)",
         "reporters": "a fixture standing in for parts of the reporter registry (official, editions), when the vector needs entries the registry doesn't have",
-        "decisions": "the expected decisions in minting order: [{printings (ids, sorted), key}] or [{printings, error}], error printings-disagree or shared-candidate (spec section 12)"
+        "rulings": "a person's rulings on the printings (spec sections 5.9 and 7.1, from 0.6.2, D167), standing in for the rulings a producer holds; absent means none: [{id (the ruling's identifier, which conflicts name), printings (the ids it rules on, two or more), ruling (one-decision or distinct-decisions), key_printing (one-decision only, optional: the printing whose docket segment or fallback citation the key takes where the official-reporter table can't decide, section 5.9), evidence (what the person checked), by (who ruled), date (when, YYYY-MM-DD)}]. A one-decision ruling links its printings as a human-curated link does",
+        "decisions": "the expected decisions in minting order: [{printings (ids, sorted), key}] or [{printings, error}], error printings-disagree or shared-candidate (spec section 12); conflicts (from 0.6.2): the ids of the rulings the decision contradicts, which the producer reports (sections 5.9, 7.1), absent when there are none"
       }
     },
     "docket.jsonl": {

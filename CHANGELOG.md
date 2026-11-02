@@ -2,6 +2,21 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.6.2 (unreleased)
+
+CRK 0.6.2, a patch release; court registry and CAP court table stay `2026.10.28`, reporter registry stays `2026.11.02`, and the profile stays 0.6.0. The registries' `spec_version` moves to 0.6.2. The owner's ruling D167 (2026-11-02), items (1) and (3), on what a person's ruling does where the official-reporter table can't decide and where printings sharing a candidate are distinct. With no rulings, no candidate key a 0.6.1 producer computes changes and no vector's expected result changes. CAP holds no rulings, so 0.6.1's measurements stand; nothing new is measured.
+
+### Court record key 0.6.2
+
+- **A person's ruling stands in for the table** (D167 (1)). Section 5.9: a ruling cites its evidence (what the person checked) and records who and when. A ruling that printings are one decision releases printings a CourtListener cluster alone links, since the person is the second source, and MAY name the printing that decides the key (`key_printing`) where the official-reporter table names no reporter for the court and date, none of the printings is in it, or the official printings give different segments; that choice stands in for rule 4. A `key_printing` that contradicts what the table gives is a conflict, and the table wins.
+- **Printings ruled distinct are numbered in printed order** (D167 (3)). Section 7.1: a ruling that printings computing one candidate are distinct decisions numbers them as rules 2 and 3 do, by one volume's order or by volume, page and position in one reporter; with printings in several reporters and no common volume they stay held `shared-candidate`. A ruling that contradicts a second source is a conflict, and the source stands.
+- Section 12: a producer reports every conflicting ruling and doesn't drop it silently. Section 14 says how vectors express a ruling; section 16 lists the ruling's format and distinct decisions in several reporters as open.
+
+### Vectors
+
+- `decisions.jsonl` takes a `rulings` fixture field, `[{id, printings, ruling (one-decision or distinct-decisions), key_printing, evidence, by, date}]`, and a decision lists the rulings it contradicts in `conflicts`. 6 new: `d167-ruling-releases-no-official-reporter` (McKenna v. State, linked by a CourtListener cluster alone, Florida without an official reporter, keyed from the printing the ruling names), `d167-ruling-without-key-printing-held` (the same ruling naming no printing; held), `d167-ruling-contradicts-table` (Brydle v. Honigbaum, the ruling naming the F.2d printing; the C.C.P.A. table wins and the ruling is a conflict), `d167-ruling-distinct-printed-order` (two zeroed-date decisions in one reporter, numbered in printed order), `d167-ruling-distinct-two-reporters-held` (ruled distinct, two reporters; held) and `d167-ruling-distinct-contradicts-citation` (a distinct ruling against a parallel citation; a conflict).
+- `tests/crk_check.py`'s oracle takes rulings, and `tests/test_court_record_key.py` checks each ruling's fields and that a vector with no rulings has no conflicts.
+
 ## v0.6.1 (unreleased)
 
 CRK 0.6.1, a patch release, and reporter registry `2026.11.02`; court registry and CAP court table stay `2026.10.28`, and the profile stays 0.6.0. The owner's ruling D158 (2026-11-02) on the draft official-reporter table that 0.6.0 ([exemplar#58](https://github.com/codexpublicus/exemplar/pull/58)) left empty, and D151 (1) (2026-11-02) on printings a CourtListener cluster alone links. No candidate key a 0.6.0 producer computes changes. Measured over CAP with the oracle and a model of a first mint, as 0.6.0 was, 0.6.1 keys 6,646,920 decisions (6,621,485 under 0.6.0), holds 54,656 for a person (80,091) and refuses 398 (398).
