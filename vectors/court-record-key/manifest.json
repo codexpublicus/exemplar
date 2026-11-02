@@ -1,6 +1,6 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.6.0",
+  "spec_version": "0.6.1",
   "courts_registry": "registry/courts.json",
   "reporter_registry": "registry/reporters.json",
   "judges_fixture": "judges-fixture.json",
