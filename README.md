@@ -82,7 +82,7 @@ Source and provenance: the court codes are the ids in Free Law Project's courts-
 
 `registry/cap-courts.json` maps each of the Caselaw Access Project's 3,454 court ids to the registry code for its decisions, with the date each code applies from where one CAP court is several registry courts over time. It is engine output, computed from CAP's case metadata and CourtListener's 2026-09-30 crosswalk of CAP cases to its clusters; each entry names the basis its code rests on, and the 6 courts it can't map are listed with the reason. Version `2026.10.28` maps 285 courts the earlier table left unmapped or marked for review, read from the head matter of their case files (codexpublicus/exemplar#26).
 
-`registry/reporters.json` is the reporter registry (spec section 10.1): the reporters official for each court's decisions (none listed yet; each entry needs the statute or rule that makes a reporter official), the reporters that are editions of one report, and the dates each volume of the United States Reports, the Supreme Court Reporter and the Lawyers' Edition prints, computed from CAP's records for a person to check.
+`registry/reporters.json` is the reporter registry (spec section 10.1): the reporters official for each court's decisions (version `2026.11.02` lists 51 courts, each step citing the statute, court rule or session law that makes its reporters official), the reporters that are editions of one report, and the dates each volume of the United States Reports, the Supreme Court Reporter and the Lawyers' Edition prints, computed from CAP's records for a person to check.
 
 To rebuild after vendoring a newer courts-db snapshot, update the pin in `registry/build_courts.py` and run `uv run python registry/build_courts.py`. The registry is append-only: a rebuild may add courts, and must not drop or change one already published.
 
@@ -90,7 +90,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.6.0 (draft), with court and reporter registries 2026.10.28; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
+Early. Nothing here is stable yet. The court record key spec is at 0.6.1 (draft), with court registry 2026.10.28 and reporter registry 2026.11.02; it moved here from gorsuch-library's research (`docs/research/2026-09-25-case-identifier-recommendation.md`) and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
