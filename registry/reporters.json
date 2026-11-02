@@ -1,11 +1,409 @@
 {
   "registry": "reporters",
-  "version": "2026.10.28",
+  "version": "2026.11.02",
   "courts_registry_version": "2026.10.28",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.6.0",
+  "spec_version": "0.6.1",
   "description": "The reporter registry (spec section 10.1): the reporters official for a court's decisions (official, spec section 5.9), the reporters that are editions of one report (editions, section 7.1), and the dates of decision each volume of the Supreme Court's reporters prints (supreme_court_volumes, section 4). Reporters are named by their slug (section 5.6).",
-  "official": {},
+  "official": {
+    "ark": [
+      {
+        "from": null,
+        "reporters": ["ark"],
+        "source": "In re Ark. Sup. Ct. & Ct. App. Rule 5-2 (per curiam, 2009-05-28), https://law.justia.com/cases/arkansas/supreme-court/2009/47319.html; Ark. Sup. Ct. R. 5-2(b)(1): \"The Arkansas Reports and the Arkansas Appellate Reports shall contain the official report of decisions ... issued before February 14, 2009\""
+      },
+      {
+        "from": "2009-02-14",
+        "reporters": [],
+        "source": "In re Ark. Sup. Ct. & Ct. App. Rule 5-2 (per curiam, 2009-05-28), https://law.justia.com/cases/arkansas/supreme-court/2009/47319.html; Ark. Sup. Ct. R. 5-2(b)(1): \"The Arkansas Reports and the Arkansas Appellate Reports shall contain the official report of decisions ... issued before February 14, 2009\"; from 2009-02-14 the official report is the electronic report on the Judiciary's website, not a printed reporter"
+      }
+    ],
+    "arkctapp": [
+      {
+        "from": null,
+        "reporters": ["ark-app"],
+        "source": "In re Ark. Sup. Ct. & Ct. App. Rule 5-2 (per curiam, 2009-05-28), https://law.justia.com/cases/arkansas/supreme-court/2009/47319.html; Ark. Sup. Ct. R. 5-2(b)(1): \"The Arkansas Reports and the Arkansas Appellate Reports shall contain the official report of decisions ... issued before February 14, 2009\""
+      },
+      {
+        "from": "2009-02-14",
+        "reporters": [],
+        "source": "In re Ark. Sup. Ct. & Ct. App. Rule 5-2 (per curiam, 2009-05-28), https://law.justia.com/cases/arkansas/supreme-court/2009/47319.html; Ark. Sup. Ct. R. 5-2(b)(1): \"The Arkansas Reports and the Arkansas Appellate Reports shall contain the official report of decisions ... issued before February 14, 2009\"; from 2009-02-14 the official report is the electronic report on the Judiciary's website, not a printed reporter"
+      }
+    ],
+    "cal": [
+      {
+        "from": null,
+        "reporters": ["cal", "cal-2d", "cal-3d", "cal-4th", "cal-5th"],
+        "source": "Cal. Gov. Code § 68902 (official reports, under the Supreme Court's supervision), https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(a), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp1d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp2d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp3d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp4d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp5d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "calctapp6d": [
+      {
+        "from": null,
+        "reporters": ["cal-app", "cal-app-2d", "cal-app-3d", "cal-app-4th", "cal-app-5th"],
+        "source": "Cal. Gov. Code § 68902, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=68902; Cal. Rules of Court, rule 8.1105(b) (an opinion certified for publication is published in the Official Reports), https://courts.ca.gov/cms/rules/index/eight/rule8_1105; the Official Reports are the California Reports and California Appellate Reports (Supreme Court of California, https://newsroom.courts.ca.gov/news/supreme-court-of-california-seeks-new-reporter-of-decisions)"
+      }
+    ],
+    "ccpa": [
+      {
+        "from": null,
+        "reporters": ["ct-cust-app", "ccpa"],
+        "source": "Judicial Code § 192, Act of Mar. 3, 1911, ch. 231, 36 Stat. 1087, 1144 (the court's reporter prepares the court's decisions for annual volumes printed by the Treasury Department), https://www.govinfo.gov/content/pkg/STATUTE-36/pdf/STATUTE-36-Pg1087.pdf; 28 U.S.C. § 833(c) (1948), 62 Stat. 869, 925 (\"The reporter also shall compile and publish, at least once a year, in such manner as the court directs, all opinions rendered by the court during the year\"), https://www.govinfo.gov/content/pkg/STATUTE-62/pdf/STATUTE-62-Pg869.pdf, repealed effective 1982-10-01 by Pub. L. 97-164; reports a statute provides for and the court publishes, official under spec section 10.1 though neither text uses the word (D158 (1))"
+      }
+    ],
+    "ga": [
+      {
+        "from": null,
+        "reporters": ["ga"],
+        "source": "Ga. Sup. Ct. R. 22(2): \"Georgia case citations must include the case name, volume, and page number of the official Georgia reporters\" (text via https://www.law.cornell.edu/citation/7-500, not yet checked on gasupreme.us)"
+      }
+    ],
+    "gactapp": [
+      {
+        "from": null,
+        "reporters": ["ga-app"],
+        "source": "Ga. Ct. App. R. 24(d): \"All citations to cases shall be by name of the case as well as by volume, page, and year of the Official Report\" (text via https://www.law.cornell.edu/citation/7-500, not yet checked on gaappeals.us)"
+      }
+    ],
+    "ill": [
+      {
+        "from": null,
+        "reporters": ["ill", "ill-2d"],
+        "source": "Ill. S. Ct. R. 6 (amended 2011-05-31, effective 2011-07-01), https://www.illinoiscourts.gov/resources/2374deda-2eed-448e-8b4b-24a22a348f28/file: \"Citation of Illinois cases filed prior to July 1, 2011, and published in the Illinois Official Reports shall be to the Official Reports\"; the commentary names them the Illinois Reports and Illinois Appellate Reports"
+      },
+      {
+        "from": "2011-07-01",
+        "reporters": [],
+        "source": "Ill. S. Ct. R. 6 (amended 2011-05-31, effective 2011-07-01), https://www.illinoiscourts.gov/resources/2374deda-2eed-448e-8b4b-24a22a348f28/file: cases filed on or after July 1, 2011 take the public-domain citation \"in lieu of an Illinois Official Reports citation\""
+      }
+    ],
+    "illappct": [
+      {
+        "from": null,
+        "reporters": ["ill-app", "ill-app-2d", "ill-app-3d"],
+        "source": "Ill. S. Ct. R. 6 (amended 2011-05-31, effective 2011-07-01), https://www.illinoiscourts.gov/resources/2374deda-2eed-448e-8b4b-24a22a348f28/file: \"Citation of Illinois cases filed prior to July 1, 2011, and published in the Illinois Official Reports shall be to the Official Reports\"; the commentary names them the Illinois Reports and Illinois Appellate Reports"
+      },
+      {
+        "from": "2011-07-01",
+        "reporters": [],
+        "source": "Ill. S. Ct. R. 6 (amended 2011-05-31, effective 2011-07-01), https://www.illinoiscourts.gov/resources/2374deda-2eed-448e-8b4b-24a22a348f28/file: cases filed on or after July 1, 2011 take the public-domain citation \"in lieu of an Illinois Official Reports citation\""
+      }
+    ],
+    "la": [
+      {
+        "from": null,
+        "reporters": ["la", "la-ann"],
+        "source": "La. Sup. Ct. Gen. Admin. Rules, Part G, § 8(A), https://courtrules.net/louisiana/louisiana-supreme-court/rule-section-8 (amendment: https://www.lasc.org/rules/orders/2022/Part_G_Section8A(1)(a)and(b).pdf): opinions issued \"prior to the discontinuation of the official Louisiana Reports in 1972\" are cited to the Louisiana Reports"
+      },
+      {
+        "from": "1973-01-01",
+        "reporters": [],
+        "source": "La. Sup. Ct. Gen. Admin. Rules, Part G, § 8(A), https://courtrules.net/louisiana/louisiana-supreme-court/rule-section-8 (amendment: https://www.lasc.org/rules/orders/2022/Part_G_Section8A(1)(a)and(b).pdf): opinions \"for the period between December 31, 1972 and January 1, 1994\" are cited in West's Southern Reporter form, and from 1994 by a public domain citation; neither is named official"
+      }
+    ],
+    "mass": [
+      {
+        "from": null,
+        "reporters": ["mass"],
+        "source": "G.L. c. 221, § 65: \"The volumes of reports shall be styled 'Massachusetts Reports'\", https://malegislature.gov/Laws/GeneralLaws/PartIII/TitleI/Chapter221/Section65"
+      }
+    ],
+    "massappct": [
+      {
+        "from": null,
+        "reporters": ["mass-app-ct"],
+        "source": "G.L. c. 211A, § 9: \"Opinions and rescripts of the appeals court shall be published by the reporter of decisions\", https://malegislature.gov/Laws/GeneralLaws/PartIII/TitleI/Chapter211A/Section9"
+      }
+    ],
+    "md": [
+      {
+        "from": null,
+        "reporters": ["md"],
+        "source": "Md. Code, Cts. & Jud. Proc. § 13-204(a) (the State Reporter publishes \"the Maryland Reports, containing opinions of the Supreme Court of Maryland, and the Maryland Appellate Reports, containing opinions of the Appellate Court of Maryland\"), https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&enactments=false&section=13-204; Md. Rule 8-504(a)(1) (\"the citation shall include a reference to the official Report\")"
+      }
+    ],
+    "mdctspecapp": [
+      {
+        "from": null,
+        "reporters": ["md-app"],
+        "source": "Md. Code, Cts. & Jud. Proc. § 13-204(a) (the State Reporter publishes \"the Maryland Reports, containing opinions of the Supreme Court of Maryland, and the Maryland Appellate Reports, containing opinions of the Appellate Court of Maryland\"), https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&enactments=false&section=13-204; Md. Rule 8-504(a)(1) (\"the citation shall include a reference to the official Report\")"
+      }
+    ],
+    "nj": [
+      {
+        "from": null,
+        "reporters": ["nj"],
+        "source": "N.J. Ct. R. 2:6-2(a)(6): \"New Jersey decisions shall be cited to the official New Jersey reports by volume number but if not officially reported that fact shall be stated and unofficial citation made\" (text via https://www.law.cornell.edu/citation/7-500, not yet checked on njcourts.gov)"
+      }
+    ],
+    "njsuperctappdiv": [
+      {
+        "from": null,
+        "reporters": ["nj-super"],
+        "source": "N.J. Ct. R. 2:6-2(a)(6): \"New Jersey decisions shall be cited to the official New Jersey reports by volume number but if not officially reported that fact shall be stated and unofficial citation made\" (text via https://www.law.cornell.edu/citation/7-500, not yet checked on njcourts.gov)"
+      }
+    ],
+    "ny": [
+      {
+        "from": null,
+        "reporters": ["ny", "ny2d", "ny3d"],
+        "source": "New York Reports: State Reporter created by the Judiciary Act of 1847 (L 1847, ch 280), https://history.nycourts.gov/biography/george-comstock; N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes determined in the Court of Appeals are published in bound volumes entitled \"New York Reports\""
+      }
+    ],
+    "nyalbanycityct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyappdiv": [
+      {
+        "from": null,
+        "reporters": ["ad", "ad2d", "ad3d"],
+        "source": "Appellate Division Reports, published by the Supreme Court Reporter from the court's creation (N.Y. Const. 1894, art. VI; first sat 1896-01-01), per the Law Reporting Bureau's history, https://nycourts.gov/reporter/history/page_15.htm; N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes determined in the appellate divisions are published in bound volumes entitled \"Appellate Division Reports\""
+      }
+    ],
+    "nyappterm": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyarbct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nycityct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyclaimsct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nycountyct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyctcompl": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nygensess": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nynyccityct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyoytermct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyrensctyct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nysaratogactyct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nysenctyct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nysessct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nyspecsessct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nysupct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d", "hun"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reports; General Term decisions to 1895 in the Supreme Court Reporter's reports (Hun), https://nycourts.gov/reporter/history/page_15.htm"
+      },
+      {
+        "from": "1896-01-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reports"
+      }
+    ],
+    "nysuperctbuf": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "nysurct": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ],
+    "ohio": [
+      {
+        "from": null,
+        "reporters": ["ohio-st", "ohio-st-2d", "ohio-st-3d"],
+        "source": "Ohio Rules for the Reporting of Opinions (effective 2012-07-01), https://www.supremecourt.ohio.gov/docs/LegalResources/Rules/reporting/Report.pdf, Rep.Op.R. 2.1: \"All opinions of the Supreme Court shall be ... reported in the advance sheets and bound volumes of the Ohio Official Reports\""
+      }
+    ],
+    "ohioctapp": [
+      {
+        "from": null,
+        "reporters": ["ohio-app", "ohio-app-2d", "ohio-app-3d"],
+        "source": "Ohio Rules for the Reporting of Opinions (effective 2012-07-01), https://www.supremecourt.ohio.gov/docs/LegalResources/Rules/reporting/Report.pdf, Rep.Op.R. 3.2 (implying the printed Ohio Official Reports were official for the courts of appeals before 2012-07-01)"
+      },
+      {
+        "from": "2012-07-01",
+        "reporters": [],
+        "source": "Ohio Rules for the Reporting of Opinions (effective 2012-07-01), https://www.supremecourt.ohio.gov/docs/LegalResources/Rules/reporting/Report.pdf, Rep.Op.R. 3.2: \"The Supreme Court hereby designates the Supreme Court website as the Ohio Official Reports for opinions of the courts of appeals and the Court of Claims as of July 1, 2012\""
+      }
+    ],
+    "pa": [
+      {
+        "from": null,
+        "reporters": ["pa"],
+        "source": "Pa.R.A.P. 2119(b), Official Note to the 2014 amendment (order of 2014-04-14, 44 Pa.B. 2510), https://www.pacourts.us/assets/opinions/Supreme/out/242aplt-attach.pdf: \"the Pennsylvania State Reports, which is the official court reports of the Pennsylvania Supreme Court, the Pennsylvania Superior Court Reports, which had been the official court reports of the Pennsylvania Superior Court, and the Pennsylvania Commonwealth Court Reports, which had been the official court reports of the Commonwealth Court\""
+      }
+    ],
+    "pacommwct": [
+      {
+        "from": null,
+        "reporters": ["pa-commw"],
+        "source": "Pa.R.A.P. 2119(b), Official Note to the 2014 amendment (order of 2014-04-14, 44 Pa.B. 2510), https://www.pacourts.us/assets/opinions/Supreme/out/242aplt-attach.pdf: \"the Pennsylvania State Reports, which is the official court reports of the Pennsylvania Supreme Court, the Pennsylvania Superior Court Reports, which had been the official court reports of the Pennsylvania Superior Court, and the Pennsylvania Commonwealth Court Reports, which had been the official court reports of the Commonwealth Court\""
+      },
+      {
+        "from": "1995-07-01",
+        "reporters": [],
+        "source": "Commonwealth Court, repeal of 210 Pa. Code § 67.52 (Internal Operating Procedure § 411), 27 Pa.B. 1282 (Doc. No. 97-401, filed 1997-03-14): \"In June of 1995, the court ceased publication of the Commonwealth Court Reports\", https://pacodeandbulletin.gov/Display/pabull?file=%2Fsecure%2Fpabulletin%2Fdata%2Fvol27%2F27-11%2F401.html; no successor is named official"
+      }
+    ],
+    "pasuperct": [
+      {
+        "from": null,
+        "reporters": ["pa-super"],
+        "source": "Pa.R.A.P. 2119(b), Official Note to the 2014 amendment (order of 2014-04-14, 44 Pa.B. 2510), https://www.pacourts.us/assets/opinions/Supreme/out/242aplt-attach.pdf: \"the Pennsylvania State Reports, which is the official court reports of the Pennsylvania Supreme Court, the Pennsylvania Superior Court Reports, which had been the official court reports of the Pennsylvania Superior Court, and the Pennsylvania Commonwealth Court Reports, which had been the official court reports of the Commonwealth Court\""
+      }
+    ],
+    "sc": [
+      {
+        "from": null,
+        "reporters": ["sc"],
+        "source": "S.C. Code Ann. § 14-3-810 (\"the official series of South Carolina Reports\"), https://www.scstatehouse.gov/code/t14c003.php; S.C. Judicial Department notice, 2007, https://sccourts.org/opinions/advSheets/no162007.pdf: \"The South Carolina Reports is the official publication of the opinions of the Supreme Court of South Carolina and the South Carolina Court of Appeals\""
+      }
+    ],
+    "scctapp": [
+      {
+        "from": null,
+        "reporters": ["sc"],
+        "source": "S.C. Code Ann. § 14-3-810 (\"the official series of South Carolina Reports\"), https://www.scstatehouse.gov/code/t14c003.php; S.C. Judicial Department notice, 2007, https://sccourts.org/opinions/advSheets/no162007.pdf: \"The South Carolina Reports is the official publication of the opinions of the Supreme Court of South Carolina and the South Carolina Court of Appeals\""
+      }
+    ],
+    "scotus": [
+      {
+        "from": "1817-03-03",
+        "reporters": ["us"],
+        "source": "Act of Mar. 3, 1817, ch. 63, § 1, 3 Stat. 376 (the reporter appointed by the Court to print and publish its decisions), https://www.govinfo.gov/content/pkg/STATUTE-3/pdf/STATUTE-3-Pg376-2.pdf; now 28 U.S.C. § 411(a); \"The opinions of the Supreme Court of the United States are published officially in the United States Reports. See 28 U. S. C. §411.\", https://www.supremecourt.gov/opinions/USReports.aspx"
+      }
+    ],
+    "superctny": [
+      {
+        "from": "1892-07-01",
+        "reporters": ["misc", "misc-2d", "misc-3d"],
+        "source": "L 1892, ch 598 (\"An act to provide for reporting the decisions of the inferior courts of record in the state of New York\", approved by the Governor May 14, 1892), § 1: the Governor appoints a miscellaneous reporter \"who shall hold office for five years from the first day of July, eighteen hundred and ninety-two\" to report opinions \"in causes decided in any court of record of this state, other than the general terms of the supreme court and in the court of appeals\"; § 7: \"This act shall take effect September one, eighteen hundred and ninety-two\" (Laws of 1892, pp. 1144-1145, https://books.google.com/books?id=p_rWqKbZ7sEC&pg=PA1144); 1 Misc. title page: \"In pursuance of Laws of 1892, chapter 598\", earliest decisions July 1892 (https://static.case.law/misc/1.pdf); Judiciary Law (L 1909, ch 35) § 447: \"The said reports shall be known as the 'Miscellaneous Reports'\"; continued by N.Y. Judiciary Law §§ 431 and 433-a (L 1938, ch 494; L 1950, ch 820) and CPLR 5529(e), text at https://www.nycourts.gov/reporter/Regulations.shtml: causes in any other court are published in the Miscellaneous Reportss"
+      }
+    ]
+  },
   "editions": [
     {
       "reporters": [

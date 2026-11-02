@@ -60,10 +60,16 @@ def test_reporter_registry() -> None:
     errors = list(jsonschema.Draft202012Validator(schema).iter_errors(reporters))
     assert not errors, [f"{list(e.path)}: {e.message}" for e in errors[:5]]
     assert reporters["courts_registry_version"] == REGISTRY["version"]
-    assert reporters["version"] == REGISTRY["version"]
+    # The reporter registry has its own CalVer version (spec section 10.3), never earlier than
+    # the court registry it pins: 2026.10.28 was released with it, and 2026.11.02 adds entries.
+    assert reporters["version"] >= REGISTRY["version"]
     assert reporters["spec_version"] == REGISTRY["spec_version"]
-    for code in reporters["official"]:
+    for code, steps in reporters["official"].items():
         assert code in REGISTRY["courts"], code
+        froms = [step["from"] for step in steps]
+        assert None not in froms[1:], code
+        dated = [f for f in froms if f is not None]
+        assert dated == sorted(set(dated)), code
     for edition in reporters["editions"]:
         assert edition["court"] in REGISTRY["courts"], edition
     for name, volumes in reporters["supreme_court_volumes"]["reporters"].items():
