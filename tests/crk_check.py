@@ -815,10 +815,19 @@ def _official(court: str, decided: str, official: dict[str, Any]) -> set[str]:
     return {r.replace("-", "") for r in chosen}
 
 
-def one_decision(printings: list[dict[str, Any]], official: dict[str, Any]) -> str:
+def one_decision(
+    printings: list[dict[str, Any]],
+    official: dict[str, Any],
+    key_printing: str | None = None,
+) -> tuple[str, bool]:
     """Section 5.9: the candidate key of a decision printed more than once, from its printings'
-    candidates, or Refusal(printings-disagree). official is the reporter registry's official."""
+    candidates, or Refusal(printings-disagree). official is the reporter registry's official;
+    key_printing is the printing a person's ruling names to decide the key (from 0.6.2, D167),
+    which stands in for rule 4 only where the official-reporter table can't decide. Returns the
+    key and whether the ruling's key_printing contradicts what rules 1 to 4 give (a conflict;
+    the table wins)."""
     parts = [(p, parse(p["candidate"])) for p in printings]
+    chosen = next((q for p, q in parts if p["id"] == key_printing), None)
     if len({q["court"] for _, q in parts}) > 1:
         raise Refusal("printings-disagree")
     decided = _merge_dates([q["decided"] for _, q in parts])
@@ -836,14 +845,21 @@ def one_decision(printings: list[dict[str, Any]], official: dict[str, Any]) -> s
         segments = {q["docket"] for _, q in top}
         if dockets:
             segments = {s for s in segments if not s.startswith("rpt.")} or segments
-        if len(segments) != 1:
+        if len(segments) == 1:
+            segment = segments.pop()
+        elif chosen is not None:
+            # From 0.6.2 (D167 (1)): the table names no reporter for the court and date, none
+            # of the printings is in it, or its printings disagree; the ruling's printing decides.
+            segment = chosen["docket"]
+        else:
             raise Refusal("printings-disagree")
-        segment = segments.pop()
+    conflict = chosen is not None and chosen["docket"] != segment
     ordinal = min(q["decision_ordinal"] for _, q in parts if q["docket"] == segment)
     first = parts[0][1]
-    return decision_key(
+    key = decision_key(
         {**first, "docket": segment, "decided": decided, "decision_ordinal": ordinal}
     )
+    return key, conflict
 
 
 def _same_name(a: str, b: str) -> bool:
@@ -870,19 +886,42 @@ def decisions(
     printings: list[dict[str, Any]],
     links: list[dict[str, Any]],
     reporters: dict[str, Any],
+    rulings: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Sections 5.9, 7.1 and 13.2 with an empty ledger: the decisions a producer holds, from
     their printings, each with its key or refusal.
 
     printings: [{id, candidate, reporter (slug), volume, page, position, name, citations}];
     links: [{printings: [id, id], source}], the producer's links between printings; reporters:
-    the reporter registry, or a fixture with its official and editions. Returns
-    [{printings: [ids], key} or {printings: [ids], error}] in minting order.
+    the reporter registry, or a fixture with its official and editions; rulings: a person's
+    rulings (from 0.6.2, D167), [{id, printings: [ids], ruling (one-decision or
+    distinct-decisions), key_printing (one-decision only, optional), evidence, by, date}].
+    Returns [{printings: [ids], key} or {printings: [ids], error}] in minting order, with
+    conflicts: [ruling ids] on a decision a ruling contradicts. With no rulings, the result is
+    what 0.6.1 gives.
     """
     by_id = {p["id"]: p for p in printings}
     ids = [p["id"] for p in printings]
     official = reporters.get("official", {})
     editions = [{r.replace("-", "") for r in e["reporters"]} for e in reporters.get("editions", [])]
+    rulings = rulings or []
+    # A person's ruling that printings are one decision links them as a second source would;
+    # one that they are distinct parts every pair of them.
+    one = [r for r in rulings if r["ruling"] == "one-decision"]
+    apart = {
+        frozenset((a, b)): r["id"]
+        for r in rulings
+        if r["ruling"] == "distinct-decisions"
+        for a in r["printings"]
+        for b in r["printings"]
+        if a != b
+    }
+    links = links + [
+        {"printings": [r["printings"][0], other], "source": "human-curated"}
+        for r in one
+        for other in r["printings"][1:]
+    ]
+    conflicts: dict[str, set[str]] = {}  # printing id -> ruling ids that contradict
 
     # The producer's links make groups, except between printings that can't be one decision.
     def can_be_one(a: str, b: str) -> bool:
@@ -900,6 +939,7 @@ def decisions(
         for lk in links
         if lk["source"] in CONFIRMING_SOURCES
     ] + [(a, b) for a in ids for b in ids if a < b and cites[a] & cites[b]]
+    confirmed_pairs = {(a, b) for a, b in confirmed} | {(b, a) for a, b in confirmed}
     units: list[tuple[list[str], str | None, str | None]] = []  # (printings, candidate, error)
     grouped: set[str] = set()
     for group in _components(ids, linked):
@@ -910,8 +950,13 @@ def decisions(
         if len(_components(group, confirmed)) > 1:
             units.append((group, None, "printings-disagree"))
             continue
+        ruling = next((r for r in one if r.get("key_printing") in group), None)
+        key_printing = ruling["key_printing"] if ruling else None
         try:
-            units.append((group, one_decision([by_id[i] for i in group], official), None))
+            key, conflict = one_decision([by_id[i] for i in group], official, key_printing)
+            units.append((group, key, None))
+            if conflict:
+                conflicts.setdefault(group[0], set()).add(ruling["id"])
         except Refusal as refusal:
             units.append((group, None, refusal.args[0]))
     for unit_ids, candidate, _ in list(units):
@@ -931,8 +976,11 @@ def decisions(
     for candidate, members in by_candidate.items():
         key = parse(candidate)
         full_docket = not key["fallback"] and not key["decided"].endswith("-00")
-        pairs = [(a, b) for a in members for b in members if a < b and cites[a] & cites[b]]
-        pairs += [(a, b) for a, b in linked if a in members and b in members]
+        sure = [(a, b) for a in members for b in members if a < b and cites[a] & cites[b]]
+        sure += [
+            (a, b) for a, b in linked if a in members and b in members and (a, b) in confirmed_pairs
+        ]
+        pairs = [(a, b) for a, b in linked if a in members and b in members]
         for a in members:
             for b in members:
                 pa, pb = by_id[a], by_id[b]
@@ -943,6 +991,12 @@ def decisions(
                     _same_name(pa["name"], pb["name"]) or editions_pair in editions
                 ):
                     pairs.append((a, b))  # rule 1
+        # From 0.6.2 (D167 (3)): a person's ruling that they are distinct parts what rule 1 or an
+        # engine link joins; one a second source contradicts is a conflict, and the source stands.
+        for a, b in sure:
+            if (r := apart.get(frozenset((a, b)))) is not None:
+                conflicts.setdefault(a, set()).add(r)
+        pairs = [(a, b) for a, b in pairs if frozenset((a, b)) not in apart] + sure
         found = _components(members, pairs)
         if len(found) == 1:
             units.append((found[0], candidate, None))
@@ -972,6 +1026,14 @@ def decisions(
             # Rule 3: one reporter, different case names: printed order.
             for group in found:
                 hint[group[0]] = min(_printed_order(by_id[i]) for i in group)
+        elif len({by_id[i]["reporter"] for i in members}) == 1 and all(
+            any(frozenset((a, b)) in apart for a in g for b in h)
+            for x, g in enumerate(found)
+            for h in found[x + 1 :]
+        ):
+            # From 0.6.2 (D167 (3)): a person ruled them distinct; printed order in their reporter.
+            for group in found:
+                hint[group[0]] = min(_printed_order(by_id[i]) for i in group)
         else:
             units += [(group, None, "shared-candidate") for group in found]
             continue
@@ -988,13 +1050,15 @@ def decisions(
     held: dict[str, set[int]] = {}
     result = []
     for group, candidate, error in sorted(units, key=order):
+        found_conflicts = sorted(set().union(*(conflicts.get(i, set()) for i in group)))
+        extra = {"conflicts": found_conflicts} if found_conflicts else {}
         if candidate is None:
-            result.append({"printings": sorted(group), "error": error})
+            result.append({"printings": sorted(group), "error": error, **extra})
             continue
         key = parse(candidate)
         used = held.setdefault(stem(candidate), set())
         while key["decision_ordinal"] in used:
             key["decision_ordinal"] += 1
         used.add(key["decision_ordinal"])
-        result.append({"printings": sorted(group), "key": decision_key(key)})
+        result.append({"printings": sorted(group), "key": decision_key(key), **extra})
     return result
