@@ -3,7 +3,7 @@
   "version": "2026.11.02",
   "courts_registry_version": "2026.10.28",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.6.2",
+  "spec_version": "0.6.3",
   "description": "The reporter registry (spec section 10.1): the reporters official for a court's decisions (official, spec section 5.9), the reporters that are editions of one report (editions, section 7.1), and the dates of decision each volume of the Supreme Court's reporters prints (supreme_court_volumes, section 4). Reporters are named by their slug (section 5.6).",
   "official": {
     "ark": [
