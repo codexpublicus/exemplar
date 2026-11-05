@@ -57,6 +57,13 @@ def test_courts_db_notice_reproduces_its_license() -> None:
     assert "registry/courts.json is built from data in Free Law Project's courts-db" in notice
 
 
+def test_reporters_db_notice_reproduces_its_license() -> None:
+    notice = (ROOT / "registry" / "NOTICE-reporters-db.txt").read_text(encoding="utf-8")
+    vendored = (ROOT / "registry" / "sources" / "reporters-db" / "LICENSE").read_text("utf-8")
+    assert notice.endswith(vendored)
+    assert "registry/reporter-variants.json is built from data in Free Law Project's" in notice
+
+
 def test_code_files_carry_spdx_headers() -> None:
     files = code_files()
     assert files
