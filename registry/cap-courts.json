@@ -1,13 +1,13 @@
 {
   "registry": "cap-courts",
-  "version": "2026.10.28",
+  "version": "2026.11.05",
   "courts_registry_version": "2026.10.28",
   "spec": "spec/court-record-key.md",
   "spec_version": "0.6.2",
   "description": "The court registry code for each court the Caselaw Access Project names (spec section 10.1). engine-output: computed from CAP's case metadata, CourtListener's 2026-09-30 crosswalk of CAP cases to its clusters, and the court registry's names, as each entry's basis says; a court in unmapped has no code, and its decisions are refused unregistered-court; an entry marked review has a code that must be reviewed before any key is minted with it, and its decisions are refused court-under-review until the mark is removed.",
   "provenance": "engine-output",
   "bases": {
-    "crosswalk-90": "90% or more of CourtListener's clusters for the court's cases are on one registered code that fits the court's jurisdiction (stare-builder crates/stare-admin/data/crk/cap_courts.py)",
+    "crosswalk-90": "90% or more of CourtListener's clusters for the court's cases are on one registered code that fits the court's jurisdiction",
     "crosswalk-90+name": "crosswalk-90, and the code's registry name is the court's name",
     "name": "the registry court in the court's jurisdiction whose name is the court's name, letter case and punctuation aside",
     "crosswalk-90-specific": "crosswalk-90 once CourtListener's generic courts (uscirct, usdistct) are left out of the count",
@@ -18,7 +18,7 @@
   },
   "source": {
     "cap": "CAP's CasesMetadata.json in each volume of the static.case.law mirror, as of 2026-09-30",
-    "crosswalk": "stare-builder's CourtListener 2026-09-30 export crosswalk (crosswalk.ndjson.gz), one CAP case per cluster"
+    "crosswalk": "a crosswalk of CAP cases to CourtListener clusters, built from CourtListener's 2026-09-30 bulk data (each cluster's link to its CAP case, and its citations), one CAP case per cluster"
   },
   "courts": {
     "8768": {"name": "High Court of American Samoa", "jurisdiction": "American Samoa", "cases": 2140, "codes": [{"from": null, "code": "amsamoa"}], "basis": "crosswalk-90+name"},

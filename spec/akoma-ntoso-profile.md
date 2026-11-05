@@ -2,7 +2,7 @@
 
 Specification version: **0.6.0** (draft). Status: not yet stable; see sections 17 and 18.
 
-This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, gorsuch-library for its corpus) write documents in this form, and the shared viewer reads them.
+This profile says how a US court decision is written as an Akoma Ntoso document: which elements of OASIS LegalDocML (Akoma Ntoso) 1.0 a decision uses, how its separate opinions, printings, pages, citations, footnotes and publisher-added material are marked, and how every document identifies itself by the court record key. Codex Publicus producers (stare for the Caselaw Access Project corpus, the Gorsuch library for its corpus) write documents in this form, and the shared viewer reads them.
 
 The decisions behind it are recorded on codexpublicus/stare#52 (2026-09-29): the court record key is the work and expression identifier; one document per decision, with separate opinions inside it; duplicative cases are other printings of the same decision (one work, several manifestations, codexpublicus/stare#61); page anchors come from CAP's `data-blocks`.
 
@@ -492,7 +492,7 @@ Facts behind its identifiers:
 
 ## 15. Source mappings
 
-These tables say where each profile element comes from in each source. Field and class names were checked against CAP volumes `a2d/31` and `us/347` and against stare-builder's CourtListener record builder (`pipelines/courtlistener/src/stare_courtlistener/record.py`); a source field not listed has no place in the document.
+These tables say where each profile element comes from in each source. Field and class names were checked against CAP volumes `a2d/31` and `us/347` and against the CourtListener records stare builds from CourtListener's bulk data; a source field not listed has no place in the document.
 
 ### 15.1 CAP case JSON
 
@@ -564,7 +564,7 @@ The `cite:` and `neutral:` aliases are formed from `data-cite`, never from `cite
 
 ### 15.3 CourtListener
 
-A CourtListener record is a cluster with its docket, court, citations and opinions. Field names are CourtListener's, as stare-builder reads them.
+A CourtListener record is a cluster with its docket, court, citations and opinions. Field names are CourtListener's, as stare reads them from CourtListener's bulk data.
 
 | CourtListener | Profile |
 |---|---|
@@ -574,8 +574,8 @@ A CourtListener record is a cluster with its docket, court, citations and opinio
 | docket `docket_number` | key input; `FRBRnumber` |
 | docket `court_id` | key input: the court code, from the court registry entry with that code, checked by the producer |
 | cluster `date_filed` | key input; `FRBRdate` (section 5.1.1). A cluster flagged `date_filed_is_approximate` gives the date only as far as CRK spec section 6.1 says: its year when it falls on 1 July, otherwise its year and month |
-| cluster citations | printings and aliases as for CAP (15.1), after stare-builder's typing into `official`, `parallel`, `neutral`, `vendor` |
-| opinion `type` | the part's role, through stare-builder's map to CAP types (`OPINION_TYPES`) and then 15.4 |
+| cluster citations | printings and aliases as for CAP (15.1), after stare types them into `official`, `parallel`, `neutral`, `vendor` |
+| opinion `type` | the part's role, through stare's map of CourtListener's types to CAP's and then 15.4 |
 | opinion `author_str`, `author` | key input: author slugs via the judge registry (`engine-output`) |
 | opinion `per_curiam` | role `per-curiam` |
 | opinion `joined_by` | `@cx:joinedBy` (`engine-output` when the slugs are mapped by the producer) |
@@ -585,7 +585,7 @@ A CourtListener record is a cluster with its docket, court, citations and opinio
 
 ### 15.4 Source opinion types to roles
 
-| Source type (CAP `type`; CourtListener through stare-builder) | CRK role |
+| Source type (CAP `type`; CourtListener through stare's map) | CRK role |
 |---|---|
 | `majority` | `opinion`; `per-curiam` when the byline, reduced to its letters and lowercased, is `percuriam`, `bythecourt` or `thecourt`, or CourtListener's `per_curiam` is set |
 | `unanimous` | `opinion` |

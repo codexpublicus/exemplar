@@ -16,7 +16,7 @@ A court record key (CRK) is a deterministic identifier for a court decision and 
 - `pr/prsupreme/8561/1943-05-18` is a decision of the Supreme Court of Puerto Rico.
 - `us/dakotasup/rpt.3-dakota-1/1882-05-00` is a decision dated, as far as any trustworthy source establishes, only to May 1882.
 
-The research behind this design, including the survey of alternatives and the sources for each docket profile, is codexpublicus/gorsuch-library `docs/research/2026-09-25-case-identifier-recommendation.md` ("the research doc"). This document supersedes it as the normative source. Where the two disagree, this document governs and the disagreement is a bug in one of them.
+The research behind this design, including the survey of alternatives and the sources for each docket profile, is an unpublished study written for the Gorsuch library (<https://gorsuch.codexpublicus.org>) on 2026-09-25 ("the research doc"). This document supersedes it as the normative source. Where the two disagree, this document governs and the disagreement is a bug in one of them.
 
 ## 1. Conventions
 
@@ -63,7 +63,7 @@ LC          = %x61-7A                           ; a-z
 
 ### 2.2 Regular expression
 
-The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which gorsuch-library tests against, in the jurisdiction segment (0.4.0, section 13.5).
+The following regular expression (POSIX ERE and PCRE, anchored) accepts exactly the strings the ABNF accepts. It differs from the regex in the research doc, which the Gorsuch library's implementation is tested against, in the jurisdiction segment (0.4.0, section 13.5).
 
 ```regex
 ^([a-z]{2,16})/([a-z][a-z0-9-]*)/([a-z0-9][a-z0-9_.-]*)/([0-9]{4}-[0-9]{2}-[0-9]{2})(~([2-9]|[1-9][0-9]+))?(/(opinion|per-curiam|plurality|concurrence|concurrence-in-judgment|concurrence-in-part-and-judgment|partial|partial-majority|dissent|statement|order|judgment|decree)(\.[a-z][a-z-]*(\+[a-z][a-z-]*)*)?(~([2-9]|[1-9][0-9]+))?)?(@[0-9]{4}-[0-9]{2}-[0-9]{2})?$
@@ -452,11 +452,11 @@ A producer MUST record, alongside the keys it mints (for example in a release ma
 | Registry | URI | Version |
 |---|---|---|
 | Courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/courts.json` | `2026.10.28` |
-| CAP courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/cap-courts.json` | `2026.10.28` |
+| CAP courts | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/cap-courts.json` | `2026.11.05` |
 | Reporters | `https://raw.githubusercontent.com/codexpublicus/exemplar/{tag}/registry/reporters.json` | `2026.11.02` |
 | Judges | supplied by the consumer | the consumer's |
 
-The court registry's URI is the raw file URL of `registry/courts.json` at the release tag of codexpublicus/exemplar the consumer pins, with `{tag}` replaced by that tag, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). The raw URL returns the registry file itself, as tagged; a `github.com/.../blob/{tag}/...` URL returns an HTML page about the file, whose fragments GitHub uses for its own line anchors. A judge registry's URI is an absolute URI that names one snapshot, chosen by whoever publishes it. This version of the spec is published with court registry `2026.10.28`, which adds the eleven codes of section 10.1, and reporter registry `2026.11.02`, which adds the official-reporter table to 0.6.0's `2026.10.28`; registry `2026.10.25`, which assigns the Federal Circuit the `us-cafc` profile, is 0.5.x's, and `2026.10.23` is 0.4.0's. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
+The court registry's URI is the raw file URL of `registry/courts.json` at the release tag of codexpublicus/exemplar the consumer pins, with `{tag}` replaced by that tag, and its version is the `version` field in the file, a CalVer date (`YYYY.MM.DD`). The raw URL returns the registry file itself, as tagged; a `github.com/.../blob/{tag}/...` URL returns an HTML page about the file, whose fragments GitHub uses for its own line anchors. A judge registry's URI is an absolute URI that names one snapshot, chosen by whoever publishes it. This version of the spec is published with court registry `2026.10.28`, which adds the eleven codes of section 10.1, CAP court table `2026.11.05`, which restates where `2026.10.28`'s crosswalk came from and maps every court as it did, and reporter registry `2026.11.02`, which adds the official-reporter table to 0.6.0's `2026.10.28`; registry `2026.10.25`, which assigns the Federal Circuit the `us-cafc` profile, is 0.5.x's, and `2026.10.23` is 0.4.0's. The test vectors resolve court codes against that registry and use a judges fixture (`vectors/court-record-key/judges-fixture.json`), which stands in for a consumer's judge registry and is not one.
 
 ## 11. Aliases and relations
 
@@ -679,7 +679,7 @@ Every vector records its `provenance`:
 
 - `human-curated`: a person checked it against the primary source. Ground truth; where it disagrees with any other vector, it wins.
 - `hand-checked`: taken from a worked example in the research doc.
-- `engine-output`: taken from an implementation's tests or output (gorsuch-library), or computed from a source's records (CAP's case metadata, CourtListener's export) by the rules here; it shows what the data and an implementation give, not what is correct.
+- `engine-output`: taken from an implementation's tests or output (the Gorsuch library's), or computed from a source's records (CAP's case metadata, CourtListener's export) by the rules here; it shows what the data and an implementation give, not what is correct.
 - `spec-derived`: constructed from this document's rules to exercise an edge case, and not yet checked by a person.
 
 ## 15. Interop mappings (informative)
