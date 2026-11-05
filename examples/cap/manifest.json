@@ -11,7 +11,7 @@
     "uriBase": "https://raw.githubusercontent.com/codexpublicus/exemplar/v0.6.0/",
     "uriNote": "Registry URIs in the documents are uriBase followed by the registry's path: the raw file URL at the release tag these examples are published in (profile section 5.3).",
     "courts": "registry/courts.json",
-    "courtsVersion": "2026.10.28",
+    "courtsVersion": "2026.11.05",
     "judges": "examples/cap/judges.json"
   },
   "courts": {

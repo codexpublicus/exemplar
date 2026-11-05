@@ -51,6 +51,7 @@ ROOT = HERE.parent.parent
 MANIFEST = HERE / "manifest.json"
 SOURCE = HERE / "source"
 COURTS = ROOT / "registry" / "courts.json"
+VARIANTS = ROOT / "registry" / "reporter-variants.json"
 LOCK = HERE / "volumes.lock.json"
 CACHE = ROOT / ".cache" / "stare"
 
@@ -160,6 +161,17 @@ def slug(text: str) -> str:
     return "-".join(s.split())
 
 
+_VARIANTS: dict[str, Any] = json.loads(VARIANTS.read_text(encoding="utf-8"))["variants"]
+
+
+def reporter_slug(reporter: str) -> str:
+    """A reporter's slug, from the abbreviation the reporter variant map gives the spelling
+    (CRK spec section 5.6, from 0.7.0); a spelling the map doesn't list is its own."""
+    spelling = " ".join(reporter.split())
+    entry = _VARIANTS.get(spelling)
+    return slug(entry["abbreviation"] if entry else spelling)
+
+
 def cite_parts(cite: str) -> tuple[str, str, str]:
     m = CITATION.match(cite.strip())
     if not m:
@@ -169,7 +181,7 @@ def cite_parts(cite: str) -> tuple[str, str, str]:
 
 def cite_alias(cite: str) -> str:
     volume, reporter, page = cite_parts(cite)
-    return f"cite:{volume}-{slug(reporter)}-{page}"
+    return f"cite:{volume}-{reporter_slug(reporter)}-{page}"
 
 
 def try_cite_alias(cite: str) -> str | None:
@@ -286,7 +298,7 @@ def decision_key(
         if not official:
             raise Refusal("no-docket" if not dockets else "docket-profile")
         volume, reporter, first = cite_parts(official[0])
-        segment = f"rpt.{volume}-{slug(reporter)}-{first}"
+        segment = f"rpt.{volume}-{reporter_slug(reporter)}-{first}"
         # CRK 5.6: the decision ordinal is the position among every decision that begins on the
         # page and shares the date, whether or not it takes the fallback.
         same_day = [c["file_name"] for c in page if c["decision_date"] == decided]
@@ -703,7 +715,7 @@ def printings(
         if c["type"] not in ("official", "parallel"):
             continue
         volume, reporter, first = cite_parts(c["cite"])
-        eid = f"printing_{volume}-{slug(reporter)}-{first}"
+        eid = f"printing_{volume}-{reporter_slug(reporter)}-{first}"
         if c["type"] == "official":
             if first != case["first_page"]:
                 raise Refusal(f"official citation {c['cite']} doesn't start at CAP's first_page")

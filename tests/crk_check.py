@@ -8,8 +8,10 @@ disagrees with it points at either the vector or the spec. Nothing here is a
 library; vectors MUST NOT be generated from it.
 """
 
+import json
 import re
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 ROLES = frozenset(
@@ -242,7 +244,7 @@ def clean(printed: str) -> str:
     return (clean_all(printed) or [""])[0]
 
 
-def _scotus(text: str) -> str | None:
+def _scotus(text: str, court: str = "") -> str | None:
     if m := re.fullmatch(r"([0-9]{1,3}),? orig\.?", text, re.IGNORECASE):
         return f"22o{m.group(1)}"
     for pattern in (
@@ -256,7 +258,7 @@ def _scotus(text: str) -> str | None:
     return None
 
 
-def _scotus_numbered(text: str) -> str | None:
+def _scotus_numbered(text: str, court: str = "") -> str | None:
     if m := re.fullmatch(r"([0-9]{1,5})", text):
         return m.group(1)
     if m := re.fullmatch(r"([0-9]{1,5}),? misc\.?", text, re.IGNORECASE):
@@ -266,13 +268,13 @@ def _scotus_numbered(text: str) -> str | None:
     return None
 
 
-def _coa(text: str) -> str | None:
+def _coa(text: str, court: str = "") -> str | None:
     text = re.sub(r"\s*\(L\)$", "", text)
     text = re.sub(r"(?<=[0-9])-[A-Za-z]$", "", text)
     return text if re.fullmatch(r"[0-9]{2}-[0-9]{3,5}", text) else None
 
 
-def _cafc(text: str) -> str | None:
+def _cafc(text: str, court: str = "") -> str | None:
     """Section 5.8: the Federal Circuit from 1982-10-01, with four-digit years."""
     if re.fullmatch(r"(?:19|20)[0-9]{2}-[0-9]{3,5}", text):
         return text
@@ -291,14 +293,26 @@ def _cafc(text: str) -> str | None:
     return None
 
 
-def _district(text: str) -> str | None:
+def _district(text: str, court: str = "") -> str | None:
     m = re.fullmatch(
         r"([0-9]):([0-9]{2})-([a-z]{1,4})-([0-9]{1,5})(?:-[a-z]{2,4})*", text, re.IGNORECASE
     )
     return f"{m.group(1)}_{m.group(2)}-{m.group(3).lower()}-{m.group(4)}" if m else None
 
 
-def _printed(text: str) -> str | None:
+# Section 5.5 (from 0.7.0, #35, D192): the courts that print a lower court's docket number in
+# parentheses after their own.
+LOWER_COURT_NUMBER = frozenset({"ala", "alacrimapp", "alacivapp", "nm", "nmctapp", "ri"})
+_TRAILING_GROUP = re.compile(r"\s*\([^()]*\)\s*$")
+
+
+def _printed(text: str, court: str = "") -> str | None:
+    if court in LOWER_COURT_NUMBER:
+        # From 0.7.0 (#35): drop the lower court's number, then one trailing `.` (5.1 step 5).
+        text = _strip_period(_TRAILING_GROUP.sub("", text))
+    else:
+        # From 0.7.0 (#35): delete parentheses, keeping what they enclose.
+        text = text.replace("(", "").replace(")", "")
     text = re.sub(r"(?<=[0-9]),(?=\s*[0-9])", "_", text.lower()).replace(",", "")
     text = re.sub(r"\s+", "", text).replace(":", "_").replace("/", "_")
     return text if DOCKET.fullmatch(text) and not text.startswith("rpt.") else None
@@ -337,6 +351,30 @@ def jurisdiction_for(court: dict[str, Any], decided: str | None) -> str:
     return court["jurisdiction"]
 
 
+# Section 5.3 (from 0.7.0, #36, D192): the Second Circuit's docket number after a calendar number,
+# `No. 1217, Docket 79-5006`, `Nos. 1149, 1291, Dockets 89-7039, 89-7041`.
+# A number with a case-type suffix (`04-0070-cv`, `03-7868 CV`, printed from 2002) isn't in that
+# form: a letter or `-` directly after it, or a space and two letters other than `to`.
+_CA2_DOCKET = re.compile(
+    r"\bdockets?\b\.?\s*(?:nos?\b\.?\s*)?([0-9]{2}-[0-9]{3,5})"
+    r"(?![0-9a-z-])(?!\s+(?!to\b)[a-z]{2}(?![a-z]))",
+    re.I,
+)
+_COA_NUMBER = re.compile(r"(?<![0-9a-z-])[0-9]{2}-[0-9]{3,5}(?![0-9a-z-])", re.I)
+
+
+def _second_circuit(profile: str | None, court: str, printed: str) -> list[str]:
+    """The us-coa dockets a Second Circuit docket printed after `Docket` names, first the
+    decision's docket, or [] when it isn't in that form."""
+    if profile != "us-coa" or court != "ca2":
+        return []
+    text = printed.strip().translate(_DASHES)
+    m = _CA2_DOCKET.search(text)
+    if not m:
+        return []
+    return [m.group(1)] + _COA_NUMBER.findall(text[m.end() :])
+
+
 def docket_segment(
     courts: dict[str, Any], court: str, printed: str, decided: str | None = None
 ) -> str:
@@ -344,10 +382,12 @@ def docket_segment(
     profile = profile_for(courts[court], decided)
     if profile is None:
         raise Refusal("no-docket-profile")
+    if found := _second_circuit(profile, court, printed):
+        return found[0]
     text = clean(printed)
     if not text:
         raise Refusal("no-docket")
-    segment = PROFILES[profile](text)
+    segment = PROFILES[profile](text, court)
     if segment is None:
         raise Refusal("docket-profile")
     return segment
@@ -358,14 +398,39 @@ def other_dockets(
 ) -> list[str]:
     """Docket segments of the other dockets a printed list names (sections 5.1, 11.1)."""
     profile = profile_for(courts[court], decided)
-    segments = [PROFILES[profile](item) for item in clean_all(printed)[1:]] if profile else []
+    if found := _second_circuit(profile, court, printed):
+        return found[1:]
+    segments = (
+        [PROFILES[profile](item, court) for item in clean_all(printed)[1:]] if profile else []
+    )
     return [s for s in segments if s is not None]
 
 
 def slug(text: str) -> str:
-    """Section 5.6: a reporter abbreviation reduced to a slug (`&` deleted from 0.5.0)."""
+    """Section 5.6: an abbreviation reduced to a slug (`&` deleted from 0.5.0)."""
     text = re.sub(r"[.'’(),&]", "", text.lower())
     return re.sub(r"\s+", "-", text.strip())
+
+
+# Section 5.6 (from 0.7.0, #31, D192): registry/reporter-variants.json, the reporter variant map.
+VARIANTS: dict[str, Any] = json.loads(
+    (Path(__file__).resolve().parent.parent / "registry" / "reporter-variants.json").read_text(
+        encoding="utf-8"
+    )
+)["variants"]
+
+
+def abbreviation(text: str) -> str:
+    """Section 5.6 (from 0.7.0): the abbreviation the variant map gives a spelling, with
+    whitespace runs collapsed; a spelling it doesn't list is its own abbreviation."""
+    spelling = " ".join(text.split())
+    entry = VARIANTS.get(spelling)
+    return entry["abbreviation"] if entry else spelling
+
+
+def reporter_slug(text: str) -> str:
+    """Section 5.6: a reporter's slug, from the abbreviation the variant map gives (0.7.0)."""
+    return slug(abbreviation(text))
 
 
 def volume_text(volume: str) -> str:
@@ -374,7 +439,8 @@ def volume_text(volume: str) -> str:
 
 
 def rpt_segment(citation: dict[str, str]) -> str:
-    return f"rpt.{volume_text(citation['volume'])}-{slug(citation['reporter'])}-{citation['page']}"
+    volume, reporter = volume_text(citation["volume"]), reporter_slug(citation["reporter"])
+    return f"rpt.{volume}-{reporter}-{citation['page']}"
 
 
 _CITATION = re.compile(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+(\*?[0-9]+)")
@@ -398,7 +464,7 @@ def reporter_citation(citation: dict[str, str] | str | None) -> dict[str, str] |
         citation = {**citation, "page": star.group(1)}
     if not _VOLUME.fullmatch(citation["volume"]) or not citation["page"].isdigit():
         return None
-    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug(citation["reporter"])):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", reporter_slug(citation["reporter"])):
         return None
     return citation
 
@@ -416,7 +482,7 @@ def supreme_court_citation(citation: dict[str, str] | str | None) -> bool:
     citation = reporter_citation(citation)
     if citation is None:
         return False
-    reporter = slug(citation["reporter"]).replace("-", "")
+    reporter = reporter_slug(citation["reporter"]).replace("-", "")
     if reporter not in SUPREME_COURT_REPORTERS:
         return False
     return not (reporter == "us" and int(citation["volume"].split()[0]) <= 4)
@@ -430,7 +496,7 @@ def supreme_court_volume_fits(
     doesn't list doesn't."""
     citation = reporter_citation(citation)
     assert citation is not None
-    name = SUPREME_COURT_REPORTERS[slug(citation["reporter"]).replace("-", "")]
+    name = SUPREME_COURT_REPORTERS[reporter_slug(citation["reporter"]).replace("-", "")]
     volumes = reporters["supreme_court_volumes"]["reporters"][name]
     span = volumes.get(citation["volume"].split()[0])
     if span is None:
@@ -444,7 +510,7 @@ def supreme_court_fallback_citation(facts: dict[str, Any]) -> dict[str, str] | s
     Reports decides, then the Supreme Court Reporter, then the Lawyers' Edition."""
     cited = [facts["reporter_citation"], *facts.get("parallel_citations", [])]
     ranked = [
-        (_SUPREME_ORDER[slug(c["reporter"]).replace("-", "")], i, c)
+        (_SUPREME_ORDER[reporter_slug(c["reporter"]).replace("-", "")], i, c)
         for i, c in enumerate(reporter_citation(c) for c in cited)
         if c is not None and supreme_court_citation(c)
     ]
@@ -470,8 +536,8 @@ def fallback_citation(facts: dict[str, Any]) -> dict[str, str] | None:
     if (
         printed_in is not None
         and official["volume"] == printed_in["volume"]
-        and slug(official["reporter"]).replace("-", "")
-        != slug(printed_in["reporter"]).replace("-", "")
+        and reporter_slug(official["reporter"]).replace("-", "")
+        != reporter_slug(printed_in["reporter"]).replace("-", "")
     ):
         return {**official, "reporter": printed_in["reporter"]}
     return official
@@ -734,7 +800,7 @@ def normalize_alias(scheme: str, printed: str) -> str:
     if scheme == "cite":
         m = re.fullmatch(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+([0-9]+)", printed.strip())
         assert m, printed
-        return f"cite:{volume_text(m.group(1))}-{slug(m.group(2))}-{m.group(3)}"
+        return f"cite:{volume_text(m.group(1))}-{reporter_slug(m.group(2))}-{m.group(3)}"
     if scheme == "neutral":
         return f"neutral:{slug(printed)}"
     if scheme == "ca6":
@@ -763,7 +829,7 @@ def _cite_aliases(printing: dict[str, Any]) -> set[tuple[str, str, str]]:
     found = set()
     for c in printing.get("citations", []):
         if (parsed := reporter_citation(c)) is not None:
-            reporter = slug(parsed["reporter"]).replace("-", "")
+            reporter = reporter_slug(parsed["reporter"]).replace("-", "")
             found.add((volume_text(parsed["volume"]), reporter, parsed["page"]))
     return found
 
