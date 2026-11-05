@@ -2,6 +2,22 @@
 
 Changes to the specs, schemas, vectors and examples, by release tag. A release tag pins the court record key spec (CRK), the Akoma Ntoso profile and the court registry together; each spec's own versioning section (CRK section 13, profile section 18) says what its versions mean. Earlier versions are described there.
 
+## v0.6.3 (unreleased)
+
+CRK 0.6.3, a patch release; court registry stays `2026.10.28`, CAP court table `2026.11.05`, reporter registry `2026.11.02`, and the profile stays 0.6.0. The registries' `spec_version` moves to 0.6.3. The owner's ruling D187 (2026-11-05) on [exemplar#59](https://github.com/codexpublicus/exemplar/issues/59) and [exemplar#60](https://github.com/codexpublicus/exemplar/issues/60). Two candidate keys change, both at 2 Serg. & Rawle 49; no existing vector's expected result changes.
+
+### Court record key 0.6.3
+
+- **A CourtListener cluster links every pair of its printings** (D187 (1), [exemplar#59](https://github.com/codexpublicus/exemplar/issues/59)). Section 5.9: the cluster asserts that all its files are one decision, and nothing else confirms or refutes that for a file between two others, so a cluster links each pair, not only neighbouring files; a pair that can't be one decision (different courts, or dates neither of which can be the other) isn't linked and breaks none of the other pairs. Sections 5.9 and 7.1 read a cluster's links this way. Example: cluster 2011124, Powell v. Drumheller at 653 A.2d 619 and 539 Pa. 484 with White v. Link (658 A.2d 619, Superior Court of Delaware) as its middle file. **Holds printings**: over CAP, CourtListener's 2026-09-30 clusters read pairwise give 82,595 groups of printings whose candidates differ, against 82,052 read as neighbours, in 596 clusters of three or four files; 1,140 more printings are in groups, held `printings-disagree` without a second source where each would have keyed alone. stare's mint, reported on #59, counts 81,971 groups against 81,429 and 1,084 more printings held.
+- **A star page is the official reporter's page** (D187 (2), [exemplar#60](https://github.com/codexpublicus/exemplar/issues/60)). Section 5.6, beside #56's rule on what a reporter citation is: a page printed `*49` is page 49 of the official reporter, wherever a citation or the volume's page gives it, and P1b and the fallback ordinal read it as any other page. **Changes keys**: CAP prints one star page; the two decisions of 1815-09-16 at 2 Serg. & Rawle 49 both key under `rpt.2-serg-rawl-49`, in printed order: Bedford v. M'Elherron (`*49`) `us/pa/rpt.2-serg-rawl-49/1815-09-16`, which was `us/pa/rpt.2-serg-rawle-49/1815-09-16`, and Smith v. Thompson `us/pa/rpt.2-serg-rawl-49/1815-09-16~2`, which was unmarked.
+- Section 13.5 and the introduction list D187.
+
+### Vectors
+
+- `decisions.jsonl`: a link may list more than two printings and links every pair of them, so a cluster is one entry; 1 new, `d187-cluster-pairwise-middle-differs` (cluster 2011124: White v. Link keys alone and the two printings of Powell v. Drumheller are held). `tests/test_court_record_key.py` checks each link's source and printings.
+- `compute.jsonl`: 2 new, `d187-star-page-first` and `d187-star-page-second` (2 Serg. & Rawle 49, both keys and their printed-date aliases).
+- `tests/crk_check.py`'s oracle links every pair of a link's printings, a person's one-decision ruling among them, and reads a star page as its page.
+
 ## v0.6.2 (unreleased)
 
 CRK 0.6.2, a patch release, and CAP court table `2026.11.05`; court registry stays `2026.10.28`, reporter registry stays `2026.11.02`, and the profile stays 0.6.0. The registries' `spec_version` moves to 0.6.2. The owner's ruling D167 (2026-11-02), items (1) and (3), on what a person's ruling does where the official-reporter table can't decide and where printings sharing a candidate are distinct. With no rulings, no candidate key a 0.6.1 producer computes changes and no vector's expected result changes. CAP holds no rulings, so 0.6.1's measurements stand; nothing new is measured.

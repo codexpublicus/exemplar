@@ -377,14 +377,16 @@ def rpt_segment(citation: dict[str, str]) -> str:
     return f"rpt.{volume_text(citation['volume'])}-{slug(citation['reporter'])}-{citation['page']}"
 
 
-_CITATION = re.compile(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+([0-9]+)")
+_CITATION = re.compile(r"([0-9]+(?:\s+[0-9]+/[0-9]+)?)\s+(.+?)\s+(\*?[0-9]+)")
 _VOLUME = re.compile(r"[0-9]+(?:\s+[0-9]+/[0-9]+)?")
+_STAR_PAGE = re.compile(r"\*([0-9]+)")
 
 
 def reporter_citation(citation: dict[str, str] | str | None) -> dict[str, str] | None:
     """Section 5.6 (from 0.6.0, #56): a reporter citation is a volume, a reporter and a page of
     decimal digits. facts give a citation as {volume, reporter, page} or as the source prints it;
-    one in another form (`2011-NMCA-108`, `1 Cai. Cas. iii`, `3 Ark. App. 280-A`) gives None."""
+    one in another form (`2011-NMCA-108`, `1 Cai. Cas. iii`, `3 Ark. App. 280-A`) gives None.
+    From 0.6.3 (D187 (2)), a star page (`*49`) is read as the official reporter's page, 49."""
     if citation is None:
         return None
     if isinstance(citation, str):
@@ -392,6 +394,8 @@ def reporter_citation(citation: dict[str, str] | str | None) -> dict[str, str] |
         if not m:
             return None
         citation = {"volume": m.group(1), "reporter": m.group(2), "page": m.group(3)}
+    if star := _STAR_PAGE.fullmatch(citation["page"]):
+        citation = {**citation, "page": star.group(1)}
     if not _VOLUME.fullmatch(citation["volume"]) or not citation["page"].isdigit():
         return None
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug(citation["reporter"])):
@@ -892,7 +896,9 @@ def decisions(
     their printings, each with its key or refusal.
 
     printings: [{id, candidate, reporter (slug), volume, page, position, name, citations}];
-    links: [{printings: [id, id], source}], the producer's links between printings; reporters:
+    links: [{printings: [id, id, ...], source}], the producer's links between printings, each
+    linking every pair of the printings it lists (from 0.6.3, D187 (1): a CourtListener cluster
+    links every pair of its printings, not only neighbouring ones); reporters:
     the reporter registry, or a fixture with its official and editions; rulings: a person's
     rulings (from 0.6.2, D167), [{id, printings: [ids], ruling (one-decision or
     distinct-decisions), key_printing (one-decision only, optional), evidence, by, date}].
@@ -916,14 +922,18 @@ def decisions(
         for b in r["printings"]
         if a != b
     }
-    links = links + [
-        {"printings": [r["printings"][0], other], "source": "human-curated"}
-        for r in one
-        for other in r["printings"][1:]
+    links = links + [{"printings": r["printings"], "source": "human-curated"} for r in one]
+    # From 0.6.3 (D187 (1)): a link, a cluster among them, links every pair of its printings.
+    links = [
+        {"printings": [a, b], "source": lk["source"]}
+        for lk in links
+        for x, a in enumerate(lk["printings"])
+        for b in lk["printings"][x + 1 :]
     ]
     conflicts: dict[str, set[str]] = {}  # printing id -> ruling ids that contradict
 
-    # The producer's links make groups, except between printings that can't be one decision.
+    # The producer's links make groups, except between printings that can't be one decision; such a
+    # pair breaks none of the link's other pairs (from 0.6.3, D187 (1)).
     def can_be_one(a: str, b: str) -> bool:
         pa, pb = parse(by_id[a]["candidate"]), parse(by_id[b]["candidate"])
         return pa["court"] == pb["court"] and _dates_fit(pa["decided"], pb["decided"])

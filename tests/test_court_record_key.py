@@ -153,6 +153,12 @@ class TestDecisions:
             assert crk_check.parse(p["candidate"])["role"] is None, p["id"]
         rulings = v.get("rulings", [])
         printing_ids = {p["id"] for p in v["printings"]}
+        for link in v.get("links", []):
+            # Section 5.9 (from 0.6.3, D187 (1)): a link, such as a cluster, links every pair of
+            # the two or more printings it lists.
+            assert link["source"] in {"courtlistener", "official", "human-curated"}, v["id"]
+            assert len(set(link["printings"])) == len(link["printings"]) >= 2, v["id"]
+            assert set(link["printings"]) <= printing_ids, v["id"]
         for r in rulings:
             # Section 5.9 (from 0.6.2, D167): a ruling cites its evidence and records who and when.
             assert r["ruling"] in {"one-decision", "distinct-decisions"}, r["id"]
