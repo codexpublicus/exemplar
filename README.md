@@ -16,7 +16,7 @@ It defines, independently of any one implementation:
 |---|---|
 | `spec/` | Normative specifications (MUST/SHOULD language): the court record key, the Akoma Ntoso profile |
 | `registry/` | The court registry (`courts.json`), its build script, and the vendored courts-db snapshot it is built from; CAP's courts mapped to registry codes (`cap-courts.json`); the reporter registry (`reporters.json`): official reporters, editions of one report, and the dates each volume of the Supreme Court's reporters prints |
-| `schema/` | JSON Schema for the court registry, the CAP court table, the reporter registry and a key publisher's errata list (`crk-errata.schema.json`, CRK section 13.4); the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
+| `schema/` | JSON Schema for the court registry, the CAP court table, the reporter registry, a key publisher's errata list (`crk-errata.schema.json`, CRK section 13.4) and, proposed (P8), a judge registry (`judges-registry.schema.json`); the vendored Akoma Ntoso 1.0 XML Schema (`schema/akn/1.0/`); the profile's Schematron rules (`profile.sch`); JSON Schema for the viewer sidecar (`sidecar.schema.json`) |
 | `vectors/` | Language-neutral JSON test vectors: key computation, parsing, rejection, valid and invalid documents and sidecars |
 | `examples/` | Sample documents built from Caselaw Access Project data, each with its viewer sidecar: `minimal/`, the hand-built excerpt the profile quotes, and `cap/`, complete documents generated from CAP cases |
 | `validator/` | The reference validator, which runs the XSD, the Schematron rules and the sidecar schema, and the vendored SchXslt2 transpiler it uses |
@@ -86,11 +86,11 @@ Source and provenance: the court codes are the ids in Free Law Project's courts-
 
 To rebuild after vendoring a newer courts-db snapshot, update the pin in `registry/build_courts.py` and run `uv run python registry/build_courts.py`. The registry is append-only: a rebuild may add courts, and must not drop or change one already published.
 
-There is no judge registry here. Judge slugs come from a registry the consumer supplies by URI (spec section 10.2); the vectors use a small fixture in its place.
+There is no judge registry here. Judge slugs come from a registry the consumer supplies by URI (spec section 10.2); the vectors use a small fixture in its place. Proposal P8 ([exemplar#47](https://github.com/codexpublicus/exemplar/issues/47), pending ruling) would publish one here for the courts the registry covers outside the United States, in the shape `schema/judges-registry.schema.json` drafts.
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.6.2 (draft), with court registry 2026.10.28, CAP court table 2026.11.05 and reporter registry 2026.11.02; it moved here from an unpublished study written for the Gorsuch library and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
+Early. Nothing here is stable yet. The court record key spec is at 0.6.2 (draft), with court registry 2026.10.28, CAP court table 2026.11.05 and reporter registry 2026.11.02; it moved here from an unpublished study written for the Gorsuch library and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19, and its proposals P5 to P9 for decisions outside the United States, pending ruling, in its section 18. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
