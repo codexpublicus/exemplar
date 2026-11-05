@@ -59,6 +59,7 @@ def load(name: str) -> list[dict[str, Any]]:
 COURTS = json.loads((ROOT / "registry" / "courts.json").read_text(encoding="utf-8"))["courts"]
 JUDGES = json.loads((VECTORS / "judges-fixture.json").read_text(encoding="utf-8"))["judges"]
 CAP_COURTS = json.loads((ROOT / "registry" / "cap-courts.json").read_text(encoding="utf-8"))
+REPORTERS = json.loads((ROOT / "registry" / "reporters.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((VECTORS / "manifest.json").read_text(encoding="utf-8"))
 ERRATA_SCHEMA = json.loads((ROOT / "schema" / "crk-errata.schema.json").read_text("utf-8"))
 
@@ -118,7 +119,7 @@ class TestCompute:
     @pytest.mark.parametrize("v", load("compute.jsonl"), ids=ids("compute.jsonl"))
     def test_vector(self, v: dict[str, Any]) -> None:
         if "key" in v:
-            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
+            key = crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
             assert key == v["key"]
             assert abnf_accepts("crk", key)
             assert regex_accepts(key)
@@ -131,13 +132,49 @@ class TestCompute:
             if "provisional" in v:
                 assert crk_check.is_provisional(v["facts"]) is v["provisional"]
             if "printed_alias" in v:
-                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                alias = crk_check.printed_alias(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
                 assert alias == v["printed_alias"]
                 assert abnf_accepts("printed-alias", alias)
         else:
             with pytest.raises(crk_check.Refusal) as refusal:
-                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS)
+                crk_check.compute(v["facts"], COURTS, JUDGES, CAP_COURTS, REPORTERS)
             assert refusal.value.args[0] == v["error"]
+
+
+class TestDecisions:
+    """decisions.jsonl: printings and their links give decisions, each with its key or refusal
+    (sections 5.9, 7.1, and 13.2 with an empty ledger)."""
+
+    @pytest.mark.parametrize("v", load("decisions.jsonl"), ids=ids("decisions.jsonl"))
+    def test_vector(self, v: dict[str, Any]) -> None:
+        reporters = {**REPORTERS, **v.get("reporters", {})}
+        for p in v["printings"]:
+            assert crk_check.classify(p["candidate"]) is None, p["id"]
+            assert crk_check.parse(p["candidate"])["role"] is None, p["id"]
+        rulings = v.get("rulings", [])
+        printing_ids = {p["id"] for p in v["printings"]}
+        for r in rulings:
+            # Section 5.9 (from 0.6.2, D167): a ruling cites its evidence and records who and when.
+            assert r["ruling"] in {"one-decision", "distinct-decisions"}, r["id"]
+            assert r["evidence"] and r["by"], r["id"]
+            assert re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", r["date"]), r["id"]
+            assert len(r["printings"]) >= 2 and set(r["printings"]) <= printing_ids, r["id"]
+            if "key_printing" in r:
+                assert r["ruling"] == "one-decision", r["id"]
+                assert r["key_printing"] in r["printings"], r["id"]
+        got = crk_check.decisions(v["printings"], v.get("links", []), reporters, rulings)
+        assert got == v["decisions"]
+        if not rulings:
+            # With no rulings, 0.6.2 gives what 0.6.1 gave: no conflicts can arise.
+            assert not any("conflicts" in d for d in got)
+        listed = sorted(i for d in v["decisions"] for i in d["printings"])
+        assert listed == sorted(p["id"] for p in v["printings"])
+        for d in v["decisions"]:
+            assert ("key" in d) is ("error" not in d)
+            if "key" in d:
+                assert crk_check.classify(d["key"]) is None
+            else:
+                assert d["error"] in {"printings-disagree", "shared-candidate"}
 
 
 class TestLedger:

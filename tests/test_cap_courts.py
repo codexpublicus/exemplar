@@ -9,6 +9,8 @@ from typing import Any
 
 import jsonschema
 
+from tests.crk_check import period
+
 ROOT = Path(__file__).resolve().parent.parent
 TABLE: dict[str, Any] = json.loads((ROOT / "registry" / "cap-courts.json").read_text("utf-8"))
 SCHEMA = json.loads((ROOT / "schema" / "cap-courts.schema.json").read_text("utf-8"))
@@ -37,13 +39,42 @@ def test_every_code_is_registered_and_in_date_order() -> None:
         assert entry["basis"] in TABLE["bases"], cap_id
 
 
-def test_generic_federal_codes_are_marked_for_review() -> None:
-    """D105: CourtListener's generic usdistct and uscirct are never minted on unreviewed."""
+def test_generic_federal_codes_are_marked_or_ruled() -> None:
+    """D105: CourtListener's generic usdistct and uscirct are never minted on unreviewed. D154
+    (codexpublicus/exemplar#26 question 8): a CAP court that holds several federal districts
+    within the same dates keeps the generic code without the mark, with a note saying why."""
     for cap_id, entry in TABLE["courts"].items():
         generic = {s["code"] for s in entry["codes"]} & {"usdistct", "uscirct"}
-        if generic:
-            assert entry.get("review") is True, cap_id
+        if generic and not entry.get("review"):
+            assert entry["basis"] == "head-matter", cap_id
+            assert "generic" in entry["note"], cap_id
+        elif generic:
             assert entry["review_reason"], cap_id
+
+
+def test_reporter_registry() -> None:
+    """registry/reporters.json: its schema, its pins, and that its courts are registered."""
+    schema = json.loads((ROOT / "schema" / "reporters.schema.json").read_text("utf-8"))
+    reporters = json.loads((ROOT / "registry" / "reporters.json").read_text("utf-8"))
+    jsonschema.Draft202012Validator.check_schema(schema)
+    errors = list(jsonschema.Draft202012Validator(schema).iter_errors(reporters))
+    assert not errors, [f"{list(e.path)}: {e.message}" for e in errors[:5]]
+    assert reporters["courts_registry_version"] == REGISTRY["version"]
+    # The reporter registry has its own CalVer version (spec section 10.3), never earlier than
+    # the court registry it pins: 2026.10.28 was released with it, and 2026.11.02 adds entries.
+    assert reporters["version"] >= REGISTRY["version"]
+    assert reporters["spec_version"] == REGISTRY["spec_version"]
+    for code, steps in reporters["official"].items():
+        assert code in REGISTRY["courts"], code
+        froms = [step["from"] for step in steps]
+        assert None not in froms[1:], code
+        dated = [f for f in froms if f is not None]
+        assert dated == sorted(set(dated)), code
+    for edition in reporters["editions"]:
+        assert edition["court"] in REGISTRY["courts"], edition
+    for name, volumes in reporters["supreme_court_volumes"]["reporters"].items():
+        for volume, span in volumes.items():
+            assert period(span["first"])[0] <= period(span["last"])[1], (name, volume)
 
 
 def test_a_court_is_mapped_or_unmapped_never_both() -> None:

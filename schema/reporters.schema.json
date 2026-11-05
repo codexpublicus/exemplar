@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/codexpublicus/exemplar/schema/reporters.schema.json",
+  "title": "Court record key: reporter registry",
+  "description": "registry/reporters.json; spec/court-record-key.md sections 4, 5.9, 7.1 and 10.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry", "version", "courts_registry_version", "spec", "spec_version", "description",
+    "official", "editions", "supreme_court_volumes"
+  ],
+  "properties": {
+    "registry": {"const": "reporters"},
+    "version": {"type": "string", "pattern": "^[0-9]{4}\\.(0[1-9]|1[0-2])\\.(0[1-9]|[12][0-9]|3[01])(\\.[1-9][0-9]*)?$"},
+    "courts_registry_version": {"type": "string"},
+    "spec": {"const": "spec/court-record-key.md"},
+    "spec_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "description": {"type": "string", "minLength": 1},
+    "official": {
+      "description": "Spec section 5.9 rule 4: by court code, the reporters official for its decisions, in date order; each step applies from its date (null: from the start) until the next, and names the statute, rule or court order that makes them official",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9-]*$"},
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "reporters", "source"],
+          "properties": {
+            "from": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/date"}]},
+            "reporters": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+            "source": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "editions": {
+      "description": "Spec section 7.1 rule 1(b): reporters that are editions of one report",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reporters", "court", "note", "source", "provenance"],
+        "properties": {
+          "reporters": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+          "court": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "note": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "provenance": {"enum": ["engine-output", "hand-checked", "human-curated"]}
+        }
+      }
+    },
+    "supreme_court_volumes": {
+      "description": "Spec section 4: for each of the Supreme Court's reporters, the first and last date of decision each volume prints, as ISO 8601 dates, reduced to a year and month or a year where the source gives no more",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provenance", "source", "reporters"],
+      "properties": {
+        "provenance": {"enum": ["engine-output", "hand-checked", "human-curated"]},
+        "source": {"type": "string", "minLength": 1},
+        "reporters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["us", "s-ct", "l-ed", "l-ed-2d"],
+          "properties": {
+            "us": {"$ref": "#/$defs/volumes"},
+            "s-ct": {"$ref": "#/$defs/volumes"},
+            "l-ed": {"$ref": "#/$defs/volumes"},
+            "l-ed-2d": {"$ref": "#/$defs/volumes"}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "iso": {"type": "string", "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "volumes": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[1-9][0-9]*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["first", "last"],
+        "properties": {"first": {"$ref": "#/$defs/iso"}, "last": {"$ref": "#/$defs/iso"}}
+      }
+    }
+  }
+}

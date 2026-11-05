@@ -1,8 +1,8 @@
-{"id": "majority-role", "key": "us/scotus/22-451/2024-06-28/majority.gorsuch", "error": "role", "layer": "syntax", "provenance": "engine-output", "source": "gorsuch-library tests/test_crk.py::TestGrammar::test_rejects"}
-{"id": "uppercase-author", "key": "us/scotus/22-451/2024-06-28/opinion.Gorsuch", "error": "author", "layer": "syntax", "provenance": "engine-output", "source": "gorsuch-library tests/test_crk.py::TestGrammar::test_rejects"}
-{"id": "ordinal-one", "key": "us/scotus/22-451/2024-06-28~1/opinion.gorsuch", "error": "ordinal", "layer": "syntax", "provenance": "engine-output", "source": "gorsuch-library tests/test_crk.py::TestGrammar::test_rejects"}
-{"id": "uppercase-court", "key": "us/SCOTUS/22-451/2024-06-28", "error": "court", "layer": "syntax", "provenance": "engine-output", "source": "gorsuch-library tests/test_crk.py::TestGrammar::test_rejects"}
-{"id": "docket-with-label", "key": "us/scotus/No. 22-451/2024-06-28", "error": "docket", "layer": "syntax", "provenance": "engine-output", "source": "gorsuch-library tests/test_crk.py::TestGrammar::test_rejects"}
+{"id": "majority-role", "key": "us/scotus/22-451/2024-06-28/majority.gorsuch", "error": "role", "layer": "syntax", "provenance": "engine-output", "source": "the Gorsuch library's key tests (grammar, rejected keys)"}
+{"id": "uppercase-author", "key": "us/scotus/22-451/2024-06-28/opinion.Gorsuch", "error": "author", "layer": "syntax", "provenance": "engine-output", "source": "the Gorsuch library's key tests (grammar, rejected keys)"}
+{"id": "ordinal-one", "key": "us/scotus/22-451/2024-06-28~1/opinion.gorsuch", "error": "ordinal", "layer": "syntax", "provenance": "engine-output", "source": "the Gorsuch library's key tests (grammar, rejected keys)"}
+{"id": "uppercase-court", "key": "us/SCOTUS/22-451/2024-06-28", "error": "court", "layer": "syntax", "provenance": "engine-output", "source": "the Gorsuch library's key tests (grammar, rejected keys)"}
+{"id": "docket-with-label", "key": "us/scotus/No. 22-451/2024-06-28", "error": "docket", "layer": "syntax", "provenance": "engine-output", "source": "the Gorsuch library's key tests (grammar, rejected keys)"}
 {"id": "empty", "key": "", "error": "structure", "layer": "syntax", "provenance": "spec-derived", "source": "spec/court-record-key.md 2.5"}
 {"id": "decision-missing-date", "key": "us/ca10/14-9585", "error": "structure", "layer": "syntax", "provenance": "spec-derived", "source": "spec/court-record-key.md 2.5"}
 {"id": "extra-segment", "key": "us/ca10/14-9585/2016-08-23/opinion.gorsuch/extra", "error": "structure", "layer": "syntax", "provenance": "spec-derived", "source": "spec/court-record-key.md 2.5"}
