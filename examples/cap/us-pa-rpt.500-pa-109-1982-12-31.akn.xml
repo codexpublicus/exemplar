@@ -49,7 +49,7 @@
       <proprietary source="#org_exemplar">
         <cx:profile version="0.6.0"/>
         <cx:keys provenance="engine-output">
-          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.6.0/registry/courts.json" version="2026.10.28"/>
+          <cx:registry name="courts" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.6.0/registry/courts.json" version="2026.11.05"/>
           <cx:registry name="judges" uri="https://raw.githubusercontent.com/codexpublicus/exemplar/v0.6.0/examples/cap/judges.json" version="fixture"/>
         </cx:keys>
         <cx:printing ref="#printing_500-pa-109" type="official" reporter="Pa." volume="500" firstPage="109" lastPage="120" text="transcribed">
