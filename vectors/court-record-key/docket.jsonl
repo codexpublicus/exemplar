@@ -1,37 +1,37 @@
-{"id": "ca10-plain", "court": "ca10", "printed": "14-9585", "segment": "14-9585", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "ca10-five-digit", "court": "ca10", "printed": "25-70019", "segment": "25-70019", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_ca10_accepts"}
-{"id": "ca10-leading-zero", "court": "ca10", "printed": "09-705", "segment": "09-705", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_ca10_accepts"}
-{"id": "ca10-label", "court": "ca10", "printed": "No. 14-3242", "segment": "14-3242", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "ca10-dash-and-period", "court": "ca10", "printed": "No. 14–9585.", "segment": "14-9585", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestStoredDocket"}
-{"id": "ca10-too-short", "court": "ca10", "printed": "14-95", "error": "docket-profile", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_ca10_rejects"}
-{"id": "ca10-four-digit-year", "court": "ca10", "printed": "2014-9585", "error": "docket-profile", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_ca10_rejects"}
-{"id": "ca10-application-shape", "court": "ca10", "printed": "20A87", "error": "docket-profile", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestStoredDocket"}
-{"id": "ca11-letter-suffix", "court": "ca11", "printed": "21-14319-F", "segment": "21-14319", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
+{"id": "ca10-plain", "court": "ca10", "printed": "14-9585", "segment": "14-9585", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "ca10-five-digit", "court": "ca10", "printed": "25-70019", "segment": "25-70019", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Tenth Circuit profile, accepted)"}
+{"id": "ca10-leading-zero", "court": "ca10", "printed": "09-705", "segment": "09-705", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Tenth Circuit profile, accepted)"}
+{"id": "ca10-label", "court": "ca10", "printed": "No. 14-3242", "segment": "14-3242", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "ca10-dash-and-period", "court": "ca10", "printed": "No. 14–9585.", "segment": "14-9585", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (stored docket)"}
+{"id": "ca10-too-short", "court": "ca10", "printed": "14-95", "error": "docket-profile", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Tenth Circuit profile, rejected)"}
+{"id": "ca10-four-digit-year", "court": "ca10", "printed": "2014-9585", "error": "docket-profile", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Tenth Circuit profile, rejected)"}
+{"id": "ca10-application-shape", "court": "ca10", "printed": "20A87", "error": "docket-profile", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (stored docket)"}
+{"id": "ca11-letter-suffix", "court": "ca11", "printed": "21-14319-F", "segment": "21-14319", "provenance": "hand-checked", "source": "the research doc 1.4"}
 {"id": "ca2-lead-marker", "court": "ca2", "printed": "19-1234(L)", "segment": "19-1234", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.3; illustrative docket"}
 {"id": "ca2-lead-marker-space", "court": "ca2", "printed": "19-1234 (L)", "segment": "19-1234", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.3; illustrative docket"}
-{"id": "scotus-paid", "court": "scotus", "printed": "22-451", "segment": "22-451", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-ifp", "court": "scotus", "printed": "24-5774", "segment": "24-5774", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-short", "court": "scotus", "printed": "22-7", "segment": "22-7", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_scotus_accepts"}
-{"id": "scotus-application", "court": "scotus", "printed": "20A87", "segment": "20a87", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-application-2", "court": "scotus", "printed": "19A785", "segment": "19a785", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.6(e); gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-application-3", "court": "scotus", "printed": "23A349", "segment": "23a349", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "scotus-motion", "court": "scotus", "printed": "23M12", "segment": "23m12", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-original-electronic", "court": "scotus", "printed": "22O141", "segment": "22o141", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "scotus-original-printed", "court": "scotus", "printed": "141, Orig.", "segment": "22o141", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4; gorsuch-library tests/test_dockets.py"}
-{"id": "scotus-original-label", "court": "scotus", "printed": "No. 141, Orig.", "segment": "22o141", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "scotus-original-no-comma", "court": "scotus", "printed": "141 Orig.", "segment": "22o141", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.2; printed form from gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "scotus-nos-label", "court": "scotus", "printed": "Nos. 20-1199", "segment": "20-1199", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "scotus-en-dash-period", "court": "scotus", "printed": "15–577.", "segment": "15-577", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "scotus-em-dash", "court": "scotus", "printed": "15—577", "segment": "15-577", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "scotus-whitespace", "court": "scotus", "printed": "  16-402 ", "segment": "16-402", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestCleanPrinted"}
-{"id": "scotus-slash", "court": "scotus", "printed": "16/402", "error": "docket-profile", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_scotus_rejects"}
-{"id": "scotus-empty", "court": "scotus", "printed": "", "error": "no-docket", "provenance": "engine-output", "source": "gorsuch-library tests/test_dockets.py::TestProfiles::test_scotus_rejects"}
-{"id": "district-judge-initials", "court": "cod", "printed": "1:17-cv-02523-PAB-STV", "segment": "1_17-cv-02523", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "district-plain", "court": "cod", "printed": "1:15-cv-01234", "segment": "1_15-cv-01234", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "bankruptcy-adversary", "court": "meb", "printed": "2:10-ap-02064", "segment": "2_10-ap-02064", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.3 (GovInfo USCOURTS-meb-2_10-ap-02064)"}
+{"id": "scotus-paid", "court": "scotus", "printed": "22-451", "segment": "22-451", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "scotus-ifp", "court": "scotus", "printed": "24-5774", "segment": "24-5774", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "scotus-short", "court": "scotus", "printed": "22-7", "segment": "22-7", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Supreme Court profile, accepted)"}
+{"id": "scotus-application", "court": "scotus", "printed": "20A87", "segment": "20a87", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "scotus-application-2", "court": "scotus", "printed": "19A785", "segment": "19a785", "provenance": "hand-checked", "source": "the research doc 1.6(e); the Gorsuch library's docket tests"}
+{"id": "scotus-application-3", "court": "scotus", "printed": "23A349", "segment": "23a349", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "scotus-motion", "court": "scotus", "printed": "23M12", "segment": "23m12", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "scotus-original-electronic", "court": "scotus", "printed": "22O141", "segment": "22o141", "provenance": "hand-checked", "source": "the research doc 1.4"}
+{"id": "scotus-original-printed", "court": "scotus", "printed": "141, Orig.", "segment": "22o141", "provenance": "hand-checked", "source": "the research doc 1.4; the Gorsuch library's docket tests"}
+{"id": "scotus-original-label", "court": "scotus", "printed": "No. 141, Orig.", "segment": "22o141", "provenance": "hand-checked", "source": "the research doc 1.4"}
+{"id": "scotus-original-no-comma", "court": "scotus", "printed": "141 Orig.", "segment": "22o141", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.2; printed form from the research doc 1.4"}
+{"id": "scotus-nos-label", "court": "scotus", "printed": "Nos. 20-1199", "segment": "20-1199", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "scotus-en-dash-period", "court": "scotus", "printed": "15–577.", "segment": "15-577", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "scotus-em-dash", "court": "scotus", "printed": "15—577", "segment": "15-577", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "scotus-whitespace", "court": "scotus", "printed": "  16-402 ", "segment": "16-402", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (cleaning a printed docket)"}
+{"id": "scotus-slash", "court": "scotus", "printed": "16/402", "error": "docket-profile", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Supreme Court profile, rejected)"}
+{"id": "scotus-empty", "court": "scotus", "printed": "", "error": "no-docket", "provenance": "engine-output", "source": "the Gorsuch library's docket tests (Supreme Court profile, rejected)"}
+{"id": "district-judge-initials", "court": "cod", "printed": "1:17-cv-02523-PAB-STV", "segment": "1_17-cv-02523", "provenance": "hand-checked", "source": "the research doc 1.4"}
+{"id": "district-plain", "court": "cod", "printed": "1:15-cv-01234", "segment": "1_15-cv-01234", "provenance": "hand-checked", "source": "the research doc 1.4"}
+{"id": "bankruptcy-adversary", "court": "meb", "printed": "2:10-ap-02064", "segment": "2_10-ap-02064", "provenance": "hand-checked", "source": "the research doc 1.3 (GovInfo USCOURTS-meb-2_10-ap-02064)"}
 {"id": "district-no-office", "court": "cod", "printed": "15-cv-01234", "error": "docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.4"}
-{"id": "louisiana", "court": "la", "printed": "2004-CA-1580", "segment": "2004-ca-1580", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
-{"id": "mississippi", "court": "miss", "printed": "95-KA-01234-SCT", "segment": "95-ka-01234-sct", "provenance": "hand-checked", "source": "gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md 1.4"}
+{"id": "louisiana", "court": "la", "printed": "2004-CA-1580", "segment": "2004-ca-1580", "provenance": "hand-checked", "source": "the research doc 1.4"}
+{"id": "mississippi", "court": "miss", "printed": "95-KA-01234-SCT", "segment": "95-ka-01234-sct", "provenance": "hand-checked", "source": "the research doc 1.4"}
 {"id": "printed-spaces-colon-slash", "court": "miss", "printed": "No. 2001 CA:12/3", "segment": "2001ca_12_3", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5; illustrative docket"}
 {"id": "printed-illegal-char", "court": "miss", "printed": "#1234", "error": "docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5"}
 {"id": "printed-reserved-rpt", "court": "mass", "printed": "rpt.12", "error": "docket-profile", "provenance": "spec-derived", "source": "spec/court-record-key.md 5.5"}

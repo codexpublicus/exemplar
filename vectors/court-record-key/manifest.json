@@ -6,8 +6,8 @@
   "judges_fixture": "judges-fixture.json",
   "provenance": {
     "human-curated": "A person checked it against the primary source. Ground truth: where it disagrees with any other vector, it wins.",
-    "hand-checked": "Taken from a worked example in gorsuch-library docs/research/2026-09-25-case-identifier-recommendation.md.",
-    "engine-output": "Taken from an implementation's tests or output (gorsuch-library), or computed from a source's records (CAP's case metadata, with the court code registry/cap-courts.json gives) by the spec's rules; it shows what the data and an implementation give, not what is correct.",
+    "hand-checked": "Taken from a worked example in the research doc, the unpublished study the spec started from (the spec's introduction).",
+    "engine-output": "Taken from an implementation's tests or output (the Gorsuch library's), or computed from a source's records (CAP's case metadata, with the court code registry/cap-courts.json gives) by the spec's rules; it shows what the data and an implementation give, not what is correct.",
     "spec-derived": "Constructed from the spec's rules to exercise an edge case; not yet checked by a person."
   },
   "files": {

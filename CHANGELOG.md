@@ -4,18 +4,28 @@ Changes to the specs, schemas, vectors and examples, by release tag. A release t
 
 ## v0.6.2 (unreleased)
 
-CRK 0.6.2, a patch release; court registry and CAP court table stay `2026.10.28`, reporter registry stays `2026.11.02`, and the profile stays 0.6.0. The registries' `spec_version` moves to 0.6.2. The owner's ruling D167 (2026-11-02), items (1) and (3), on what a person's ruling does where the official-reporter table can't decide and where printings sharing a candidate are distinct. With no rulings, no candidate key a 0.6.1 producer computes changes and no vector's expected result changes. CAP holds no rulings, so 0.6.1's measurements stand; nothing new is measured.
+CRK 0.6.2, a patch release, and CAP court table `2026.11.05`; court registry stays `2026.10.28`, reporter registry stays `2026.11.02`, and the profile stays 0.6.0. The registries' `spec_version` moves to 0.6.2. The owner's ruling D167 (2026-11-02), items (1) and (3), on what a person's ruling does where the official-reporter table can't decide and where printings sharing a candidate are distinct. With no rulings, no candidate key a 0.6.1 producer computes changes and no vector's expected result changes. CAP holds no rulings, so 0.6.1's measurements stand; nothing new is measured.
 
 ### Court record key 0.6.2
 
 - **A person's ruling stands in for the table** (D167 (1)). Section 5.9: a ruling cites its evidence (what the person checked) and records who and when. A ruling that printings are one decision releases printings a CourtListener cluster alone links, since the person is the second source, and MAY name the printing that decides the key (`key_printing`) where the official-reporter table names no reporter for the court and date, none of the printings is in it, or the official printings give different segments; that choice stands in for rule 4. A `key_printing` that contradicts what the table gives is a conflict, and the table wins.
 - **Printings ruled distinct are numbered in printed order** (D167 (3)). Section 7.1: a ruling that printings computing one candidate are distinct decisions numbers them as rules 2 and 3 do, by one volume's order or by volume, page and position in one reporter; with printings in several reporters and no common volume they stay held `shared-candidate`. A ruling that contradicts a second source is a conflict, and the source stands.
 - Section 12: a producer reports every conflicting ruling and doesn't drop it silently. Section 14 says how vectors express a ruling; section 16 lists the ruling's format and distinct decisions in several reporters as open.
+- The introduction and section 14 describe the research doc as an unpublished study written for the Gorsuch library, and an implementation's tests as the Gorsuch library's, in place of paths in that library's repository. Section 10.3 pins CAP court table `2026.11.05`. No rule changes.
+
+### Akoma Ntoso profile 0.6.0
+
+- The introduction names the Gorsuch library as a producer, and section 15 says the CourtListener field names are as stare reads them from CourtListener's bulk data, in place of paths in a private repository. No rule changes, and the version stays 0.6.0.
+
+### CAP court table 2026.11.05
+
+- `source.crosswalk` says the crosswalk was built from CourtListener's 2026-09-30 bulk data (each cluster's link to its CAP case, and its citations), and `bases.crosswalk-90` drops the path of the code that applied it; both named a private repository. No court's codes, basis, note or review mark change, so every key `2026.10.28` gives, it still gives.
 
 ### Vectors
 
 - `decisions.jsonl` takes a `rulings` fixture field, `[{id, printings, ruling (one-decision or distinct-decisions), key_printing, evidence, by, date}]`, and a decision lists the rulings it contradicts in `conflicts`. 6 new: `d167-ruling-releases-no-official-reporter` (McKenna v. State, linked by a CourtListener cluster alone, Florida without an official reporter, keyed from the printing the ruling names), `d167-ruling-without-key-printing-held` (the same ruling naming no printing; held), `d167-ruling-contradicts-table` (Brydle v. Honigbaum, the ruling naming the F.2d printing; the C.C.P.A. table wins and the ruling is a conflict), `d167-ruling-distinct-printed-order` (two zeroed-date decisions in one reporter, numbered in printed order), `d167-ruling-distinct-two-reporters-held` (ruled distinct, two reporters; held) and `d167-ruling-distinct-contradicts-citation` (a distinct ruling against a parallel citation; a conflict).
 - `tests/crk_check.py`'s oracle takes rulings, and `tests/test_court_record_key.py` checks each ruling's fields and that a vector with no rulings has no conflicts.
+- The court record key vectors' `source` fields, and the manifest's `hand-checked` and `engine-output` descriptions, cite the research doc and the Gorsuch library's key and docket tests in place of paths in that library's repository. No vector's facts or expected result change.
 
 ## v0.6.1 (unreleased)
 
@@ -122,7 +132,7 @@ CRK 0.4.0, profile 0.4.0, court registry `2026.10.23`, and a new CAP court table
 
 ### CAP court table 2026.10.23
 
-- New `registry/cap-courts.json` and `schema/cap-courts.schema.json`: the registry code for each of CAP's 3,454 court ids, by date, with the basis for each. 3,248 courts, 6,914,464 of 6,920,598 cases (99.91%), are mapped: the 2,954 of stare-builder's table, and 294 more by name, by the crosswalk once CourtListener's generic courts are set aside or at 75%, and by hand for six (CAP's Kentucky Court of Appeals is `kyctapphigh` before 1976-01-01 and `kyctapp` from it; its Texas Courts of Appeals are `texapp`). 206 courts (6,134 cases) are listed as unmapped, with the reason. The 88 courts (626 cases) mapped to CourtListener's generic `usdistct` or `uscirct` are marked `review: true`, with a `review_reason`, and refused `court-under-review` (D105). Engine output, for review.
+- New `registry/cap-courts.json` and `schema/cap-courts.schema.json`: the registry code for each of CAP's 3,454 court ids, by date, with the basis for each. 3,248 courts, 6,914,464 of 6,920,598 cases (99.91%), are mapped: the 2,954 an earlier engine table mapped, and 294 more by name, by the crosswalk once CourtListener's generic courts are set aside or at 75%, and by hand for six (CAP's Kentucky Court of Appeals is `kyctapphigh` before 1976-01-01 and `kyctapp` from it; its Texas Courts of Appeals are `texapp`). 206 courts (6,134 cases) are listed as unmapped, with the reason. The 88 courts (626 cases) mapped to CourtListener's generic `usdistct` or `uscirct` are marked `review: true`, with a `review_reason`, and refused `court-under-review` (D105). Engine output, for review.
 
 ### Akoma Ntoso profile 0.4.0
 
