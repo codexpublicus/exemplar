@@ -3,8 +3,9 @@
 # path.
 #
 # Not annotated here: the vendored third-party files (schema/akn/1.0/*.xsd,
-# registry/sources/courts-db/, validator/vendor/schxslt2/ other than source.json), which keep the
-# terms they state, and registry/NOTICE-courts-db.txt, which reproduces courts-db's notice.
+# registry/sources/courts-db/, registry/sources/reporters-db/, validator/vendor/schxslt2/ other
+# than source.json), which keep the terms they state, and registry/NOTICE-courts-db.txt and
+# registry/NOTICE-reporters-db.txt, which reproduce courts-db's and reporters-db's notices.
 version = 1
 
 [[annotations]]
@@ -23,6 +24,7 @@ path = [
     "registry/courts.json",
     "registry/cap-courts.json",
     "registry/reporters.json",
+    "registry/reporter-variants.json",
     "vectors/**",
     "examples/README.md",
     "examples/minimal/**",

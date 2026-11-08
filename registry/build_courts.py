@@ -24,8 +24,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "registry" / "sources" / "courts-db" / "courts.json"
 OUTPUT = ROOT / "registry" / "courts.json"
 
-VERSION = "2026.10.28"
-SPEC_VERSION = "0.6.3"
+VERSION = "2026.11.05"
+SPEC_VERSION = "0.7.0"
 
 PROVENANCE = {
     "name": "courts-db",
@@ -44,6 +44,7 @@ PROVENANCE = {
 
 COURT_RULE = re.compile(r"[a-z][a-z0-9-]*")
 COURTS_OF_APPEALS = {f"ca{n}" for n in range(1, 12)} | {"cadc"}
+US_COA_FROM = "1971-01-01"  # the regional circuits' yy-nnnnn dockets (#36)
 NOT_A_COURT = {"usdistct"}  # courts-db's generic "United States District Court"
 
 
@@ -55,8 +56,15 @@ def profiles(court: dict[str, Any]) -> list[dict[str, str | None]]:
             {"from": None, "profile": "scotus-numbered"},
             {"from": "1971-07-01", "profile": "scotus-ot1971"},
         ]
-    if code in COURTS_OF_APPEALS:
+    if code == "ca11":
+        # spec section 5.3: the Eleventh Circuit from its start (1981-10-01)
         return [{"from": None, "profile": "us-coa"}]
+    if code in COURTS_OF_APPEALS:
+        # spec section 5.3, from 0.7.0 (#36, D192): us-coa from 1971-01-01, printed before
+        return [
+            {"from": None, "profile": "printed"},
+            {"from": US_COA_FROM, "profile": "us-coa"},
+        ]
     if code == "cafc":
         # spec section 5.8, from 0.5.0: from the court's first day, 1982-10-01
         return [{"from": "1982-10-01", "profile": "us-cafc"}]
