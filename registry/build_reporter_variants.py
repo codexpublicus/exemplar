@@ -35,7 +35,7 @@ SOURCE = ROOT / "registry" / "sources" / "reporters-db" / "reporters.json"
 OUTPUT = ROOT / "registry" / "reporter-variants.json"
 
 VERSION = "2026.11.05"
-SPEC_VERSION = "0.7.0"
+SPEC_VERSION = "0.8.0"
 
 PROVENANCE = {
     "name": "reporters-db",

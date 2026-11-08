@@ -1,6 +1,6 @@
 {
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.7.0",
+  "spec_version": "0.8.0",
   "courts_registry": "registry/courts.json",
   "reporter_registry": "registry/reporters.json",
   "reporter_variants": "registry/reporter-variants.json",
