@@ -64,8 +64,14 @@ def test_every_abbreviation_slugs_to_a_valid_slug() -> None:
         assert crk_check.RPT.fullmatch(f"rpt.1-{slug}-1"), spelling
 
 
-def test_an_abbreviation_is_not_itself_mapped() -> None:
-    # One lookup gives the abbreviation: no entry maps to a spelling another entry maps on.
+def test_an_abbreviation_is_its_own_abbreviation() -> None:
+    # One lookup gives the abbreviation: no entry maps to a spelling another entry maps on
+    # elsewhere, though a curated entry may keep a spelling as its own (`P.R.`, `Cai.`).
     for spelling, entry in REGISTRY["variants"].items():
-        if entry["abbreviation"] != spelling:
-            assert entry["abbreviation"] not in REGISTRY["variants"], spelling
+        target = REGISTRY["variants"].get(entry["abbreviation"])
+        assert target is None or target["abbreviation"] == entry["abbreviation"], spelling
+
+
+def test_the_puerto_rico_reports_take_pr() -> None:
+    # D195: CAP's `P.R.`, reporters-db's `P.R.R.` and its variation `Puerto Rico` are one slug.
+    assert {crk_check.reporter_slug(s) for s in ("P.R.", "P.R.R.", "Puerto Rico")} == {"pr"}

@@ -408,10 +408,10 @@
     {
       "reporters": [
         "pr-dec",
-        "prr"
+        "pr"
       ],
       "court": "prsupreme",
-      "note": "The Supreme Court of Puerto Rico's decisions: Decisiones de Puerto Rico (P.R. Dec.), in Spanish, and Puerto Rico Reports (CAP's volumes `P.R.`, reporters-db's `P.R.R.`, the slug the reporter variant map gives from 2026.11.05), the English edition",
+      "note": "The Supreme Court of Puerto Rico's decisions: Decisiones de Puerto Rico (P.R. Dec.), in Spanish, and Puerto Rico Reports (P.R.; the reporter variant map gives reporters-db's `P.R.R.` the same slug from 2026.11.05), the English edition",
       "source": "CAP's reporter records (ReportersMetadata.json, reporters 975 and 304), proposed on codexpublicus/exemplar#55 and ruled D154 (2026-10-28)",
       "provenance": "hand-checked"
     }

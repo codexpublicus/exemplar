@@ -14,11 +14,14 @@ tests/test_reporter_variants.py can rebuild it and compare:
 - every variation reporters-db lists for exactly one edition, and that isn't itself an edition,
   maps to that edition (basis reporters-db);
 - CURATED adds the spellings the Caselaw Access Project uses that reporters-db lacks, resolves the
-  one spelling CAP uses that reporters-db gives several editions for, and keeps separate the
-  series reporters-db's variations would join (basis curated). A curated entry overrides
-  reporters-db's.
+  one spelling CAP uses that reporters-db gives several editions for, keeps separate the series
+  reporters-db's variations would join, and gives the Puerto Rico Reports one abbreviation, `P.R.`,
+  for every spelling, reporters-db's edition `P.R.R.` included (basis curated). A curated entry
+  overrides reporters-db's.
 
-A spelling that is a reporters-db edition, or that the map doesn't list, is its own abbreviation.
+A spelling that is a reporters-db edition and has no curated entry, or that the map doesn't list,
+is its own abbreviation. Every abbreviation the map gives is its own abbreviation, so one lookup
+gives it.
 """
 
 import hashlib
@@ -75,13 +78,24 @@ CURATED: dict[str, tuple[str, str]] = {
         "lists it as a variation of `S. & M.`, the Mississippi Reports of Smedes and Marshall "
         "(the High Court of Errors and Appeals), which would join them (70 CAP fallback keys)",
     ),
-    # reporters-db gives `P.R.` three editions (`P.`, `P.R.R.`, `Pen. & W.`).
+    # The Puerto Rico Reports: reporters-db gives `P.R.` three editions (`P.`, `P.R.R.`,
+    # `Pen. & W.`) and abbreviates the report `P.R.R.`; the map gives all of its spellings `P.R.`,
+    # the slug `pr` CAP's volumes and earlier versions of this spec use (D195).
     "P.R.": (
-        "P.R.R.",
+        "P.R.",
         "CAP's volumes named `P.R.` are the Puerto Rico Reports, the English edition of the "
-        "Supreme Court of Puerto Rico's decisions, which reporters-db abbreviates `P.R.R.`; "
-        "reporters-db also lists `P.R.` as a variation of `P.` (the Pacific Reporter) and "
-        "`Pen. & W.` (Penrose and Watts), which CAP doesn't spell `P.R.`",
+        "Supreme Court of Puerto Rico's decisions, slug `pr` (D195); reporters-db also lists "
+        "`P.R.` as a variation of `P.` (the Pacific Reporter) and `Pen. & W.` (Penrose and "
+        "Watts), which CAP doesn't spell `P.R.`",
+    ),
+    "P.R.R.": (
+        "P.R.",
+        "reporters-db's abbreviation of the Puerto Rico Reports, which CAP's volumes name `P.R.`; "
+        "mapped to `P.R.`, so that both spellings take the slug `pr` (D195)",
+    ),
+    "Puerto Rico": (
+        "P.R.",
+        "reporters-db's variation of `P.R.R.`, the Puerto Rico Reports; mapped with it (D195)",
     ),
     # Spellings CAP uses that reporters-db 3.2.67 lacks.
     "Davis L. Ct. Cas.": (
@@ -145,10 +159,14 @@ def build() -> dict[str, Any]:
             unresolved[variation] = sorted(targets)
     for variation, (abbreviation, note) in CURATED.items():
         assert variation == spelling(variation), variation
-        assert variation not in editions, variation
-        assert abbreviation in editions or abbreviation == variation, variation
+        # A curated abbreviation is an edition, or a spelling a curated entry keeps as its own.
+        assert abbreviation in editions or CURATED.get(abbreviation, ("",))[0] == abbreviation
         unresolved.pop(variation, None)
         variants[variation] = {"abbreviation": abbreviation, "basis": "curated", "note": note}
+    for variation, entry in variants.items():
+        # One lookup gives the abbreviation: it is its own abbreviation.
+        target = variants.get(entry["abbreviation"])
+        assert target is None or target["abbreviation"] == entry["abbreviation"], variation
     return {
         "registry": "reporter-variants",
         "version": VERSION,
