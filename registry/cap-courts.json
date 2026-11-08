@@ -3,7 +3,7 @@
   "version": "2026.11.05.1",
   "courts_registry_version": "2026.11.05",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.7.0",
+  "spec_version": "0.8.0",
   "description": "The court registry code for each court the Caselaw Access Project names (spec section 10.1). engine-output: computed from CAP's case metadata, CourtListener's 2026-09-30 crosswalk of CAP cases to its clusters, and the court registry's names, as each entry's basis says; a court in unmapped has no code, and its decisions are refused unregistered-court; an entry marked review has a code that must be reviewed before any key is minted with it, and its decisions are refused court-under-review until the mark is removed.",
   "provenance": "engine-output",
   "bases": {

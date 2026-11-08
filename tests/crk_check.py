@@ -304,6 +304,9 @@ def _district(text: str, court: str = "") -> str | None:
 # parentheses after their own.
 LOWER_COURT_NUMBER = frozenset({"ala", "alacrimapp", "alacivapp", "nm", "nmctapp", "ri"})
 _TRAILING_GROUP = re.compile(r"\s*\([^()]*\)\s*$")
+# Section 5.5 (from 0.8.0, D200): a run of parentheses and whitespace, with at least one
+# parenthesis, that has a digit directly before and after it.
+_PAREN_BETWEEN_DIGITS = re.compile(r"(?<=[0-9])[\s()]*[()][\s()]*(?=[0-9])")
 
 
 def _printed(text: str, court: str = "") -> str | None:
@@ -311,8 +314,9 @@ def _printed(text: str, court: str = "") -> str | None:
         # From 0.7.0 (#35): drop the lower court's number, then one trailing `.` (5.1 step 5).
         text = _strip_period(_TRAILING_GROUP.sub("", text))
     else:
-        # From 0.7.0 (#35): delete parentheses, keeping what they enclose.
-        text = text.replace("(", "").replace(")", "")
+        # From 0.7.0 (#35): delete parentheses, keeping what they enclose. From 0.8.0 (D200): a
+        # run of parentheses and whitespace between two digits becomes `_`, so numbers don't glue.
+        text = _PAREN_BETWEEN_DIGITS.sub("_", text).replace("(", "").replace(")", "")
     text = re.sub(r"(?<=[0-9]),(?=\s*[0-9])", "_", text.lower()).replace(",", "")
     text = re.sub(r"\s+", "", text).replace(":", "_").replace("/", "_")
     return text if DOCKET.fullmatch(text) and not text.startswith("rpt.") else None

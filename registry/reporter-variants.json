@@ -2,7 +2,7 @@
   "registry": "reporter-variants",
   "version": "2026.11.05",
   "spec": "spec/court-record-key.md",
-  "spec_version": "0.7.0",
+  "spec_version": "0.8.0",
   "description": "The reporter variant map (spec sections 5.6 and 10.1, from 0.7.0): for a spelling of a reporter's abbreviation, with whitespace runs collapsed to one space, the abbreviation whose slug a key and a cite: alias use. A spelling the map doesn't list is its own abbreviation. Entries with basis reporters-db are the variations the reporters-db snapshot named in source lists for exactly one edition; entries with basis curated are this registry's (registry/build_reporter_variants.py) and override reporters-db's. unresolved lists the variations reporters-db gives several editions for that no curated entry resolves; each is its own abbreviation.",
   "source": {
     "name": "reporters-db",

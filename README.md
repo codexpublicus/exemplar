@@ -92,7 +92,7 @@ There is no judge registry here. Judge slugs come from a registry the consumer s
 
 ## Status
 
-Early. Nothing here is stable yet. The court record key spec is at 0.7.0 (draft), with court registry 2026.11.05, CAP court table 2026.11.05.1, reporter registry 2026.11.05 and reporter variant map 2026.11.05; it moved here from an unpublished study written for the Gorsuch library and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
+Early. Nothing here is stable yet. The court record key spec is at 0.8.0 (draft), with court registry 2026.11.05, CAP court table 2026.11.05.1, reporter registry 2026.11.05 and reporter variant map 2026.11.05; it moved here from an unpublished study written for the Gorsuch library and is now the normative source. The Akoma Ntoso profile is at 0.6.0 (draft); its open questions are listed in its section 19. Documents refer to keys as `crk:` URIs (`crk:us/dc/57/1943-04-06`) and to the registries by their raw file URLs at a release tag; the examples name `v0.6.0`, the tag they are to be published under. Changes from one version to the next are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Checks
 
