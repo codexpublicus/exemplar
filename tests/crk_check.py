@@ -352,27 +352,40 @@ def jurisdiction_for(court: dict[str, Any], decided: str | None) -> str:
 
 
 # Section 5.3 (from 0.7.0, #36, D192): the Second Circuit's docket number after a calendar number,
-# `No. 1217, Docket 79-5006`, `Nos. 1149, 1291, Dockets 89-7039, 89-7041`.
-# A number with a case-type suffix (`04-0070-cv`, `03-7868 CV`, printed from 2002) isn't in that
-# form: a letter or `-` directly after it, or a space and two letters other than `to`.
-_CA2_DOCKET = re.compile(
-    r"\bdockets?\b\.?\s*(?:nos?\b\.?\s*)?([0-9]{2}-[0-9]{3,5})"
-    r"(?![0-9a-z-])(?!\s+(?!to\b)[a-z]{2}(?![a-z]))",
-    re.I,
+# `No. 1217, Docket 79-5006`, `Nos. 1149, 1291, Dockets 89-7039, 89-7041`; and (D195) its docket
+# number with a case-type suffix, printed from 2002, `05-5250-cv`, `03-7868 CV`, `03-4725-AG NAC`,
+# or a marker, `03-1396(L), 03-1397(CON)`, `93-9263L`.
+_CA2_NUMBER = r"[0-9]{2}-[0-9]{3,5}(?![0-9])"
+# One group of a case-type suffix: up to five letters, directly or after `-` or a space, that
+# aren't a word of a list or range.
+_CA2_SUFFIX = r"(?:-|\s)?(?!(?:to|and|et|no|nos|thru)(?![a-z]))[a-z]{1,5}(?![a-z0-9])"
+_CA2_MARKER = r"\s*\([a-z]{1,4}\)"
+_CA2_END = r"(?=\s*(?:[,;&]|\band\b|\.?\s*$))"
+_CA2_WORD = re.compile(r"\bdockets?\b\.?\s*(?:nos?\b\.?\s*)?", re.I)
+# The number after `Docket`, with nothing after it that the suffix form reads (0.7.0, D192).
+_CA2_PLAIN = re.compile(rf"({_CA2_NUMBER})(?![a-z-])(?!\s+(?!to\b)[a-z]{{2}}(?![a-z]))", re.I)
+# The number with a case-type suffix of one or two groups, a marker, or both (D195).
+_CA2_SUFFIXED = re.compile(
+    rf"({_CA2_NUMBER})(?:(?:{_CA2_SUFFIX}){{1,2}}(?:{_CA2_MARKER})?|{_CA2_MARKER}){_CA2_END}", re.I
 )
-_COA_NUMBER = re.compile(r"(?<![0-9a-z-])[0-9]{2}-[0-9]{3,5}(?![0-9a-z-])", re.I)
+# Another docket: a later number of the form, alone or with a suffix or marker.
+_CA2_OTHER = re.compile(
+    rf"(?<![0-9a-z-])({_CA2_NUMBER})(?:{_CA2_SUFFIX}){{0,2}}(?:{_CA2_MARKER})?(?![0-9a-z-])", re.I
+)
 
 
 def _second_circuit(profile: str | None, court: str, printed: str) -> list[str]:
-    """The us-coa dockets a Second Circuit docket printed after `Docket` names, first the
-    decision's docket, or [] when it isn't in that form."""
+    """The us-coa dockets a Second Circuit docket names in the two-number form (D192) or with a
+    case-type suffix or marker (D195), first the decision's docket, or [] when it is in neither."""
     if profile != "us-coa" or court != "ca2":
         return []
     text = printed.strip().translate(_DASHES)
-    m = _CA2_DOCKET.search(text)
+    word = _CA2_WORD.search(text)
+    start = word.end() if word else len(text) - len(_unlabel(text)[0])
+    m = _CA2_SUFFIXED.match(text, start) or (word and _CA2_PLAIN.match(text, start))
     if not m:
         return []
-    return [m.group(1)] + _COA_NUMBER.findall(text[m.end() :])
+    return [m.group(1)] + _CA2_OTHER.findall(text, m.end())
 
 
 def docket_segment(
