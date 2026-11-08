@@ -56,7 +56,7 @@ PROVENANCE = {
 # Spelling -> (abbreviation, note). The spellings are as the Caselaw Access Project's metadata
 # prints them, in a citation or as a volume's reporter, with whitespace collapsed (D192,
 # codexpublicus/exemplar#31).
-KEPT_SEPARATE = "Kept separate pending the owner's check (D192)"
+KEPT_SEPARATE = "Kept separate, as the owner ruled in A246 (2026-11-08)"
 CURATED: dict[str, tuple[str, str]] = {
     # Three variations reporters-db lists that would put two series under one slug.
     "Cai.": (
